@@ -1,8 +1,8 @@
 functions and procedures
 ========================
-Script body goes to these sub directory, in each directory there are files that represent an object. \n
-for example, party_calculate_faggotry_level that takes in: party_no, and returns a certain value ranging [0,100]. \n
-because that script returns a value and it "resembles" an method object of party, it should reside on /functions/party.py \n
+Script body goes to these sub directory, in each directory there are files that represent an object.    
+for example, party_calculate_faggotry_level that takes in: party_no, and returns a certain value ranging [0,100].   
+because that script returns a value and it "resembles" an method object of party, it should reside on /functions/party.py    
 ```
   ...
   ablablablabalbalblaa
@@ -20,8 +20,8 @@ because that script returns a value and it "resembles" an method object of party
 ```
 
 
-function : a script that returns values \n
-conditional_function : a cf script that doesn't return values, it is used as conditional checks (can fail) \n
-procedure: a script that returns no values \n
+function : a script that returns values    
+conditional_function : a cf script that doesn't return values, it is used as conditional checks (can fail)  
+procedure: a script that returns no values  
  
 NOTE: there are cf scripts in function, because they do return value, but also act as conditional function
