@@ -3,7 +3,7 @@ A new version of modded modded 1257AD
 
 
 TODO:
-- [ ] code refactoring (15%)
+- [ ] code refactoring and documentation (15%) 
 - [ ] import troop trees from modded 1257AD
 - [ ] brainybots
 
