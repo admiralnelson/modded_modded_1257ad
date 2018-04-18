@@ -1,0 +1,1463 @@
+from header import *
+
+# script_game_get_multiplayer_server_option_for_mission_template
+		# Input: arg1 = mission_template_id, arg2 = option_index
+		# Output: trigger_result = 1 for option available, 0 for not available
+		#         reg0 = option_value
+game_get_multiplayer_server_option_for_mission_template	=	(
+	"game_get_multiplayer_server_option_for_mission_template",
+			[
+				(store_script_param, ":mission_template_id", 1),
+				(store_script_param, ":option_index", 2),
+				(try_begin),
+					(eq, ":option_index", 0),
+					(assign, reg0, "$g_multiplayer_team_1_faction"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 1),
+					(assign, reg0, "$g_multiplayer_team_2_faction"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 2),
+					(assign, reg0, "$g_multiplayer_num_bots_team_1"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 3),
+					(assign, reg0, "$g_multiplayer_num_bots_team_2"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 4),
+					(server_get_friendly_fire, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 5),
+					(server_get_melee_friendly_fire, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 6),
+					(server_get_friendly_fire_damage_self_ratio, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 7),
+					(server_get_friendly_fire_damage_friend_ratio, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 8),
+					(server_get_ghost_mode, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 9),
+					(server_get_control_block_dir, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 10),
+					(server_get_combat_speed, reg0),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(eq, ":mission_template_id", "mt_multiplayer_hq"),
+						(val_add, ":option_index", 1), #max game time
+					(try_end),
+					(eq, ":option_index", 11),
+					(assign, reg0, "$g_multiplayer_game_max_minutes"),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_bt"),
+						(neq, ":mission_template_id", "mt_multiplayer_fd"),
+						(neq, ":mission_template_id", "mt_multiplayer_sg"),
+						(val_add, ":option_index", 1), #max round time
+					(try_end),
+					(eq, ":option_index", 12),
+					(assign, reg0, "$g_multiplayer_round_max_seconds"),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_bt"),
+						(neq, ":mission_template_id", "mt_multiplayer_fd"),
+						(val_add, ":option_index", 1), #respawn as bot
+					(try_end),
+					(eq, ":option_index", 13),
+					(assign, reg0, "$g_multiplayer_player_respawn_as_bot"),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_sg"),
+						(val_add, ":option_index", 1), #respawn limit
+					(try_end),
+					(eq, ":option_index", 14),
+					(assign, reg0, "$g_multiplayer_number_of_respawn_count"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 15),
+					(assign, reg0, "$g_multiplayer_game_max_points"),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_hq"),
+						(val_add, ":option_index", 1), #point gained from flags
+					(try_end),
+					(eq, ":option_index", 16),
+					(assign, reg0, "$g_multiplayer_point_gained_from_flags"),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_cf"),
+						(val_add, ":option_index", 1), #point gained from capturing flag
+					(try_end),
+					(eq, ":option_index", 17),
+					(assign, reg0, "$g_multiplayer_point_gained_from_capturing_flag"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 18),
+					(assign, reg0, "$g_multiplayer_respawn_period"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 19),
+					(assign, reg0, "$g_multiplayer_initial_gold_multiplier"),
+					(set_trigger_result, 1),
+				(else_try),
+					(eq, ":option_index", 20),
+					(assign, reg0, "$g_multiplayer_battle_earnings_multiplier"),
+					(set_trigger_result, 1),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_bt"),
+						(neq, ":mission_template_id", "mt_multiplayer_fd"),
+						(neq, ":mission_template_id", "mt_multiplayer_sg"),
+						(val_add, ":option_index", 1),
+					(try_end),
+					(eq, ":option_index", 21),
+					(assign, reg0, "$g_multiplayer_round_earnings_multiplier"),
+					(set_trigger_result, 1),
+				(try_end),
+		])
+
+		#script_multiplayer_get_item_value_for_troop
+		# Input: arg1 = item_no, arg2 = troop_no
+		# Output: reg0: item_value
+multiplayer_get_item_value_for_troop =	(
+	"multiplayer_get_item_value_for_troop",
+			[
+				(store_script_param, ":item_no", 1),
+				(store_script_param, ":troop_no", 2),
+				(try_begin),
+					(call_script, "script_cf_multiplayer_is_item_default_for_troop", ":item_no", ":troop_no"),
+					(assign, ":item_value", 0),
+				(else_try),
+					(store_item_value, ":item_value", ":item_no"),
+					(store_troop_faction, ":faction_no", ":troop_no"),
+					(store_sub, ":faction_slot", ":faction_no", npc_kingdoms_begin),
+					(val_add, ":faction_slot", slot_item_multiplayer_faction_price_multipliers_begin),
+					(item_get_slot, ":price_multiplier", ":item_no", ":faction_slot"),
+					(val_mul, ":item_value", ":price_multiplier"),
+					(val_div, ":item_value", 100),
+				(try_end),
+				(assign, reg0, ":item_value"),
+		])
+
+		#script_multiplayer_get_previous_item_for_item_and_troop
+		# Input: arg1 = item_no, arg2 = troop_no
+		# Output: reg0: previous_item_no (-1 if it is the root item, 0 if the item is invalid)
+multiplayer_get_previous_item_for_item_and_troop =	(
+	"multiplayer_get_previous_item_for_item_and_troop",
+			[
+				(store_script_param, ":item_no", 1),
+				(store_script_param, ":troop_no", 2),
+				(item_get_slot, ":item_class", ":item_no", slot_item_multiplayer_item_class),
+				(call_script, "script_multiplayer_get_item_value_for_troop", ":item_no", ":troop_no"),
+				(assign, ":item_value", reg0),
+				(store_sub, ":troop_index", ":troop_no", multiplayer_troops_begin),
+				(val_add, ":troop_index", slot_item_multiplayer_availability_linked_list_begin),
+				(assign, ":max_item_no", -1),
+				(assign, ":max_item_value", -1),
+				(try_for_range, ":i_item", all_items_begin, all_items_end),
+					(item_slot_eq, ":i_item", slot_item_multiplayer_item_class, ":item_class"),
+					(item_slot_ge, ":i_item", ":troop_index", 1),
+					(call_script, "script_multiplayer_get_item_value_for_troop", ":i_item", ":troop_no"),
+					(assign, ":i_item_value", reg0),
+					(try_begin),
+						(eq, ":i_item_value", 0),
+						(eq, ":max_item_value", 0),
+						#choose between 2 default items
+						(store_item_value, ":i_item_real_value", ":i_item"),
+						(store_item_value, ":max_item_real_value", ":max_item_no"),
+						(try_begin),
+							(gt, ":i_item_real_value", ":max_item_real_value"),
+							(assign, ":max_item_value", ":i_item_value"),
+							(assign, ":max_item_no", ":i_item"),
+						(try_end),
+					(else_try),
+						(gt, ":i_item_value", ":max_item_value"),
+						(lt, ":i_item_value", ":item_value"),
+						(assign, ":max_item_value", ":i_item_value"),
+						(assign, ":max_item_no", ":i_item"),
+					(try_end),
+				(try_end),
+				(try_begin),
+					(eq, ":max_item_no", -1),
+					(assign, ":item_upper_class", -1),
+					(try_begin),
+						(is_between, ":item_class", multi_item_class_type_melee_weapons_begin, multi_item_class_type_melee_weapons_end),
+						(assign, ":item_upper_class", 0),
+					(else_try),
+						(is_between, ":item_class", multi_item_class_type_shields_begin, multi_item_class_type_shields_end),
+						(assign, ":item_upper_class", 1),
+					(else_try),
+						(eq, ":item_class", multi_item_class_type_bow),
+						(assign, ":item_upper_class", 2),
+					(else_try),
+						(eq, ":item_class", multi_item_class_type_crossbow),
+						(assign, ":item_upper_class", 3),
+					(else_try),
+						(eq, ":item_class", multi_item_class_type_arrow),
+						(assign, ":item_upper_class", 4),
+					(else_try),
+						(eq, ":item_class", multi_item_class_type_bolt),
+						(assign, ":item_upper_class", 5),
+					(else_try),
+						(eq, ":item_class", multi_item_class_type_throwing),
+						(assign, ":item_upper_class", 6),
+					(else_try),
+						(is_between, ":item_class", multi_item_class_type_heads_begin, multi_item_class_type_heads_end),
+						(assign, ":item_upper_class", 7),
+					(else_try),
+						(is_between, ":item_class", multi_item_class_type_bodies_begin, multi_item_class_type_bodies_end),
+						(assign, ":item_upper_class", 8),
+					(else_try),
+						(is_between, ":item_class", multi_item_class_type_feet_begin, multi_item_class_type_feet_end),
+						(assign, ":item_upper_class", 9),
+					(else_try),
+						(is_between, ":item_class", multi_item_class_type_gloves_begin, multi_item_class_type_gloves_end),
+						(assign, ":item_upper_class", 10),
+					(else_try),
+						(is_between, ":item_class", multi_item_class_type_horses_begin, multi_item_class_type_horses_end),
+						(assign, ":item_upper_class", 11),
+					(try_end),
+					(neq, ":item_upper_class", 0),
+					#search for the default item for non-weapon classes (only 1 slot is easy to fill)
+					(assign, ":end_cond", all_items_end),
+					(try_for_range, ":i_item", all_items_begin, ":end_cond"),
+						(item_slot_ge, ":i_item", ":troop_index", 1),
+						(item_get_slot, ":i_item_class", ":i_item", slot_item_multiplayer_item_class),
+						(try_begin),
+							(is_between, ":i_item_class", multi_item_class_type_melee_weapons_begin, multi_item_class_type_melee_weapons_end),
+							(assign, ":i_item_upper_class", 0),
+						(else_try),
+							(is_between, ":i_item_class", multi_item_class_type_shields_begin, multi_item_class_type_shields_end),
+							(assign, ":i_item_upper_class", 1),
+						(else_try),
+							(eq, ":i_item_class", multi_item_class_type_bow),
+							(assign, ":i_item_upper_class", 2),
+						(else_try),
+							(eq, ":i_item_class", multi_item_class_type_crossbow),
+							(assign, ":i_item_upper_class", 3),
+						(else_try),
+							(eq, ":i_item_class", multi_item_class_type_arrow),
+							(assign, ":i_item_upper_class", 4),
+						(else_try),
+							(eq, ":i_item_class", multi_item_class_type_bolt),
+							(assign, ":i_item_upper_class", 5),
+						(else_try),
+							(eq, ":i_item_class", multi_item_class_type_throwing),
+							(assign, ":i_item_upper_class", 6),
+						(else_try),
+							(is_between, ":i_item_class", multi_item_class_type_heads_begin, multi_item_class_type_heads_end),
+							(assign, ":i_item_upper_class", 7),
+						(else_try),
+							(is_between, ":i_item_class", multi_item_class_type_bodies_begin, multi_item_class_type_bodies_end),
+							(assign, ":i_item_upper_class", 8),
+						(else_try),
+							(is_between, ":i_item_class", multi_item_class_type_feet_begin, multi_item_class_type_feet_end),
+							(assign, ":i_item_upper_class", 9),
+						(else_try),
+							(is_between, ":i_item_class", multi_item_class_type_gloves_begin, multi_item_class_type_gloves_end),
+							(assign, ":i_item_upper_class", 10),
+						(else_try),
+							(is_between, ":i_item_class", multi_item_class_type_horses_begin, multi_item_class_type_horses_end),
+							(assign, ":i_item_upper_class", 11),
+						(try_end),
+						(eq, ":i_item_upper_class", ":item_upper_class"),
+						(call_script, "script_cf_multiplayer_is_item_default_for_troop", ":i_item", ":troop_no"),
+						(assign, ":max_item_no", ":i_item"),
+						(assign, ":end_cond", 0), #break
+					(try_end),
+				(try_end),
+				(assign, reg0, ":max_item_no"),
+		])
+
+
+# script_game_multiplayer_server_option_for_mission_template_to_string
+		# Input: arg1 = mission_template_id, arg2 = option_index, arg3 = option_value
+		# Output: s0 = option_text
+game_multiplayer_server_option_for_mission_template_to_string =	(
+	"game_multiplayer_server_option_for_mission_template_to_string",
+			[
+				(store_script_param, ":mission_template_id", 1),
+				(store_script_param, ":option_index", 2),
+				(store_script_param, ":option_value", 3),
+				(str_clear, s0),
+				(try_begin),
+					(eq, ":option_index", 0),
+					(assign, reg1, 1),
+					(str_store_string, s0, "str_team_reg1_faction"),
+					(str_store_faction_name, s1, ":option_value"),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 1),
+					(assign, reg1, 2),
+					(str_store_string, s0, "str_team_reg1_faction"),
+					(str_store_faction_name, s1, ":option_value"),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 2),
+					(assign, reg1, 1),
+					(str_store_string, s0, "str_number_of_bots_in_team_reg1"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 3),
+					(assign, reg1, 2),
+					(str_store_string, s0, "str_number_of_bots_in_team_reg1"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 4),
+					(str_store_string, s0, "str_allow_friendly_fire"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_no_wo_dot"),
+					(else_try),
+						(str_store_string, s1, "str_yes_wo_dot"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 5),
+					(str_store_string, s0, "str_allow_melee_friendly_fire"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_no_wo_dot"),
+					(else_try),
+						(str_store_string, s1, "str_yes_wo_dot"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 6),
+					(str_store_string, s0, "str_friendly_fire_damage_self_ratio"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 7),
+					(str_store_string, s0, "str_friendly_fire_damage_friend_ratio"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 8),
+					(str_store_string, s0, "str_spectator_camera"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_free"),
+					(else_try),
+						(eq, ":option_value", 1),
+						(str_store_string, s1, "str_stick_to_any_player"),
+					(else_try),
+						(eq, ":option_value", 2),
+						(str_store_string, s1, "str_stick_to_team_members"),
+					(else_try),
+						(str_store_string, s1, "str_stick_to_team_members_view"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 9),
+					(str_store_string, s0, "str_control_block_direction"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_automatic"),
+					(else_try),
+						(str_store_string, s1, "str_by_mouse_movement"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 10),
+					(str_store_string, s0, "str_combat_speed"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_combat_speed_0"),
+					(else_try),
+						(eq, ":option_value", 1),
+						(str_store_string, s1, "str_combat_speed_1"),
+					(else_try),
+						(eq, ":option_value", 2),
+						(str_store_string, s1, "str_combat_speed_2"),
+					(else_try),
+						(eq, ":option_value", 3),
+						(str_store_string, s1, "str_combat_speed_3"),
+					(else_try),
+						(str_store_string, s1, "str_combat_speed_4"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(try_begin),
+						(eq, ":mission_template_id", "mt_multiplayer_hq"),
+						(val_add, ":option_index", 1), #max game time
+					(try_end),
+					(eq, ":option_index", 11),
+					(str_store_string, s0, "str_map_time_limit"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_bt"),
+						(neq, ":mission_template_id", "mt_multiplayer_fd"),
+						(neq, ":mission_template_id", "mt_multiplayer_sg"),
+						(val_add, ":option_index", 1), #max round time
+					(try_end),
+					(eq, ":option_index", 12),
+					(str_store_string, s0, "str_round_time_limit"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_bt"),
+						(neq, ":mission_template_id", "mt_multiplayer_fd"),
+						(val_add, ":option_index", 1), #respawn as bot
+					(try_end),
+					(eq, ":option_index", 13),
+					(str_store_string, s0, "str_players_take_control_of_a_bot_after_death"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_no_wo_dot"),
+					(else_try),
+						(str_store_string, s1, "str_yes_wo_dot"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_sg"),
+						(val_add, ":option_index", 1), #respawn limit
+					(try_end),
+					(eq, ":option_index", 14),
+					(str_store_string, s0, "str_defender_spawn_count_limit"),
+					(try_begin),
+						(eq, ":option_value", 0),
+						(str_store_string, s1, "str_unlimited"),
+					(else_try),
+						(assign, reg1, ":option_value"),
+						(str_store_string, s1, "str_reg1"),
+					(try_end),
+					(str_store_string, s0, "str_s0_s1"),
+				(else_try),
+					(eq, ":option_index", 15),
+					(str_store_string, s0, "str_team_points_limit"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_hq"),
+						(val_add, ":option_index", 1), #point gained from flags
+					(try_end),
+					(eq, ":option_index", 16),
+					(str_store_string, s0, "str_point_gained_from_flags"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_cf"),
+						(val_add, ":option_index", 1), #point gained from capturing flag
+					(try_end),
+					(eq, ":option_index", 17),
+					(str_store_string, s0, "str_point_gained_from_capturing_flag"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 18),
+					(str_store_string, s0, "str_respawn_period"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 19),
+					(str_store_string, s0, "str_initial_gold_multiplier"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(eq, ":option_index", 20),
+					(str_store_string, s0, "str_battle_earnings_multiplier"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(else_try),
+					(try_begin),
+						(neq, ":mission_template_id", "mt_multiplayer_bt"),
+						(neq, ":mission_template_id", "mt_multiplayer_fd"),
+						(neq, ":mission_template_id", "mt_multiplayer_sg"),
+						(val_add, ":option_index", 1),
+					(try_end),
+					(eq, ":option_index", 21),
+					(str_store_string, s0, "str_round_earnings_multiplier"),
+					(assign, reg0, ":option_value"),
+					(str_store_string, s0, "str_s0_reg0"),
+				(try_end),
+		])
+
+		# script_game_get_multiplayer_game_type_enum
+		# Input: none
+		# Output: reg0:first type, reg1:type count
+game_get_multiplayer_game_type_enum =	(
+		"game_get_multiplayer_game_type_enum",
+			[
+				(assign, reg0, multiplayer_game_type_deathmatch),
+				(assign, reg1, multiplayer_num_game_types),
+		])
+
+		# script_find_number_of_agents_constant
+		# Input: none
+		# Output: reg0 = 100xconstant (100..500)
+find_number_of_agents_constant = (
+	"find_number_of_agents_constant",
+			[
+				(assign, ":num_dead_or_alive_agents", 0),
+				
+				(try_for_agents, ":cur_agent"),
+					(agent_is_human, ":cur_agent"),
+					(val_add, ":num_dead_or_alive_agents", 1),
+				(try_end),
+				
+				(try_begin),
+					(le, ":num_dead_or_alive_agents", 2), #2
+					(assign, reg0, 100),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 4), #2+2
+					(assign, reg0, 140),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 7), #2+2+3
+					(assign, reg0, 180),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 11), #2+2+3+4
+					(assign, reg0, 220),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 17), #2+2+3+4+6
+					(assign, reg0, 260),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 25), #2+2+3+4+6+8
+					(assign, reg0, 300),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 36), #2+2+3+4+6+8+11
+					(assign, reg0, 340),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 50), #2+2+3+4+6+8+11+14
+					(assign, reg0, 380),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 68), #2+2+3+4+6+8+11+14+18
+					(assign, reg0, 420),
+				(else_try),
+					(le, ":num_dead_or_alive_agents", 91), #2+2+3+4+6+8+11+14+18+23
+					(assign, reg0, 460),
+				(else_try),
+					(assign, reg0, 500),
+				(try_end),
+		])
+
+
+		# script_game_multiplayer_get_game_type_mission_template
+		# Input: arg1 = game_type
+		# Output: mission_template
+game_multiplayer_get_game_type_mission_template	=(
+	"game_multiplayer_get_game_type_mission_template",
+			[
+				(assign, ":selected_mt", -1),
+				(store_script_param, ":game_type", 1),
+				(try_begin),
+					(eq, ":game_type", multiplayer_game_type_deathmatch),
+					(assign, ":selected_mt", "mt_multiplayer_dm"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_team_deathmatch),
+					(assign, ":selected_mt", "mt_multiplayer_tdm"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_battle),
+					(assign, ":selected_mt", "mt_multiplayer_bt"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_destroy),
+					(assign, ":selected_mt", "mt_multiplayer_fd"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_capture_the_flag),
+					(assign, ":selected_mt", "mt_multiplayer_cf"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_headquarters),
+					(assign, ":selected_mt", "mt_multiplayer_hq"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_siege),
+					(assign, ":selected_mt", "mt_multiplayer_sg"),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_duel),
+					(assign, ":selected_mt", "mt_multiplayer_duel"),
+				(try_end),
+				(assign, reg0, ":selected_mt"),
+		])
+
+		# script_multiplayer_get_mission_template_game_type
+		# Input: arg1 = mission_template_no
+		# Output: reg0 game_type
+multiplayer_get_mission_template_game_type =	(
+	"multiplayer_get_mission_template_game_type",
+			[
+				(store_script_param, ":mission_template_no", 1),
+				(assign, ":game_type", -1),
+				(try_begin),
+					(eq, ":mission_template_no", "mt_multiplayer_dm"),
+					(assign, ":game_type", multiplayer_game_type_deathmatch),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_tdm"),
+					(assign, ":game_type", multiplayer_game_type_team_deathmatch),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_bt"),
+					(assign, ":game_type", multiplayer_game_type_battle),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_fd"),
+					(assign, ":game_type", multiplayer_game_type_destroy),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_cf"),
+					(assign, ":game_type", multiplayer_game_type_capture_the_flag),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_hq"),
+					(assign, ":game_type", multiplayer_game_type_headquarters),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_sg"),
+					(assign, ":game_type", multiplayer_game_type_siege),
+				(else_try),
+					(eq, ":mission_template_no", "mt_multiplayer_duel"),
+					(assign, ":game_type", multiplayer_game_type_duel),
+				(try_end),
+				(assign, reg0, ":game_type"),
+		])
+
+		# script_multiplayer_get_troop_class
+		# Input: arg1 = troop_no
+		# Output: reg0: troop_class
+multiplayer_get_troop_class =		(
+	"multiplayer_get_troop_class",
+			[
+				(store_script_param_1, ":troop_no"),
+				(assign, ":troop_class", multi_troop_class_other),
+				(try_begin),
+					(this_or_next|eq, ":troop_no", "trp_vaegir_archer_multiplayer"),
+					(this_or_next|eq, ":troop_no", "trp_nord_archer_multiplayer"),
+					(eq, ":troop_no", "trp_sarranid_archer_multiplayer"),
+					(assign, ":troop_class", multi_troop_class_archer),
+				(else_try),
+					(this_or_next|eq, ":troop_no", "trp_swadian_man_at_arms_multiplayer"),
+					(this_or_next|eq, ":troop_no", "trp_nord_scout_multiplayer"),
+					(this_or_next|eq, ":troop_no", "trp_rhodok_horseman_multiplayer"),
+					(this_or_next|eq, ":troop_no", "trp_sarranid_mamluke_multiplayer"),
+					(eq, ":troop_no", "trp_vaegir_horseman_multiplayer"),
+					(assign, ":troop_class", multi_troop_class_cavalry),
+				(else_try),
+					(eq, ":troop_no", "trp_khergit_veteran_horse_archer_multiplayer"),
+					(assign, ":troop_class", multi_troop_class_mounted_archer),
+					#     (else_try),
+					#       (eq, ":troop_no", "trp_swadian_mounted_crossbowman_multiplayer"),
+					#       (assign, ":troop_class", multi_troop_class_mounted_crossbowman),
+				(else_try),
+					(this_or_next|eq, ":troop_no", "trp_swadian_crossbowman_multiplayer"),
+					(eq, ":troop_no", "trp_rhodok_veteran_crossbowman_multiplayer"),
+					(assign, ":troop_class", multi_troop_class_crossbowman),
+				(else_try),
+					(this_or_next|eq, ":troop_no", "trp_swadian_infantry_multiplayer"),
+					(this_or_next|eq, ":troop_no", "trp_sarranid_footman_multiplayer"),
+					(eq, ":troop_no", "trp_nord_veteran_multiplayer"),
+					(assign, ":troop_class", multi_troop_class_infantry),
+				(else_try),
+					(eq, ":troop_no", "trp_vaegir_spearman_multiplayer"),
+					(assign, ":troop_class", multi_troop_class_spearman),
+				(try_end),
+				(assign, reg0, ":troop_class"),
+		])
+
+		#script_multiplayer_calculate_cur_selected_items_cost
+		# Input: arg1 = player_no
+		# Output: reg0: total_cost
+multiplayer_calculate_cur_selected_items_cost	= (
+	"multiplayer_calculate_cur_selected_items_cost",
+			[
+				(store_script_param, ":player_no", 1),
+				(store_script_param, ":calculation_type", 2), #0 for normal calculation
+				(assign, ":total_cost", 0),
+				(player_get_troop_id, ":troop_no", ":player_no"),
+				
+				(try_begin),
+					(eq, ":calculation_type", 0),
+					(assign, ":begin_cond", slot_player_cur_selected_item_indices_begin),
+					(assign, ":end_cond", slot_player_cur_selected_item_indices_end),
+				(else_try),
+					(assign, ":begin_cond", slot_player_selected_item_indices_begin),
+					(assign, ":end_cond", slot_player_selected_item_indices_end),
+				(try_end),
+				
+				(try_for_range, ":i_item", ":begin_cond", ":end_cond"),
+					(player_get_slot, ":item_id", ":player_no", ":i_item"),
+					(ge, ":item_id", 0), #might be -1 for horses etc.
+					(call_script, "script_multiplayer_get_item_value_for_troop", ":item_id", ":troop_no"),
+					(val_add, ":total_cost", reg0),
+				(try_end),
+				(assign, reg0, ":total_cost"),
+		])
+
+				# script_multiplayer_fill_map_game_types
+		# Input: game_type
+		# Output: num_maps
+multiplayer_fill_map_game_types	= (
+	"multiplayer_fill_map_game_types",
+			[
+				(store_script_param, ":game_type", 1),
+				(try_for_range, ":i_multi", multi_data_maps_for_game_type_begin, multi_data_maps_for_game_type_end),
+					(troop_set_slot, "trp_multiplayer_data", ":i_multi", -1),
+				(try_end),
+				(assign, ":num_maps", 0),
+				(try_begin),
+					(this_or_next|eq, ":game_type", multiplayer_game_type_deathmatch),
+					(this_or_next|eq, ":game_type", multiplayer_game_type_duel),
+					(eq, ":game_type", multiplayer_game_type_team_deathmatch),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin, "scn_multi_scene_1"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 1, "scn_multi_scene_2"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 2, "scn_multi_scene_4"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 3, "scn_multi_scene_7"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 4, "scn_multi_scene_9"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 5, "scn_multi_scene_11"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 6, "scn_multi_scene_12"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 7, "scn_multi_scene_14"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 8, "scn_multi_scene_17"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 9, "scn_multi_scene_18"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 10, "scn_random_multi_plain_medium"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 11, "scn_random_multi_plain_large"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 12, "scn_random_multi_steppe_medium"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 13, "scn_random_multi_steppe_large"),
+					(assign, ":num_maps", 14),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_battle),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin, "scn_multi_scene_1"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 1, "scn_multi_scene_2"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 2, "scn_multi_scene_4"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 3, "scn_multi_scene_7"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 4, "scn_multi_scene_9"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 5, "scn_multi_scene_11"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 6, "scn_multi_scene_12"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 7, "scn_multi_scene_14"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 8, "scn_multi_scene_17"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 9, "scn_multi_scene_18"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 10, "scn_random_multi_plain_medium"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 11, "scn_random_multi_plain_large"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 12, "scn_random_multi_steppe_medium"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 13, "scn_random_multi_steppe_large"),
+					(assign, ":num_maps", 14),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_destroy),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin, "scn_multi_scene_1"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 1, "scn_multi_scene_2"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 2, "scn_multi_scene_4"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 3, "scn_multi_scene_7"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 4, "scn_multi_scene_9"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 5, "scn_multi_scene_12"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 6, "scn_multi_scene_14"),
+					(assign, ":num_maps", 7),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_capture_the_flag),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin, "scn_multi_scene_1"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 1, "scn_multi_scene_2"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 2, "scn_multi_scene_4"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 3, "scn_multi_scene_7"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 4, "scn_multi_scene_9"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 5, "scn_multi_scene_11"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 6, "scn_multi_scene_12"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 7, "scn_multi_scene_14"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 8, "scn_multi_scene_17"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 9, "scn_multi_scene_18"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 10, "scn_random_multi_plain_medium"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 11, "scn_random_multi_plain_large"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 12, "scn_random_multi_steppe_medium"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 13, "scn_random_multi_steppe_large"),
+					(assign, ":num_maps", 14),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_headquarters),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin, "scn_multi_scene_1"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 1, "scn_multi_scene_2"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 2, "scn_multi_scene_4"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 3, "scn_multi_scene_7"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 4, "scn_multi_scene_9"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 5, "scn_multi_scene_11"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 6, "scn_multi_scene_12"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 7, "scn_multi_scene_14"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 8, "scn_multi_scene_17"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 9, "scn_multi_scene_18"),
+					(assign, ":num_maps", 10),
+				(else_try),
+					(eq, ":game_type", multiplayer_game_type_siege),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin, "scn_multi_scene_3"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 1, "scn_multi_scene_8"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 2, "scn_multi_scene_10"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 3, "scn_multi_scene_13"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 4, "scn_multi_scene_15"),
+					(troop_set_slot, "trp_multiplayer_data", multi_data_maps_for_game_type_begin + 5, "scn_multi_scene_16"),
+					(assign, ":num_maps", 6),
+				(try_end),
+				(assign, reg0, ":num_maps"),
+		])
+
+		# script_multiplayer_find_player_leader_for_bot
+		# Input: arg1 = team_no
+		# Output: reg0 = player_no
+multiplayer_find_player_leader_for_bot =	(
+	"multiplayer_find_player_leader_for_bot",
+			[
+				(store_script_param, ":team_no", 1),
+				(store_script_param, ":look_only_actives", 2),
+				
+				(team_get_faction, ":team_faction", ":team_no"),
+				(assign, ":num_ai_troops", 0),
+				(try_for_range, ":cur_ai_troop", multiplayer_ai_troops_begin, multiplayer_ai_troops_end),
+					(store_troop_faction, ":ai_troop_faction", ":cur_ai_troop"),
+					(eq, ":ai_troop_faction", ":team_faction"),
+					(val_add, ":num_ai_troops", 1),
+				(try_end),
+				
+				(call_script, "script_multiplayer_count_players_bots"),
+				
+				(assign, ":team_player_count", 0),
+				
+				(get_max_players, ":num_players"),
+				(try_for_range, ":cur_player", 0, ":num_players"),
+					(assign, ":continue", 0),
+					(player_is_active, ":cur_player"),
+					(try_begin),
+						(eq, ":look_only_actives", 0),
+						(assign, ":continue", 1),
+					(else_try),
+						(neq, ":look_only_actives", 0),
+						(player_get_agent_id, ":cur_agent", ":cur_player"),
+						(ge, ":cur_agent", 0),
+						(agent_is_alive, ":cur_agent"),
+						(assign, ":continue", 1),
+					(try_end),
+					
+					(eq, ":continue", 1),
+					
+					(player_get_team_no, ":player_team", ":cur_player"),
+					(eq, ":team_no", ":player_team"),
+					(val_add, ":team_player_count", 1),
+				(try_end),
+				(assign, ":result_leader", -1),
+				(try_begin),
+					(gt, ":team_player_count", 0),
+					(assign, ":total_bot_count", "$g_multiplayer_num_bots_team_1"),
+					(try_begin),
+						(eq, ":team_no", 1),
+						(assign, ":total_bot_count", "$g_multiplayer_num_bots_team_2"),
+					(try_end),
+					(store_div, ":num_bots_for_each_player", ":total_bot_count", ":team_player_count"),
+					(store_mul, ":check_remainder", ":num_bots_for_each_player", ":team_player_count"),
+					(try_begin),
+						(lt, ":check_remainder", ":total_bot_count"),
+						(val_add, ":num_bots_for_each_player", 1),
+					(try_end),
+					
+					(assign, ":total_bot_req", 0),
+					(try_for_range, ":cur_player", 0, ":num_players"),
+						(player_is_active, ":cur_player"),
+						
+						(player_get_agent_id, ":cur_agent", ":cur_player"),
+						(ge, ":cur_agent", 0),
+						(agent_is_alive, ":cur_agent"),
+						
+						(player_get_team_no, ":player_team", ":cur_player"),
+						(eq, ":team_no", ":player_team"),
+						(assign, ":ai_wanted", 0),
+						(store_add, ":end_cond", slot_player_bot_type_1_wanted, ":num_ai_troops"),
+						(try_for_range, ":bot_type_wanted_slot", slot_player_bot_type_1_wanted, ":end_cond"),
+							(player_slot_ge, ":cur_player", ":bot_type_wanted_slot", 1),
+							(assign, ":ai_wanted", 1),
+							(assign, ":end_cond", 0), #break
+						(try_end),
+						(eq, ":ai_wanted", 1),
+						(player_get_slot, ":player_bot_count", ":cur_player", slot_player_last_bot_count),
+						(lt, ":player_bot_count", ":num_bots_for_each_player"),
+						(val_add, ":total_bot_req", ":num_bots_for_each_player"),
+						(val_sub, ":total_bot_req", ":player_bot_count"),
+					(try_end),
+					(gt, ":total_bot_req", 0),
+					
+					(store_random_in_range, ":random_bot", 0, ":total_bot_req"),
+					(try_for_range, ":cur_player", 0, ":num_players"),
+						(player_is_active, ":cur_player"),
+						
+						(player_get_agent_id, ":cur_agent", ":cur_player"),
+						(ge, ":cur_agent", 0),
+						(agent_is_alive, ":cur_agent"),
+						
+						(player_get_team_no, ":player_team", ":cur_player"),
+						(eq, ":team_no", ":player_team"),
+						(assign, ":ai_wanted", 0),
+						(store_add, ":end_cond", slot_player_bot_type_1_wanted, ":num_ai_troops"),
+						(try_for_range, ":bot_type_wanted_slot", slot_player_bot_type_1_wanted, ":end_cond"),
+							(player_slot_ge, ":cur_player", ":bot_type_wanted_slot", 1),
+							(assign, ":ai_wanted", 1),
+							(assign, ":end_cond", 0), #break
+						(try_end),
+						(eq, ":ai_wanted", 1),
+						(player_get_slot, ":player_bot_count", ":cur_player", slot_player_last_bot_count),
+						(lt, ":player_bot_count", ":num_bots_for_each_player"),
+						(val_sub, ":random_bot", ":num_bots_for_each_player"),
+						(val_add, ":random_bot", ":player_bot_count"),
+						(lt, ":random_bot", 0),
+						(assign, ":result_leader", ":cur_player"),
+						(assign, ":num_players", 0), #break
+					(try_end),
+				(try_end),
+				(assign, reg0, ":result_leader"),
+		])
+		
+# script_multiplayer_find_spawn_point_2
+		# Input: arg1 = team_no, arg2 = examine_all_spawn_points, arg3 = is_horseman
+		# Output: reg0 = entry_point_no
+multiplayer_find_spawn_point_2 =	(
+	"multiplayer_find_spawn_point_2",
+			[
+				(store_script_param, ":team_no", 1),
+				(store_script_param, ":examine_all_spawn_points", 2), #0-dm, 1-tdm, 2-cf, 3-hq, 4-sg
+				(store_script_param, ":is_horseman", 3), #0:no, 1:yes, -1:do not care
+				
+				(assign, ":best_entry_point_score", -10000000),
+				(assign, ":best_entry_point", 0),
+				
+				(assign, ":num_operations", 0),
+				
+				(assign, ":num_human_agents_div_3_plus_one", 0),
+				(try_begin), #counting number of agents
+					(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+					(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_headquarters),
+					(eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+					(try_for_agents, ":i_agent"),
+						(agent_is_alive, ":i_agent"),
+						(agent_is_human, ":i_agent"),
+						(val_add, ":num_human_agents_div_3_plus_one", 1),
+					(try_end),
+				(try_end),
+				
+				(assign, ":num_human_agents_plus_one", ":num_human_agents_div_3_plus_one"),
+				
+				(try_begin),
+					(le, ":num_human_agents_plus_one", 4),
+					(assign, ":random_number_upper_limit", 2), #this is not typo-mistake this should be 2 too, not 1.
+				(else_try),
+					(le, ":num_human_agents_plus_one", 8),
+					(assign, ":random_number_upper_limit", 2),
+				(else_try),
+					(le, ":num_human_agents_plus_one", 16),
+					(assign, ":random_number_upper_limit", 3),
+				(else_try),
+					(le, ":num_human_agents_plus_one", 24),
+					(assign, ":random_number_upper_limit", 4),
+				(else_try),
+					(le, ":num_human_agents_plus_one", 32),
+					(assign, ":random_number_upper_limit", 5),
+				(else_try),
+					(le, ":num_human_agents_plus_one", 40),
+					(assign, ":random_number_upper_limit", 6),
+				(else_try),
+					(assign, ":random_number_upper_limit", 7),
+				(try_end),
+				
+				(val_div, ":num_human_agents_div_3_plus_one", 3),
+				(val_add, ":num_human_agents_div_3_plus_one", 1),
+				(store_mul, ":negative_num_human_agents_div_3_plus_one", ":num_human_agents_div_3_plus_one", -1),
+				
+				(try_begin),
+					(eq, ":examine_all_spawn_points", 1),
+					(assign, ":random_number_upper_limit", 1),
+				(try_end),
+				
+				(try_begin), #counting number of our flags and enemy flags
+					(eq, "$g_multiplayer_game_type", multiplayer_game_type_headquarters),
+					(assign, ":our_flag_count", 0),
+					(assign, ":enemy_flag_count", 0),
+					(try_for_range, ":flag_no", 0, "$g_number_of_flags"),
+						(store_add, ":cur_flag_owner_slot", multi_data_flag_owner_begin, ":flag_no"),
+						(troop_get_slot, ":cur_flag_owner", "trp_multiplayer_data", ":cur_flag_owner_slot"),
+						(neq, ":cur_flag_owner", 0),
+						(val_sub, ":cur_flag_owner", 1),
+						(try_begin),
+							(eq, ":cur_flag_owner", ":team_no"),
+							(val_add, ":our_flag_count", 1),
+						(else_try),
+							(val_add, ":enemy_flag_count", 1),
+						(try_end),
+					(try_end),
+				(try_end),
+				
+				(assign, ":first_agent", 0),
+				(try_begin), #first spawned agents will be spawned at their base points in tdm, cf and hq mods.
+					(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_team_deathmatch),
+					(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+					(eq, "$g_multiplayer_game_type", multiplayer_game_type_headquarters),
+					(try_begin),
+						(eq, ":team_no", 0),
+						(eq, "$g_multiplayer_team_1_first_spawn", 1),
+						(assign, ":first_agent", 1),
+						(assign, "$g_multiplayer_team_1_first_spawn", 0),
+					(else_try),
+						(eq, ":team_no", 1),
+						(eq, "$g_multiplayer_team_2_first_spawn", 1),
+						(assign, ":first_agent", 1),
+						(assign, "$g_multiplayer_team_2_first_spawn", 0),
+					(try_end),
+				(try_end),
+				
+				(try_begin),
+					(eq, ":first_agent", 1),
+					(store_mul, ":best_entry_point", ":team_no", multi_num_valid_entry_points_div_2),
+				(else_try),
+					(try_for_range, ":i_entry_point", 0, multi_num_valid_entry_points),
+						(assign, ":minimum_enemy_distance", 3000),
+						(assign, ":second_minimum_enemy_distance", 3000),
+						
+						(assign, ":entry_point_score", 0),
+						(store_random_in_range, ":random_value", 0, ":random_number_upper_limit"), #in average it is 5
+						(eq, ":random_value", 0),
+						(entry_point_get_position, pos0, ":i_entry_point"), #pos0 holds current entry point position
+						(try_for_agents, ":i_agent"),
+							(agent_is_alive, ":i_agent"),
+							(agent_is_human, ":i_agent"),
+							(agent_get_team, ":agent_team", ":i_agent"),
+							(try_begin),
+								(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_team_deathmatch),
+								(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+								(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_headquarters),
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+								(try_begin),
+									(teams_are_enemies, ":team_no", ":agent_team"),
+									(assign, ":multiplier", -2),
+								(else_try),
+									(assign, ":multiplier", 1),
+								(try_end),
+							(else_try),
+								(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch),
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_duel),
+								(assign, ":multiplier", -1),
+							(try_end),
+							(agent_get_position, pos1, ":i_agent"),
+							(get_distance_between_positions_in_meters, ":distance", pos0, pos1),
+							(val_add, ":num_operations", 1),
+							(try_begin),
+								(try_begin), #find closest enemy soldiers
+									(lt, ":multiplier", 0),
+									(try_begin),
+										(lt, ":distance", ":minimum_enemy_distance"),
+										(assign, ":second_minimum_enemy_distance", ":minimum_enemy_distance"),
+										(assign, ":minimum_enemy_distance", ":distance"),
+									(else_try),
+										(lt, ":distance", ":second_minimum_enemy_distance"),
+										(assign, ":second_minimum_enemy_distance", ":distance"),
+									(try_end),
+								(try_end),
+								
+								(lt, ":distance", 100),
+								(try_begin), #do not spawn over or too near to another agent (limit is 2 meters, squared 4 meters)
+									(lt, ":distance", 3),
+									(try_begin),
+										(this_or_next|eq, ":examine_all_spawn_points", 0),
+										(this_or_next|lt, ":multiplier", 0), #new added 20.08.08
+										(neq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+										(try_begin),
+											(lt, ":distance", 1),
+											(assign, ":dist_point", -1000000), #never place
+										(else_try),
+											(lt, ":distance", 2),
+											(try_begin),
+												(lt, ":multiplier", 0),
+												(assign, ":dist_point", -20000),
+											(else_try),
+												(assign, ":dist_point", -2000), #can place, friend and distance is between 1-2 meters
+											(try_end),
+										(else_try),
+											(try_begin),
+												(lt, ":multiplier", 0),
+												(assign, ":dist_point", -10000),
+											(else_try),
+												(assign, ":dist_point", -1000), #can place, friend and distance is between 2-3 meters
+											(try_end),
+										(try_end),
+									(else_try),
+										#if examinining all spawn points and mod is siege only. This happens in new round start placings.
+										(try_begin),
+											(lt, ":distance", 1),
+											(assign, ":dist_point", -20000), #very hard to place distance is < 1 meter
+										(else_try),
+											(lt, ":distance", 2),
+											(assign, ":dist_point", -2000),
+										(else_try),
+											(assign, ":dist_point", -1000), #can place, distance is between 2-3 meters
+										(try_end),
+									(try_end),
+									
+									(val_mul, ":dist_point", ":num_human_agents_div_3_plus_one"),
+								(else_try),
+									(assign, ":dist_point", 0),
+									(this_or_next|neq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+									(this_or_next|lt, ":multiplier", 0),
+									(eq, ":team_no", 1), #only attackers are effected by positive enemy & friend distance at siege mod, defenders only get negative score effect a bit
+									
+									(try_begin), #in siege give no positive or negative score to > 40m distance. (6400 = 10000 - 3600(60 * 60))
+										(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+										
+										(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch), #new added after moving below part to above
+										(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_duel), #new added after moving below part to above
+										(eq, "$g_multiplayer_game_type", multiplayer_game_type_team_deathmatch), #new added after moving below part to above
+										
+										(store_sub, ":dist_point", multiplayer_spawn_min_enemy_dist_limit, ":distance"), #up to 40 meters give (positive(if friend) or negative(if enemy)) points
+										(val_max, ":dist_point", 0),
+										(val_mul, ":dist_point", ":dist_point"),
+									(else_try),
+										(store_mul, ":one_and_half_limit", multiplayer_spawn_min_enemy_dist_limit, 3),
+										(val_div, ":one_and_half_limit", 2),
+										(store_sub, ":dist_point", ":one_and_half_limit", ":distance"), #up to 60 meters give (positive(if friend) or negative(if enemy)) points
+										(val_mul, ":dist_point", ":dist_point"),
+									(try_end),
+									
+									(val_mul, ":dist_point", ":multiplier"),
+								(try_end),
+								(val_add, ":entry_point_score", ":dist_point"),
+							(try_end),
+						(try_end),
+						
+						(try_begin),
+							(eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+							(store_mul, ":max_enabled_agent_distance_score", 1000, ":num_human_agents_div_3_plus_one"),
+							(ge, ":entry_point_score", ":max_enabled_agent_distance_score"),
+							(assign, ":entry_point_score", ":max_enabled_agent_distance_score"),
+						(try_end),
+						
+						(try_begin),
+							(neq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+							
+							#(assign, ":minimum_enemy_dist_score", 0), #close also these with displays
+							#(assign, ":second_minimum_enemy_dist_score", 0), #close also these with displays
+							#(assign, reg2, ":minimum_enemy_distance"), #close also these with displays
+							#(assign, reg3, ":second_minimum_enemy_distance"), #close also these with displays
+							
+							(try_begin), #if minimum enemy dist score is greater than 40(multiplayer_spawn_above_opt_enemy_dist_point) meters then give negative score
+								(lt, ":minimum_enemy_distance", 3000),
+								(try_begin),
+									(gt, ":minimum_enemy_distance", multiplayer_spawn_above_opt_enemy_dist_point),
+									(val_sub, ":minimum_enemy_distance", multiplayer_spawn_above_opt_enemy_dist_point),
+									(store_mul, ":minimum_enemy_dist_score", ":minimum_enemy_distance", -50),
+									(val_mul, ":minimum_enemy_dist_score", ":num_human_agents_div_3_plus_one"),
+									(val_add, ":entry_point_score", ":minimum_enemy_dist_score"),
+								(try_end),
+							(try_end),
+							
+							(try_begin), #if second minimum enemy dist score is greater than 40(multiplayer_spawn_above_opt_enemy_dist_point) meters then give negative score
+								(lt, ":second_minimum_enemy_distance", 3000), #3000 x 3000
+								(try_begin),
+									(gt, ":second_minimum_enemy_distance", multiplayer_spawn_above_opt_enemy_dist_point),
+									(val_sub, ":second_minimum_enemy_distance", multiplayer_spawn_above_opt_enemy_dist_point),
+									(store_mul, ":second_minimum_enemy_dist_score", ":second_minimum_enemy_distance", -50),
+									(val_mul, ":second_minimum_enemy_dist_score", ":num_human_agents_div_3_plus_one"),
+									(val_add, ":entry_point_score", ":second_minimum_enemy_dist_score"),
+								(try_end),
+							(try_end),
+							
+							#(assign, reg0, ":minimum_enemy_dist_score"), #close also above assignment lines with these displays
+							#(assign, reg1, ":second_minimum_enemy_dist_score"), #close also above assignment lines with these displays
+							#(display_message, "@{!}minimum enemy distance : {reg2}, score : {reg0}"), #close also above assignment lines with these displays
+							#(display_message, "@{!}second minimum enemy distance : {reg3}, score : {reg1}"), #close also above assignment lines with these displays
+						(try_end),
+						
+						(try_begin), #giving positive points for "distance of entry point position to ground" while searching for entry point for defender team
+							(neq, ":is_horseman", -1), #if being horseman or rider is not (not important)
+							
+							#additional score to entry points which has distance to ground value of > 0 meters
+							(position_get_distance_to_terrain, ":height_to_terrain", pos0),
+							(val_max, ":height_to_terrain", 0),
+							(val_min, ":height_to_terrain", 300),
+							(ge, ":height_to_terrain", 40),
+							
+							(store_mul, ":height_to_terrain_score", ":height_to_terrain", ":num_human_agents_div_3_plus_one"), #it was 8
+							
+							(try_begin),
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_team_deathmatch),
+								(val_mul, ":height_to_terrain_score", 16),
+							(else_try),
+								(val_mul, ":height_to_terrain_score", 4),
+							(try_end),
+							
+							(try_begin),
+								(eq, ":is_horseman", 0),
+								(try_begin),
+									(eq, "$g_multiplayer_game_type", multiplayer_game_type_siege), #but only in siege mod, defender infantries will get positive points for spawning in high places.
+									(eq, ":team_no", 0),
+									(val_add, ":entry_point_score", ":height_to_terrain_score"),
+								(try_end),
+							(else_try),
+								(val_mul, ":height_to_terrain_score", 5),
+								(val_sub, ":entry_point_score", ":height_to_terrain_score"),
+							(try_end),
+						(try_end),
+						
+						(try_begin), #additional random entry point score at deathmatch, teamdethmatch, capture the flag and siege
+							(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+							(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_deathmatch),
+							(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_duel),
+							(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+							(eq, "$g_multiplayer_game_type", multiplayer_game_type_team_deathmatch),
+							(try_begin),
+								(neq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+								(store_random_in_range, ":random_value", 0, 400),
+								
+								(try_begin),
+									(eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+									(val_mul, ":random_value", 5),
+								(try_end),
+							(else_try),
+								(eq, ":team_no", 1),
+								(store_random_in_range, ":random_value", 0, 600), #siege-attacker
+							(else_try),
+								(store_random_in_range, ":random_value", 0, 200), #siege-defender
+							(try_end),
+							(val_mul, ":random_value", ":num_human_agents_div_3_plus_one"),
+							(val_add, ":entry_point_score", ":random_value"),
+						(try_end),
+						
+						(try_begin),
+							(this_or_next|eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+							(eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+							
+							(try_begin),
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+								(try_begin),
+									(eq, ":team_no", 0),
+									(entry_point_get_position, pos1, multi_base_point_team_1), #our base is at pos1
+									(entry_point_get_position, pos2, multi_base_point_team_2), #enemy base is at pos2
+								(else_try),
+									(entry_point_get_position, pos1, multi_base_point_team_2), #our base is at pos2
+									(entry_point_get_position, pos2, multi_base_point_team_1), #enemy base is at pos1
+								(try_end),
+							(else_try),
+								(try_begin), #siege
+									(eq, ":team_no", 0),
+									(entry_point_get_position, pos1, multi_siege_flag_point), #our base is at pos1 (it was multi_initial_spawn_point_team_1 changed at v622)
+									(entry_point_get_position, pos2, multi_initial_spawn_point_team_2), #enemy base is at pos2
+								(else_try),
+									(entry_point_get_position, pos1, multi_initial_spawn_point_team_2), #our base is at pos2
+									(entry_point_get_position, pos2, multi_siege_flag_point), #enemy base is at pos1 (it was multi_initial_spawn_point_team_1 changed at v622)
+								(try_end),
+							(try_end),
+							
+							(try_begin),
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+								(position_get_z, ":pos0_z", pos0),
+								(position_set_z, pos1, ":pos0_z"), #make z of our base same with entry point position z
+								(position_set_z, pos2, ":pos0_z"), #make z of enemy base same with entry point position z
+							(try_end),
+							
+							(get_sq_distance_between_positions_in_meters, ":sq_dist_to_our_base", pos0, pos1),
+							(get_sq_distance_between_positions_in_meters, ":sq_dist_to_enemy_base", pos0, pos2),
+							(get_distance_between_positions_in_meters, ":dist_to_enemy_base", pos0, pos2),
+							
+							#give positive points if this entry point is near to our base.
+							(assign, ":dist_to_our_base_point", 0),
+							(try_begin), #capture the flag (points for being near to base)
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+								
+								(get_distance_between_positions_in_meters, ":dist_to_our_base", pos0, pos1),
+								(lt, ":dist_to_our_base", 100),
+								(store_sub, ":dist_to_our_base_point", 100, ":dist_to_our_base"),
+								
+								(try_begin), #assign all 75-100's to 75
+									(gt, ":dist_to_our_base_point", 75),
+									(assign, ":dist_to_our_base_point", 75),
+								(try_end),
+								
+								(val_mul, ":dist_to_our_base_point", 50), #0..5000 (increase is linear)
+								
+								(val_mul, ":dist_to_our_base_point", ":num_human_agents_div_3_plus_one"),
+							(else_try), #siege (points for being near to base)
+								(lt, ":sq_dist_to_our_base", 10000), #in siege give entry points score until 100m distance is reached
+								(try_begin),
+									(eq, ":team_no", 0),
+									(try_begin),
+										(lt, ":sq_dist_to_our_base", 2500), #if distance is < 50m in siege give all highest point possible
+										(assign, ":sq_dist_to_our_base", 0),
+									(else_try),
+										(val_sub, ":sq_dist_to_our_base", 2500),
+										(val_mul, ":sq_dist_to_our_base", 2),
+									(try_end),
+								(try_end),
+								
+								(store_sub, ":dist_to_our_base_point", 10000, ":sq_dist_to_our_base"),
+								
+								#can be (10000 - (10000 - 2500) * 2) = -5000 (for only defenders) so we are adding this loss.
+								(val_add, ":dist_to_our_base_point", 5000), #so score getting from being near to base changes between 0 to 15000
+								
+								(try_begin),
+									(eq, ":team_no", 0),
+								(else_try), #in siege mod for attackers being near to base entry point has 45 times less importance
+									(val_div, ":dist_to_our_base_point", 45),
+								(try_end),
+								(val_mul, ":dist_to_our_base_point", ":num_human_agents_div_3_plus_one"),
+							(try_end),
+							
+							(val_add, ":entry_point_score", ":dist_to_our_base_point"),
+							
+							
+							#give negative points if this entry point is near to enemy base.
+							(assign, ":dist_to_enemy_base_point", 0),
+							(try_begin), #capture the flag
+								(eq, "$g_multiplayer_game_type", multiplayer_game_type_capture_the_flag),
+								
+								(lt, ":dist_to_enemy_base", 150),
+								(store_sub, ":dist_to_enemy_base_point", 150, ":dist_to_enemy_base"),
+								
+								(try_begin), #assign 150 to 150 + (150 - 50) * 2 = 350, assign 100 to 100 + (100 - 50) * 2 = 200
+									(gt, ":dist_to_enemy_base_point", 50),
+									(store_sub, ":dist_to_enemy_base_point_minus_50", ":dist_to_enemy_base_point", 50),
+									(val_mul, ":dist_to_enemy_base_point_minus_50", 2),
+									(val_add, ":dist_to_enemy_base_point", ":dist_to_enemy_base_point_minus_50"),
+								(try_end),
+								
+								(val_mul, ":dist_to_enemy_base_point", -50), #-7500(with extras 350 * 50 = -17500)..0 (increase is linear)
+								
+								(val_mul, ":dist_to_enemy_base_point", ":num_human_agents_div_3_plus_one"),
+							(else_try),
+								(this_or_next|neq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+								(eq, ":team_no", 1),
+								
+								(assign, ":dist_to_enemy_base_point", 0),
+								
+								(try_begin),
+									(neq, "$g_multiplayer_game_type", multiplayer_game_type_siege),
+									
+									(try_begin),
+										(lt, ":sq_dist_to_enemy_base", 10000),
+										(store_sub, ":dist_to_enemy_base_point", 10000, ":sq_dist_to_enemy_base"),
+										(val_div, ":dist_to_enemy_base_point", 4),
+										(val_mul, ":dist_to_enemy_base_point", ":negative_num_human_agents_div_3_plus_one"),
+									(try_end),
+								(else_try),
+									(val_max, ":dist_to_enemy_base", 60), #<60 meters has all most negative score
+									
+									(try_begin),
+										(eq, ":is_horseman", 1),
+										(assign, ":optimal_distance", 120),
+									(else_try),
+										(assign, ":optimal_distance", 80),
+									(try_end),
+									
+									(try_begin),
+										(le, ":dist_to_enemy_base", ":optimal_distance"),
+										(store_sub, ":dist_to_enemy_base_point", ":optimal_distance", ":dist_to_enemy_base"),
+										(val_mul, ":dist_to_enemy_base_point", 180), #-3600 max
+									(else_try),
+										(store_sub, ":dist_to_enemy_base_point", ":dist_to_enemy_base", ":optimal_distance"),
+										(val_mul, ":dist_to_enemy_base_point", 30), #-unlimited max but lower slope
+									(try_end),
+									
+									(val_sub, ":dist_to_enemy_base_point", 600),
+									(val_max, ":dist_to_enemy_base_point", 0),
+									
+									(val_mul, ":dist_to_enemy_base_point", ":negative_num_human_agents_div_3_plus_one"),
+								(try_end),
+							(try_end),
+							
+							(val_add, ":entry_point_score", ":dist_to_enemy_base_point"),
+						(else_try),
+							(eq, "$g_multiplayer_game_type", multiplayer_game_type_headquarters),
+							
+							(try_for_range, ":flag_no", 0, "$g_number_of_flags"),
+								(store_add, ":cur_flag_owner_slot", multi_data_flag_owner_begin, ":flag_no"),
+								(troop_get_slot, ":cur_flag_owner", "trp_multiplayer_data", ":cur_flag_owner_slot"),
+								(neq, ":cur_flag_owner", 0),
+								(val_sub, ":cur_flag_owner", 1),
+								
+								(scene_prop_get_instance, ":pole_id", "spr_headquarters_pole_code_only", ":flag_no"),
+								(prop_instance_get_position, pos1, ":pole_id"), #pos1 holds pole position.
+								
+								(get_sq_distance_between_positions_in_meters, ":sq_dist_to_cur_pole", pos0, pos1),
+								(lt, ":sq_dist_to_cur_pole", 6400),
+								
+								(try_begin),
+									(eq, ":cur_flag_owner", ":team_no"),
+									(store_sub, ":dist_to_flag_point", 6400, ":sq_dist_to_cur_pole"), #up to 80 meters give positive points if entry point is near our base
+									(val_mul, ":dist_to_flag_point", 2),
+									(val_div, ":dist_to_flag_point", ":our_flag_count"),
+									(val_mul, ":dist_to_flag_point", ":num_human_agents_div_3_plus_one"),
+								(else_try),
+									(store_sub, ":dist_to_flag_point", 6400, ":sq_dist_to_cur_pole"), #up to 80 meters give negative points if entry point is near enemy base
+									(val_mul, ":dist_to_flag_point", 2),
+									(val_div, ":dist_to_flag_point", ":enemy_flag_count"),
+									(val_mul, ":dist_to_flag_point", ":negative_num_human_agents_div_3_plus_one"),
+								(try_end),
+								(val_add, ":entry_point_score", ":dist_to_flag_point"),
+							(try_end),
+						(try_end),
+						
+						#(assign, reg1, ":i_entry_point"),
+						#(assign, reg2, ":entry_point_score"),
+						#(display_message, "@{!}entry_no : {reg1} , entry_score : {reg2}"),
+						
+						(gt, ":entry_point_score", ":best_entry_point_score"),
+						(assign, ":best_entry_point_score", ":entry_point_score"),
+						(assign, ":best_entry_point", ":i_entry_point"),
+					(try_end),
+					
+					#(assign, reg0, ":best_entry_point"),
+					#(assign, reg1, ":best_entry_point_score"),
+					#(assign, reg2, ":num_operations"),
+					#(assign, reg7, ":is_horseman"),
+					#(display_message, "@{!},is horse:{reg7}, best entry:{reg0}, best entry score:{reg1}, num_operations:{reg2}"),
+				(try_end),
+				(assign, reg0, ":best_entry_point"),
+		])
+		
+		# script_multiplayer_find_bot_troop_and_group_for_spawn
+		# Input: arg1 = team_no
+		# Output: reg0 = troop_id, reg1 = group_id
+multiplayer_find_bot_troop_and_group_for_spawn =	(
+	"multiplayer_find_bot_troop_and_group_for_spawn",
+			[
+				(store_script_param, ":team_no", 1),
+				(store_script_param, ":look_only_actives", 2),
+				
+				(call_script, "script_multiplayer_find_player_leader_for_bot", ":team_no", ":look_only_actives"),
+				(assign, ":leader_player", reg0),
+				
+				(assign, ":available_troops_in_faction", 0),
+				(assign, ":available_troops_to_spawn", 0),
+				(team_get_faction, ":team_faction_no", ":team_no"),
+				
+				(try_for_range, ":troop_no", multiplayer_ai_troops_begin, multiplayer_ai_troops_end),
+					(store_troop_faction, ":troop_faction", ":troop_no"),
+					(eq, ":troop_faction", ":team_faction_no"),
+					(store_add, ":wanted_slot", slot_player_bot_type_1_wanted, ":available_troops_in_faction"),
+					(val_add, ":available_troops_in_faction", 1),
+					(try_begin),
+						(this_or_next|lt, ":leader_player", 0),
+						(player_slot_ge, ":leader_player", ":wanted_slot", 1),
+						(val_add, ":available_troops_to_spawn", 1),
+					(try_end),
+				(try_end),
+				
+				(assign, ":available_troops_in_faction", 0),
+				
+				(store_random_in_range, ":random_troop_index", 0, ":available_troops_to_spawn"),
+				(assign, ":end_cond", multiplayer_ai_troops_end),
+				(try_for_range, ":troop_no", multiplayer_ai_troops_begin, ":end_cond"),
+					(store_troop_faction, ":troop_faction", ":troop_no"),
+					(eq, ":troop_faction", ":team_faction_no"),
+					(store_add, ":wanted_slot", slot_player_bot_type_1_wanted, ":available_troops_in_faction"),
+					(val_add, ":available_troops_in_faction", 1),
+					(this_or_next|lt, ":leader_player", 0),
+					(player_slot_ge, ":leader_player", ":wanted_slot", 1),
+					(val_sub, ":random_troop_index", 1),
+					(lt, ":random_troop_index", 0),
+					(assign, ":end_cond", 0),
+					(assign, ":selected_troop", ":troop_no"),
+				(try_end),
+				(assign, reg0, ":selected_troop"),
+				(assign, reg1, ":leader_player"),
+		])
