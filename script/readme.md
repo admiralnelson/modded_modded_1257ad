@@ -2,7 +2,7 @@ functions and procedures
 ========================
 Script body goes to these sub directory, in each directory there are files that represent an object.    
 for example, party_calculate_faggotry_level that takes in: party_no, and returns a certain value ranging [0,100].   
-because that script returns a value and it "resembles" an method object of party, it should reside on /functions/party.py    
+because that script returns a value and it "resembles" a method object of party, it should reside on /functions/party.py    
 ```
   ...
   ablablablabalbalblaa
