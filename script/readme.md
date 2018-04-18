@@ -24,7 +24,7 @@ function : a script that returns values
 conditional_function : a cf script that doesn't return values, it is used as conditional checks (can fail)  
 procedure: a script that returns no values  
  
-NOTE: there are cf scripts in function, because they do return value, but also act as conditional function. ~~blame memeworld for that~~
+NOTE: there are cf scripts in functions, because they do return value, but also act as conditional function. ~~blame memeworld for that~~
 
 "but why?" you ask   
 to reduce unreadable abomination mess in module_script to more structured readable form.
