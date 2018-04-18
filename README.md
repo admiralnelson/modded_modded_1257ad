@@ -13,8 +13,10 @@ Suggestion from last thread 211791549
 - [ ] decapitations
 - [ ] bigger map icons
 - [ ] remove africa 
-- [ ] autobuy/autosell
-
+- [ ] autobuy/autosell/auto upgrade
+- [ ] put villagers in
+- [ ] scale down maps
+- [ ] spawn army dismounted in village
 
 Might experiment with it
 - [ ] Custom troop trees
