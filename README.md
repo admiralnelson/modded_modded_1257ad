@@ -4,7 +4,7 @@ A new version of modded modded 1257AD
 
 TODO:
 - [ ] code refactoring and documentation (18%-ish, 109 out of 596 procedures/functions/cfunctions) 
-- [ ] import troop trees from modded 1257AD
+- [ ] import troop trees from modded 1257AD + weapon balance ofc  
 - [ ] brainybots 
 - [ ] fix retarded siege AI
 
@@ -25,3 +25,4 @@ Might experiment with it
 logs:  
 (1%-ish, 41 out of 596 procedures/functions/cfunctions)   
 (18%-ish, 109 out of 596 procedures/functions/cfunctions)  
+(25%-ish, 154  out of 596 procedures/functions/cfunctions)  
