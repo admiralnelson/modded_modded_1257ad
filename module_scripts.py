@@ -4692,8 +4692,9 @@ scripts = [
 		##      (assign, reg0, ":result"),
 		##  ]),
 		
-		
 		# script_let_nearby_parties_join_current_battle
+		# no longer behaves like native
+		# WARNING : modified by 1257AD devs
 		# Input: arg1 = besiege_mode, arg2 = dont_add_friends_other_than_accompanying
 		# Output: none
 		("let_nearby_parties_join_current_battle",
@@ -5092,6 +5093,8 @@ scripts = [
 		##  ]),
 		
 		# script_give_center_to_faction
+		# added dimplomacy
+		# WARNING: modified by 1257dev
 		# Input: arg1 = center_no, arg2 = faction
 		("give_center_to_faction",
 			[

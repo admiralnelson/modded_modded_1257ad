@@ -1000,3 +1000,208 @@ move_members_with_ratio = (
 				(try_end),
 		])
 		
+		# script_let_nearby_parties_join_current_battle
+		# no longer behaves like native
+		# WARNING : modified by 1257AD devs
+		# Input: arg1 = besiege_mode, arg2 = dont_add_friends_other_than_accompanying
+		# Output: none
+		("let_nearby_parties_join_current_battle",
+			[
+				(store_script_param, ":besiege_mode", 1),
+				(store_script_param, ":dont_add_friends_other_than_accompanying", 2),
+				
+				(store_character_level, ":player_level", "trp_player"),
+				(try_for_parties, ":party_no"),
+					# (neq, ":party_no", "$g_battle_preparation"),
+					(party_is_active, ":party_no"),
+					(party_get_battle_opponent, ":opponent",":party_no"),
+					(lt, ":opponent", 0), #party is not itself involved in a battle
+					(party_get_attached_to, ":attached_to",":party_no"),
+					(lt, ":attached_to", 0), #party is not attached to another party
+					(get_party_ai_behavior, ":behavior", ":party_no"),
+					(neq, ":behavior", ai_bhvr_in_town),
+					
+					(party_stack_get_troop_id, ":stack_troop", ":party_no", 0),
+					(try_begin),
+						(neg|is_between, ":stack_troop", "trp_looter", "trp_black_khergit_horseman"),
+						(assign, ":join_distance", 5), #day/not bandit - rafi reduced
+						(try_begin),
+							(is_currently_night),
+							(assign, ":join_distance", 3), #nigh/not bandit - rafi reduced
+						(try_end),
+					(else_try),
+						(assign, ":join_distance", 3), #day/bandit
+						(try_begin),
+							(is_currently_night),
+							(assign, ":join_distance", 2), #night/bandit
+						(try_end),
+					(try_end),
+					
+					#Quest bandits do not join battle
+					(this_or_next|neg|check_quest_active, "qst_track_down_bandits"),
+					(neg|quest_slot_eq, "qst_track_down_bandits", slot_quest_target_party, ":party_no"),
+					(this_or_next|neg|check_quest_active, "qst_troublesome_bandits"),
+					(neg|quest_slot_eq, "qst_troublesome_bandits", slot_quest_target_party, ":party_no"),
+					
+					(store_distance_to_party_from_party, ":distance", ":party_no", "p_main_party"),
+					(lt, ":distance", ":join_distance"),
+					# (party_slot_eq, ":party_no", slot_party_battle_preparation, 1),
+					# (try_begin),
+					# (eq, "$g_battle_preparation_phase", 3),
+					# (party_slot_eq, ":party_no", slot_party_battle_preparation, 1),
+					# (party_set_slot, ":party_no", slot_party_battle_preparation, -1),
+					# (try_end),
+					
+					(store_faction_of_party, ":faction_no", ":party_no"),
+					(store_faction_of_party, ":enemy_faction", "$g_enemy_party"),
+					(try_begin),
+						(eq, ":faction_no", "fac_player_supporters_faction"),
+						(assign, ":reln_with_player", 100),
+					(else_try),
+						(store_relation, ":reln_with_player", ":faction_no", "fac_player_supporters_faction"),
+					(try_end),
+					(try_begin),
+						(eq, ":faction_no", ":enemy_faction"),
+						(assign, ":reln_with_enemy", 100),
+					(else_try),
+						(store_relation, ":reln_with_enemy", ":faction_no", ":enemy_faction"),
+					(try_end),
+					
+					(assign, ":enemy_side", 1),
+					(try_begin),
+						(neq, "$g_enemy_party", "$g_encountered_party"),
+						(assign, ":enemy_side", 2),
+					(try_end),
+					
+					(try_begin),
+						(eq, ":besiege_mode", 0),
+						(lt, ":reln_with_player", 0),
+						(gt, ":reln_with_enemy", 0),
+						(party_get_slot, ":party_type", ":party_no"),
+						
+						(assign, ":enemy_is_bandit_party_and_level_is_greater_than_6", 0),
+						(try_begin),
+							(party_stack_get_troop_id, ":stack_troop", ":party_no", 0),
+							(is_between, ":stack_troop", "trp_looter", "trp_black_khergit_horseman"),
+							(gt, ":player_level", 6),
+							(assign, ":enemy_is_bandit_party_and_level_is_greater_than_6", 1),
+						(try_end),
+						(party_get_template_id, ":template", ":party_no"),
+						(this_or_next|eq, ":party_type", spt_kingdom_hero_party),
+			(this_or_next|eq, ":party_type", spt_patrol), # tom
+				(this_or_next|eq, ":template", "pt_mongolian_camp"),
+				(this_or_next|eq, ":template", "pt_welsh"),
+				(this_or_next|eq, ":template", "pt_guelphs"),
+				(this_or_next|eq, ":template", "pt_ghibellines"),
+				(this_or_next|eq, ":template", "pt_crusaders"),
+				(this_or_next|eq, ":template", "pt_crusader_raiders"),
+				(this_or_next|eq, ":template", "pt_jihadist_raiders"),
+				(this_or_next|eq, ":template", "pt_teutonic_raiders"),
+				(this_or_next|eq, ":template", "pt_curonians"),
+				(this_or_next|eq, ":template", "pt_prussians"),
+				(this_or_next|eq, ":template", "pt_samogitians"),
+				(this_or_next|eq, ":template", "pt_yotvingians"),
+				(this_or_next|eq, ":party_type", spt_merc_party),
+						(eq, ":enemy_is_bandit_party_and_level_is_greater_than_6", 1),
+						
+						(get_party_ai_behavior, ":ai_bhvr", ":party_no"),
+						(neq, ":ai_bhvr", ai_bhvr_avoid_party),
+						#rafi
+						(party_relocate_near_party, ":party_no", "p_main_party", 3),
+						#rafi
+						(party_quick_attach_to_current_battle, ":party_no", ":enemy_side"), #attach as enemy
+						(str_store_party_name, s1, ":party_no"),
+						(display_message, "str_s1_joined_battle_enemy"),
+					(else_try),
+						(try_begin),
+							(party_slot_eq, ":party_no", slot_party_ai_state, spai_accompanying_army),
+							(party_slot_eq, ":party_no", slot_party_ai_object, "trp_player"),
+							(assign, ":party_is_accompanying_player", 1),
+						(else_try),
+							(assign, ":party_is_accompanying_player", 0),
+						(try_end),
+						
+						(this_or_next|eq, ":dont_add_friends_other_than_accompanying", 0),
+						(eq, ":party_is_accompanying_player", 1),
+						(gt, ":reln_with_player", 0),
+						(lt, ":reln_with_enemy", 0),
+						
+						(assign, ":following_player", 0),
+						(try_begin),
+							(party_slot_eq, ":party_no", slot_party_ai_state, spai_accompanying_army),
+							(party_slot_eq, ":party_no", slot_party_ai_object, "p_main_party"),
+							(assign, ":following_player", 1),
+						(try_end),
+						
+						(assign, ":do_join", 1),
+						(try_begin),
+							(eq, ":besiege_mode", 1),
+							(eq, ":following_player", 0),
+							(assign, ":do_join", 0),
+							(eq, ":faction_no", "$players_kingdom"),
+							(faction_slot_eq, "$players_kingdom", slot_faction_marshall, "trp_player"),
+							(assign, ":do_join", 1),
+						(try_end),
+						(eq, ":do_join", 1),
+						
+						(party_get_slot, ":party_type", ":party_no"),
+						(eq, ":party_type", spt_kingdom_hero_party),
+						(party_stack_get_troop_id, ":leader", ":party_no", 0),
+						#(troop_get_slot, ":player_relation", ":leader", slot_troop_player_relation),
+						(call_script, "script_troop_get_player_relation", ":leader"),
+						(assign, ":player_relation", reg0),
+						
+						(assign, ":join_even_you_do_not_like_player", 0),
+						(try_begin),
+							(faction_slot_eq, "$players_kingdom", slot_faction_marshall, "trp_player"), #new added, if player is marshal and if he is accompanying then join battle even lord do not like player
+							(eq, ":following_player", 1),
+							(assign, ":join_even_you_do_not_like_player", 1),
+						(try_end),
+						
+						(this_or_next|ge, ":player_relation", 0),
+						(eq, ":join_even_you_do_not_like_player", 1),
+						#rafi
+						(party_relocate_near_party, ":party_no", "p_main_party", 3),
+						#rafi
+						(party_quick_attach_to_current_battle, ":party_no", 0), #attach as friend
+						(str_store_party_name, s1, ":party_no"),
+						(display_message, "str_s1_joined_battle_friend"),
+			(else_try), ## various parties join in
+			
+				(party_get_template_id, ":template", ":party_no"),
+			(this_or_next|eq, ":party_type", spt_patrol), # tom
+				(this_or_next|eq, ":template", "pt_mongolian_camp"),
+				(this_or_next|eq, ":template", "pt_welsh"),
+				(this_or_next|eq, ":template", "pt_guelphs"),
+				(this_or_next|eq, ":template", "pt_ghibellines"),
+				(this_or_next|eq, ":template", "pt_crusaders"),
+				(this_or_next|eq, ":template", "pt_crusader_raiders"),
+				(this_or_next|eq, ":template", "pt_jihadist_raiders"),
+				(this_or_next|eq, ":template", "pt_teutonic_raiders"),
+				(this_or_next|eq, ":template", "pt_curonians"),
+				(this_or_next|eq, ":template", "pt_prussians"),
+				(this_or_next|eq, ":template", "pt_samogitians"),
+				(this_or_next|eq, ":template", "pt_yotvingians"),
+				(eq, ":party_type", spt_merc_party),
+			
+			(try_begin),
+							(party_slot_eq, ":party_no", slot_party_ai_state, spai_accompanying_army),
+							(party_slot_eq, ":party_no", slot_party_ai_object, "trp_player"),
+							(assign, ":party_is_accompanying_player", 1),
+						(else_try),
+							(assign, ":party_is_accompanying_player", 0),
+						(try_end),
+						
+						(this_or_next|eq, ":dont_add_friends_other_than_accompanying", 0),
+						(eq, ":party_is_accompanying_player", 1),
+						(gt, ":reln_with_player", 0),
+						(lt, ":reln_with_enemy", 0),
+			(party_relocate_near_party, ":party_no", "p_main_party", 3),
+			(party_quick_attach_to_current_battle, ":party_no", 0), #attach as friend
+						(str_store_party_name, s1, ":party_no"),
+						(display_message, "str_s1_joined_battle_friend"),
+					(try_end),
+			
+				(try_end),
+		]),
+		
