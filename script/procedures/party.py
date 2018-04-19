@@ -1657,3 +1657,127 @@ party_set_ai_state = (
 				(try_end),
 		])
 		
+		
+		# script_change_player_relation_with_center
+		# Input: arg1 = party_no, arg2 = relation difference
+		# Output: none
+change_player_relation_with_center=(
+	"change_player_relation_with_center",
+			[
+				(store_script_param_1, ":center_no"),
+				(store_script_param_2, ":difference"),
+				
+				(party_get_slot, ":player_relation", ":center_no", slot_center_player_relation),
+				(assign, reg1, ":player_relation"),
+				(val_add, ":player_relation", ":difference"),
+				(val_clamp, ":player_relation", -100, 100),
+				(assign, reg2, ":player_relation"),
+				(party_set_slot, ":center_no", slot_center_player_relation, ":player_relation"),
+				
+				(try_begin),
+					(le, ":player_relation", -50),
+					(unlock_achievement, ACHIEVEMENT_OLD_DIRTY_SCOUNDREL),
+				(try_end),
+				
+				
+				(str_store_party_name_link, s1, ":center_no"),
+				(try_begin),
+					(gt, ":difference", 0),
+					(display_message, "@Your relation with {s1} has improved."),
+				(else_try),
+					(lt, ":difference", 0),
+					(display_message, "@Your relation with {s1} has deteriorated."),
+				(try_end),
+				(try_begin),
+			(eq, "$use_feudal_lance", 0), #lance recruitment thing
+					(party_slot_eq, ":center_no", slot_party_type, spt_village),
+					(call_script, "script_update_volunteer_troops_in_village", ":center_no"),
+				(try_end),
+				
+				(try_begin),
+					(this_or_next|is_between, "$g_talk_troop", village_elders_begin, village_elders_end),
+					(is_between, "$g_talk_troop", mayors_begin, mayors_end),
+					(assign, "$g_talk_troop_relation", ":player_relation"),
+					(call_script, "script_setup_talk_info"),
+				(try_end),
+		])
+		
+
+		# script_party_calculate_and_set_nearby_friend_enemy_follower_strengths
+		# WARNING: modified by 1257AD faction
+		# Input: party_no
+		# Output: none
+party_calculate_and_set_nearby_friend_enemy_follower_strengths=(
+	"party_calculate_and_set_nearby_friend_enemy_follower_strengths",
+			[
+				(store_script_param, ":party_no", 1),
+				(assign, ":follower_strength", 0),
+				(assign, ":friend_strength", 0),
+				(assign, ":enemy_strength", 0),
+				(store_faction_of_party, ":party_faction", ":party_no"),
+				
+				(store_add, ":end_cond", active_npcs_end, 1),
+				(try_for_range, ":iteration", active_npcs_begin, ":end_cond"),
+					(try_begin),
+						(eq, ":iteration", active_npcs_end),
+						(assign, ":cur_troop", "trp_player"),
+					(else_try),
+						(assign, ":cur_troop", ":iteration"),
+					(try_end),
+					
+					(troop_slot_eq, ":cur_troop", slot_troop_occupation, slto_kingdom_hero),
+					(troop_get_slot, ":cur_troop_party", ":cur_troop", slot_troop_leaded_party),
+					(ge, ":cur_troop_party", 0),
+					(party_is_active, ":cur_troop_party"),
+					
+					
+					#I moved these lines here from (*1) to faster process, ozan.
+					(store_troop_faction, ":army_faction", ":cur_troop"),
+					(store_relation, ":relation", ":army_faction", ":party_faction"),
+					(this_or_next|neq, ":relation", 0),
+					(eq, ":army_faction", ":party_faction"),
+					#ozan end
+					
+					
+					(neq, ":party_no", ":cur_troop_party"),
+					(party_get_slot, ":str", ":cur_troop_party", slot_party_cached_strength),
+					(try_begin),
+						(neg|is_between, ":party_no", centers_begin, centers_end),
+						(party_slot_eq, ":cur_troop_party", slot_party_ai_state, spai_accompanying_army),
+						(party_get_slot, ":commander_party", ":cur_troop_party", slot_party_ai_object),
+						(eq, ":commander_party", ":party_no"),
+						(val_add, ":follower_strength", ":str"),
+					(else_try),
+						(store_distance_to_party_from_party, ":distance", ":cur_troop_party", ":party_no"),
+						(lt, ":distance", 20),
+						
+						#(*1)
+						
+						(try_begin),
+							(lt, ":distance", 5),
+							(assign, ":str_divided", ":str"),
+						(else_try),
+							(lt, ":distance", 10),
+							(store_div, ":str_divided", ":str", 2),
+						(else_try),
+							(lt, ":distance", 15),
+							(store_div, ":str_divided", ":str", 4),
+						(else_try),
+							(store_div, ":str_divided", ":str", 8),
+						(try_end),
+						
+						(try_begin),
+							(this_or_next|eq, ":army_faction", ":party_faction"),
+							(gt, ":relation", 0),
+							(val_add, ":friend_strength", ":str_divided"),
+						(else_try),
+							(lt, ":relation", 0),
+							(val_add, ":enemy_strength", ":str_divided"),
+						(try_end),
+					(try_end),
+				(try_end),
+				
+				(party_set_slot, ":party_no", slot_party_follower_strength, ":follower_strength"),
+				(party_set_slot, ":party_no", slot_party_nearby_friend_strength, ":friend_strength"),
+				(party_set_slot, ":party_no", slot_party_nearby_enemy_strength, ":enemy_strength"),
+		])

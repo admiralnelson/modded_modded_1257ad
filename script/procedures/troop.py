@@ -696,3 +696,139 @@ calculate_hero_weekly_net_income_and_add_to_wealth	= (
 					(troop_set_slot, ":troop_no", slot_troop_wealth, ":cur_wealth"),
 		])
 
+
+		# script_change_player_relation_with_troop
+		# Input: arg1 = troop_no, arg2 = relation difference
+		# Output: none
+change_player_relation_with_troop=(
+	"change_player_relation_with_troop",
+			[
+				(store_script_param_1, ":troop_no"),
+				(store_script_param_2, ":difference"),
+				
+				(try_begin),
+					(neq, ":troop_no", "trp_player"),
+					(neg|is_between, ":troop_no", soldiers_begin, soldiers_end),
+					(neq, ":troop_no", -1),
+					(neq, ":difference", 0),
+					(call_script, "script_troop_get_player_relation", ":troop_no"),
+					(assign, ":old_effective_relation", reg0),
+					(troop_get_slot, ":player_relation", ":troop_no", slot_troop_player_relation),
+					(val_add, ":player_relation", ":difference"),
+					(val_clamp, ":player_relation", -100, 101),
+					(try_begin),
+						(troop_set_slot, ":troop_no", slot_troop_player_relation, ":player_relation"),
+						
+						(try_begin),
+							(le, ":player_relation", -50),
+							(unlock_achievement, ACHIEVEMENT_OLD_DIRTY_SCOUNDREL),
+						(try_end),
+						
+						(str_store_troop_name_link, s1, ":troop_no"),
+						(call_script, "script_troop_get_player_relation", ":troop_no"),
+						(assign, ":new_effective_relation", reg0),
+						(neq, ":old_effective_relation", ":new_effective_relation"),
+						(assign, reg1, ":old_effective_relation"),
+						(assign, reg2, ":new_effective_relation"),
+						(try_begin),
+							(gt, ":difference", 0),
+							(display_message, "str_troop_relation_increased"),
+						(else_try),
+							(lt, ":difference", 0),
+							(display_message, "str_troop_relation_detoriated"),
+						(try_end),
+						(try_begin),
+							(eq, ":troop_no", "$g_talk_troop"),
+							(assign, "$g_talk_troop_relation", ":new_effective_relation"),
+							(call_script, "script_setup_talk_info"),
+						(try_end),
+						(call_script, "script_update_troop_notes", ":troop_no"),
+					(try_end),
+				(try_end),
+		])
+		
+		
+		# script_recruit_troop_as_companion
+		# Input: arg1 = troop_no,
+		# Output: none
+recruit_troop_as_companion=(
+	"recruit_troop_as_companion",
+			[
+				(store_script_param_1, ":troop_no"),
+				(troop_set_slot, ":troop_no", slot_troop_occupation, slto_player_companion),
+				(troop_set_slot, ":troop_no", slot_troop_traveling, -1), # rafi
+				(troop_set_slot, ":troop_no", slot_troop_cur_center, -1),
+				
+				(troop_set_auto_equip, ":troop_no", 0),
+				(party_add_members, "p_main_party", ":troop_no", 1),
+				(str_store_troop_name, s6, ":troop_no"),
+				(display_message, "@{s6} has joined your party."),
+				(troop_set_note_available, ":troop_no", 1),
+				
+				(try_begin),
+					(is_between, ":troop_no", companions_begin, companions_end),
+					(store_sub, ":companion_number", ":troop_no", companions_begin),
+					
+					(set_achievement_stat, ACHIEVEMENT_KNIGHTS_OF_THE_ROUND, ":companion_number", 1),
+					
+					(assign, ":number_of_companions_hired", 0),
+					(try_for_range, ":cur_companion", 0, 16),
+						(get_achievement_stat, ":is_hired", ACHIEVEMENT_KNIGHTS_OF_THE_ROUND, ":cur_companion"),
+						(eq, ":is_hired", 1),
+						(val_add, ":number_of_companions_hired", 1),
+					(try_end),
+					
+					(try_begin),
+						(ge, ":number_of_companions_hired", 6),
+						(unlock_achievement, ACHIEVEMENT_KNIGHTS_OF_THE_ROUND),
+					(try_end),
+				(try_end),
+		])
+
+# script_change_troop_renown
+		# Input: arg1 = troop_no, arg2 = relation difference
+		# Output: none
+change_troop_renown = (
+	"change_troop_renown",
+			[
+				(store_script_param_1, ":troop_no"),
+				(store_script_param_2, ":renown_change"),
+				
+				(troop_get_slot, ":old_renown", ":troop_no", slot_troop_renown),
+				
+				(try_begin),
+					(gt, ":renown_change", 0),
+					(assign, reg4, ":renown_change"),
+					
+					(store_div, ":subtraction", ":old_renown", 200),
+					(val_sub, ":renown_change", ":subtraction"),
+					(val_max, ":renown_change", 0),
+					
+					(eq, ":troop_no", "trp_player"),
+					(assign, reg5, ":renown_change"),
+					
+					(eq, "$cheat_mode", 1),
+					(display_message, "str_renown_change_of_reg4_reduced_to_reg5_because_of_high_existing_renown"),
+				(try_end),
+				
+				(store_add, ":new_renown", ":old_renown", ":renown_change"),
+				(val_max, ":new_renown", 0),
+				(troop_set_slot, ":troop_no", slot_troop_renown, ":new_renown"),
+				
+				(try_begin),
+					(eq, ":troop_no", "trp_player"),
+					(str_store_troop_name, s1, ":troop_no"),
+					(assign, reg12, ":renown_change"),
+					(val_abs, reg12),
+					(try_begin),
+						(gt, ":renown_change", 0),
+						(display_message, "@You gained {reg12} renown."),
+					(else_try),
+						(lt, ":renown_change", 0),
+						(display_message, "@You lose {reg12} renown."),
+					(try_end),
+				(try_end),
+				(call_script, "script_update_troop_notes", ":troop_no"),
+		])
+
+		

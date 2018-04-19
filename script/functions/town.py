@@ -240,3 +240,22 @@ village_set_state = (
 				(try_end),
 				(party_set_slot, ":village_no", slot_village_state, ":new_state"),
 		])
+
+# script_get_center_faction_relation_including_player
+		# called from triggers
+		# Input: arg1: center_no, arg2: target_faction_no
+		# Output: reg0: relation
+		
+get_center_faction_relation_including_player =	(
+	"get_center_faction_relation_including_player",
+			[
+				(store_script_param, ":center_no", 1),
+				(store_script_param, ":target_faction_no", 2),
+				(store_faction_of_party, ":center_faction", ":center_no"),
+				(store_relation, ":relation", ":center_faction", ":target_faction_no"),
+				(try_begin),
+					(party_slot_eq, ":center_no", slot_town_lord, "trp_player"),
+					(store_relation, ":relation", "fac_player_supporters_faction", ":target_faction_no"),
+				(try_end),
+				(assign, reg0, ":relation"),
+		])
