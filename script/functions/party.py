@@ -922,4 +922,121 @@ calculate_battle_advantage = (
 				(display_message, "@Battle Advantage = {reg0}.", 0xFFFFFFFF),
 		])
 		
+		# script_cf_get_random_enemy_center
+		# Input: arg1 = party_no
+		# Output: reg0 = center_no
+		("cf_get_random_enemy_center",
+			[
+				(store_script_param_1, ":party_no"),
+				
+				(assign, ":result", -1),
+				(assign, ":total_enemy_centers", 0),
+				(store_faction_of_party, ":party_faction", ":party_no"),
+				
+				(try_for_range, ":center_no", centers_begin, centers_end),
+					(store_faction_of_party, ":center_faction", ":center_no"),
+					(store_relation, ":party_relation", ":center_faction", ":party_faction"),
+					(lt, ":party_relation", 0),
+					(val_add, ":total_enemy_centers", 1),
+				(try_end),
+				
+				(gt, ":total_enemy_centers", 0),
+				(store_random_in_range, ":random_center", 0, ":total_enemy_centers"),
+				(assign, ":total_enemy_centers", 0),
+				(try_for_range, ":center_no", centers_begin, centers_end),
+					(eq, ":result", -1),
+					(store_faction_of_party, ":center_faction", ":center_no"),
+					(store_relation, ":party_relation", ":center_faction", ":party_faction"),
+					(lt, ":party_relation", 0),
+					(val_sub, ":random_center", 1),
+					(lt, ":random_center", 0),
+					(assign, ":result", ":center_no"),
+				(try_end),
+				(assign, reg0, ":result"),
+		]),
+		
+
+
+		# script_get_relation_between_parties
+		# Input: arg1 = party_no_1, arg2 = party_no_2
+		# Output: reg0 = relation between parties
+		("get_relation_between_parties",
+			[
+				(store_script_param_1, ":party_no_1"),
+				(store_script_param_2, ":party_no_2"),
+				
+				(store_faction_of_party, ":party_no_1_faction", ":party_no_1"),
+				(store_faction_of_party, ":party_no_2_faction", ":party_no_2"),
+				(try_begin),
+					(eq, ":party_no_1_faction", ":party_no_2_faction"),
+					(assign, reg0, 100),
+				(else_try),
+					(store_relation, ":relation", ":party_no_1_faction", ":party_no_2_faction"),
+					(assign, reg0, ":relation"),
+				(try_end),
+		]),
+
+		# script_calculate_weekly_party_wage
+		# no longer behaves like native
+		# WARNING: modified by 1257devs
+		# Input: arg1 = party_no
+		# Output: reg0 = weekly wage
+		("calculate_weekly_party_wage",
+			[
+				(store_script_param_1, ":party_no"),
+				
+				(assign, ":result", 0),
+				(party_get_num_companion_stacks, ":num_stacks",":party_no"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop",":party_no",":i_stack"),
+					(party_stack_get_size, ":stack_size",":party_no",":i_stack"),
+					#(call_script, "script_npc_get_troop_wage", ":stack_troop", ":party_no"),
+					# rafi
+					(call_script, "script_game_get_troop_wage", ":stack_troop", ":party_no"),
+					(assign, ":cur_wage", reg0),
+					(val_mul, ":cur_wage", ":stack_size"),
+					(val_add, ":result", ":cur_wage"),
+				(try_end),
+				(assign, reg0, ":result"),
+		]),
+		
+		# script_calculate_player_faction_wage
+		# no longer behaves like native
+		# WARNING: modified by 1257devs
+		# Input: arg1 = party_no
+		# Output: reg0 = weekly wage
+		("calculate_player_faction_wage",
+			[(assign, ":nongarrison_wages", 0),
+				(assign, ":garrison_wages", 0),
+				(try_for_parties, ":party_no"),
+					(assign, ":garrison_troop", 0),
+					(try_begin),
+						(this_or_next|party_slot_eq, ":party_no", slot_party_type, spt_town),
+						(party_slot_eq, ":party_no", slot_party_type, spt_castle),
+						(party_slot_eq, ":party_no", slot_town_lord, "trp_player"),
+						(assign, ":garrison_troop", 1),
+					(try_end),
+					(this_or_next|eq, ":party_no", "p_main_party"),
+					(eq, ":garrison_troop", 1),
+					(party_get_num_companion_stacks, ":num_stacks",":party_no"),
+					(try_for_range, ":i_stack", 0, ":num_stacks"),
+						(party_stack_get_troop_id, ":stack_troop",":party_no",":i_stack"),
+						(party_stack_get_size, ":stack_size",":party_no",":i_stack"),
+						(call_script, "script_game_get_troop_wage", ":stack_troop", ":party_no"),
+						(assign, ":cur_wage", reg0),
+						(val_mul, ":cur_wage", ":stack_size"),
+						(try_begin),
+							(eq, ":garrison_troop", 1),
+							(val_add, ":garrison_wages", ":cur_wage"),
+						(else_try),
+							(val_add, ":nongarrison_wages", ":cur_wage"),
+						(try_end),
+					(try_end),
+				(try_end),
+				(val_div, ":garrison_wages", 2),#tom was 2#Half payment for garrisons
+				(store_sub, ":total_payment", 14, "$g_cur_week_half_daily_wage_payments"), #between 0 and 7
+				(val_mul, ":nongarrison_wages", ":total_payment"),
+				(val_div, ":nongarrison_wages", 14),
+				(store_add, reg0, ":nongarrison_wages", ":garrison_wages"),
+		]),
 		

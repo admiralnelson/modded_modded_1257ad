@@ -330,3 +330,185 @@ troop_set_title_according_to_faction = (
 		])
 		
 		
+# script_create_kingdom_hero_party
+		# creates player kingdom!
+		# WARNING: heavily modified by 1257AD devs
+		# Input: arg1 = troop_no, arg2 = center_no
+		# Output: $pout_party = party_no
+		("create_kingdom_hero_party",
+			[
+				(store_script_param, ":troop_no", 1),
+				(store_script_param, ":center_no", 2),
+				
+				(store_troop_faction, ":troop_faction_no", ":troop_no"),
+				
+				(assign, "$pout_party", -1),
+				(set_spawn_radius, 0),
+				(spawn_around_party, ":center_no", "pt_kingdom_hero_party"),
+				
+				(assign, "$pout_party", reg0),
+				
+				(party_set_faction, "$pout_party", ":troop_faction_no"),
+				(party_set_slot, "$pout_party", slot_party_type, spt_kingdom_hero_party),
+				(call_script, "script_party_set_ai_state", "$pout_party", spai_undefined, -1),
+				(troop_set_slot, ":troop_no", slot_troop_leaded_party, "$pout_party"),
+				(party_add_leader, "$pout_party", ":troop_no"),
+				(str_store_troop_name, s5, ":troop_no"),
+				(party_set_name, "$pout_party", "str_s5_s_party"),
+				
+				(party_set_slot, "$pout_party", slot_party_commander_party, -1), #we need this because 0 is player's party!
+				
+				#Setting the flag icon
+				#normal_banner_begin
+				(troop_get_slot, ":cur_banner", ":troop_no", slot_troop_banner_scene_prop),
+				(try_begin),
+					(gt, ":cur_banner", 0),
+					(val_sub, ":cur_banner", banner_scene_props_begin),
+					(val_add, ":cur_banner", banner_map_icons_begin),
+					(party_set_banner_icon, "$pout_party", ":cur_banner"),
+					#custom_banner_begin
+					#(troop_get_slot, ":flag_icon", ":troop_no", slot_troop_custom_banner_map_flag_type),
+					#(try_begin),
+					#  (ge, ":flag_icon", 0),
+					#  (val_add, ":flag_icon", custom_banner_map_icons_begin),
+					#  (party_set_banner_icon, "$pout_party", ":flag_icon"),
+				(try_end),
+				
+				(try_begin),
+					#because of below two lines, lords can only hire more than one party_template(stack) at game start once a time during all game.
+					(troop_slot_eq, ":troop_no", slot_troop_spawned_before, 0),
+					(troop_set_slot, ":troop_no", slot_troop_spawned_before, 1),
+					(assign, ":num_tries", 20),
+					(try_begin),
+						(store_troop_faction, ":troop_kingdom", ":troop_no"),
+						(faction_slot_eq, ":troop_kingdom", slot_faction_leader, ":troop_no"),
+						(assign, ":num_tries", 50),
+					(try_end),
+					
+					#(str_store_troop_name, s0, ":troop_no"),
+					#(display_message, "{!}str_debug__hiring_men_to_party_for_s0"),
+					
+					(try_for_range, ":unused", 0, ":num_tries"),
+						(call_script, "script_hire_men_to_kingdom_hero_party", ":troop_no"),
+					(try_end),
+			
+			#tom
+			(try_begin), ##add a few noble pages to the mix as well
+			(faction_get_slot, ":center_culture", ":troop_kingdom", slot_faction_culture),
+			(faction_get_slot, ":castle", ":center_culture", slot_faction_tier_1_castle_troop),
+			(store_random_in_range, ":catle_amount", 2, 7),
+			(party_add_members, "$pout_party", ":castle", ":catle_amount"),
+			(try_end),
+					#tom
+			
+					# (assign, ":xp_rounds", 0),
+					
+					# (game_get_reduce_campaign_ai, ":reduce_campaign_ai"),
+					# (try_begin),
+						# (this_or_next|eq, ":troop_faction_no", "$players_kingdom"),
+						# (eq, ":troop_faction_no", "fac_player_supporters_faction"),
+						# (assign, ":xp_rounds", 0),
+					# (else_try),
+						# (eq, ":reduce_campaign_ai", 0), #hard
+						# (assign, ":xp_rounds", 2),
+					# (else_try),
+						# (eq, ":reduce_campaign_ai", 1), #moderate
+						# (assign, ":xp_rounds", 1),
+					# (else_try),
+						# (eq, ":reduce_campaign_ai", 2), #easy
+						# (assign, ":xp_rounds", 0),
+					# (try_end),
+					
+					# (troop_get_slot, ":renown", ":troop_no", slot_troop_renown),
+					# (store_div, ":renown_xp_rounds", ":renown", 100),
+					# (val_add, ":xp_rounds", ":renown_xp_rounds"),
+					#(try_for_range, ":unused", 0, ":xp_rounds"),
+						# no xp for joo
+						#(call_script, "script_upgrade_hero_party", "$pout_party", 4000),
+						#(call_script, "script_upgrade_hero_party", "$pout_party", 400),
+					#(try_end),
+				(try_end),
+		]),
+		
+		# script_troop_does_business_in_center
+		# Currently called from process_ai_state, could be called from elsewhere
+		# It is used for lord to (1)Court ladies (2)Collect rents (3)Look for volunteers
+		# WARNING: heavily modified by 1257AD devs
+		# INPUT: arg1 = troop_no, arg2 = center_no
+		# OUTPUT: none
+		("troop_does_business_in_center",
+			[
+				(store_script_param, ":troop_no", 1),
+				(store_script_param, ":center_no", 2),
+				
+				(troop_get_slot, ":led_party", ":troop_no", slot_troop_leaded_party),
+				
+				(store_current_hours, ":current_time"),
+				(try_begin),
+					#         (party_slot_eq, ":center_no", slot_town_lord, ":troop_no"), #this was added to get lords in centers out and visiting their fiefs, but I've adjusted the decision checklist
+					(is_between, ":center_no", walled_centers_begin, walled_centers_end),
+					(party_set_slot, ":led_party", slot_party_last_in_any_center, ":current_time"),
+					(try_begin),
+						(call_script, "script_lord_get_home_center", ":troop_no"),
+						(eq, ":center_no", reg0),
+						(party_set_slot, ":led_party", slot_party_last_in_home_center, ":current_time"),
+					(try_end),
+				(try_end),
+				
+				#Collect the rents - tom, done diffrently
+				(try_begin),
+					(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+					
+					(party_get_slot, ":accumulated_rents", ":center_no", slot_center_accumulated_rents),
+					(party_get_slot, ":accumulated_tariffs", ":center_no", slot_center_accumulated_tariffs),
+					(troop_get_slot, ":troop_wealth", ":troop_no", slot_troop_wealth),
+					(val_add, ":troop_wealth", ":accumulated_rents"),
+					(val_add, ":troop_wealth", ":accumulated_tariffs"),
+					
+					(troop_set_slot, ":troop_no", slot_troop_wealth, ":troop_wealth"),
+					(party_set_slot, ":center_no", slot_center_accumulated_rents, 0),
+					(party_set_slot, ":center_no", slot_center_accumulated_tariffs, 0),
+					
+					(try_begin),
+						(this_or_next|eq, "$cheat_mode", 1),
+						(eq, "$cheat_mode", 3),
+						(assign, reg1, ":troop_wealth"),
+						(str_store_party_name, s4, ":center_no"),
+						(add_troop_note_from_sreg, ":troop_no", 1, "str_current_wealth_reg1_taxes_last_collected_from_s4", 0),
+					(try_end),
+				(try_end),
+				
+				#Recruit volunteers
+				(try_begin),
+					(is_between, ":center_no", villages_begin, villages_end),
+					
+					(party_get_slot, ":troop_type", ":center_no", slot_center_npc_volunteer_troop_type),
+					(party_get_slot, ":troop_amount", ":center_no", slot_center_npc_volunteer_troop_amount),
+					(party_set_slot, ":center_no", slot_center_npc_volunteer_troop_amount, -1),
+					(party_add_members, ":led_party", ":troop_type", ":troop_amount"),
+					
+				(try_end),
+				
+				#Courtship
+				(try_begin),
+					(party_get_slot, ":time_of_last_courtship", ":led_party", slot_party_leader_last_courted),
+					(store_sub, ":hours_since_last_courtship", ":current_time", ":time_of_last_courtship"),
+					(gt, ":hours_since_last_courtship", 72),
+					
+					# rafi no courtship for TO
+					(store_faction_of_troop, ":fac", ":troop_no"),
+					
+					(troop_slot_eq, ":troop_no", slot_troop_spouse, -1),
+					(try_for_range, ":love_interest_slot", slot_troop_love_interest_1, slot_troop_love_interests_end),
+						(neq, ":fac", "fac_kingdom_1"), # rafi
+						(troop_get_slot, ":love_interest", ":troop_no", ":love_interest_slot"),
+						(gt, ":love_interest", 0),
+						(troop_get_slot, ":love_interest_town", ":love_interest", slot_troop_cur_center),
+						(eq, ":center_no", ":love_interest_town"),
+						
+						(call_script, "script_courtship_event_troop_court_lady", ":troop_no", ":love_interest"),
+						(party_set_slot, ":led_party", slot_party_leader_last_courted, ":current_time"),
+					(try_end),
+				(try_end),
+		]),
+		
