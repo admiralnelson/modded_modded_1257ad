@@ -22,5 +22,5 @@ Might experiment with it
 - [ ] Custom troop trees
 
 logs:
-(1%-ish, 41 out of 596 procedures/functions/cfunctions) 
-(18%-ish, 109 out of 596 procedures/functions/cfunctions) 
+(1%-ish, 41 out of 596 procedures/functions/cfunctions)   
+(18%-ish, 109 out of 596 procedures/functions/cfunctions)  
