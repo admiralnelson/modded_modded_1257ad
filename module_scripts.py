@@ -5232,6 +5232,7 @@ scripts = [
 		]),
 		
 		# script_change_troop_faction
+		# Implementation of "lord defected" logic  
 		# Input: arg1 = troop_no, arg2 = faction
 		("change_troop_faction",
 			[
@@ -5495,6 +5496,8 @@ scripts = [
 				(try_end),
 		]),
 		
+##############END
+
 		# script_give_center_to_lord
 		# Input: arg1 = center_no, arg2 = lord_troop, arg3 = add_garrison_to_center
 		("give_center_to_lord",
