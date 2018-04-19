@@ -1,8 +1,10 @@
 from header import *
-		# script_cf_check_enemies_nearby
+
+# script_cf_check_enemies_nearby
 		# Input: none
 		# Output: none, fails when enemies are nearby
-		("cf_check_enemies_nearby",
+cf_check_enemies_nearby	= (
+	"cf_check_enemies_nearby",
 			[
 				(get_player_agent_no, ":player_agent"),
 				(agent_is_alive, ":player_agent"),
@@ -20,5 +22,4 @@ from header import *
 					(assign, ":result", 1),
 				(try_end),
 				(eq, ":result", 0),
-		]),
-		
+		])

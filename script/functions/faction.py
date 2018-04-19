@@ -1,9 +1,32 @@
 from header import *
 
+# script_count_parties_of_faction_and_party_type:
+		# counts number of active parties with a template and faction.
+		# Input: arg1 = faction_no, arg2 = party_type
+		# Output: reg0 = count
+		
+count_parties_of_faction_and_party_type = (
+			"count_parties_of_faction_and_party_type",
+			[
+				(store_script_param_1, ":faction_no"),
+				(store_script_param_2, ":party_type"),
+				(assign, reg0, 0),
+				(try_for_parties, ":party_no"),
+					(party_is_active, ":party_no"),
+					(party_get_slot, ":cur_party_type", ":party_no", slot_party_type),
+					(store_faction_of_party, ":cur_faction", ":party_no"),
+					(eq, ":cur_party_type", ":party_type"),
+					(eq, ":cur_faction", ":faction_no"),
+					(val_add, reg0, 1),
+				(try_end),
+		])
+
+
 # script_faction_get_number_of_armies
 		# Input: arg1 = faction_no
 		# Output: reg0 = number_of_armies
-		("faction_get_number_of_armies",
+faction_get_number_of_armies = (
+	"faction_get_number_of_armies",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":num_armies", 0),
@@ -24,12 +47,13 @@ from header import *
 					(val_add, ":num_armies", 1),
 				(try_end),
 				(assign, reg0, ":num_armies"),
-		]),
+		])
 
 		# script_faction_recalculate_strength
 		# Input: arg1 = faction_no
 		# Output: reg0 = strength
-		("faction_recalculate_strength",
+faction_recalculate_strength = (
+	"faction_recalculate_strength",
 			[
 				(store_script_param_1, ":faction_no"),
 				
@@ -54,12 +78,13 @@ from header import *
 				(faction_set_slot, ":faction_no", slot_faction_num_castles, ":num_castles"),
 				(faction_set_slot, ":faction_no", slot_faction_num_towns, ":num_towns"),
 				
-		]),
+		])
 
 # script_cf_faction_get_random_enemy_faction
 		# Input: arg1 = faction_no
 		# Output: reg0 = faction_no (Can fail)
-		("cf_faction_get_random_enemy_faction",
+cf_faction_get_random_enemy_faction = (
+	"cf_faction_get_random_enemy_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				
@@ -85,12 +110,13 @@ from header import *
 				
 				(neq, ":result", -1),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		# script_cf_faction_get_random_friendly_faction
 		# Input: arg1 = faction_no
 		# Output: reg0 = faction_no (Can fail)
-		("cf_faction_get_random_friendly_faction",
+cf_faction_get_random_friendly_faction = (
+	"cf_faction_get_random_friendly_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				
@@ -118,14 +144,15 @@ from header import *
 				
 				(neq, ":result", -1),
 				(assign, reg0, ":result"),
-		]),
+		])
 
 
-		
+
 		# script_cf_get_random_lord_in_a_center_with_faction
 		# Input: arg1 = faction_no
 		# Output: reg0 = troop_no, Can Fail!
-		("cf_get_random_lord_in_a_center_with_faction",
+cf_get_random_lord_in_a_center_with_faction = (
+	"cf_get_random_lord_in_a_center_with_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":result", -1),
@@ -161,12 +188,13 @@ from header import *
 				(try_end),
 				(neq, ":result", -1),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		# script_cf_get_random_lord_except_king_with_faction
 		# Input: arg1 = faction_no
 		# Output: reg0 = troop_no, Can Fail!
-		("cf_get_random_lord_except_king_with_faction",
+cf_get_random_lord_except_king_with_faction = (
+	"cf_get_random_lord_except_king_with_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":result", -1),
@@ -200,13 +228,14 @@ from header import *
 				(try_end),
 				(neq, ":result", -1),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		
 		# script_cf_get_random_lord_from_another_faction_in_a_center
 		# Input: arg1 = faction_no
 		# Output: reg0 = troop_no, Can Fail!
-		("cf_get_random_lord_from_another_faction_in_a_center",
+cf_get_random_lord_from_another_faction_in_a_center = (
+	"cf_get_random_lord_from_another_faction_in_a_center",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":result", -1),
@@ -250,4 +279,4 @@ from header import *
 				(try_end),
 				(neq, ":result", -1),
 				(assign, reg0, ":result"),
-		]),
+		])

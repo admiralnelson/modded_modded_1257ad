@@ -765,31 +765,12 @@ party_count_fit_regulars = (
 					(val_add, reg0, ":stack_size"),
 				(try_end),
 		])
-
-# script_count_parties_of_faction_and_party_type:
-		# counts number of active parties with a template and faction.
-		# Input: arg1 = faction_no, arg2 = party_type
-		# Output: reg0 = count
-		
-		("count_parties_of_faction_and_party_type",
-			[
-				(store_script_param_1, ":faction_no"),
-				(store_script_param_2, ":party_type"),
-				(assign, reg0, 0),
-				(try_for_parties, ":party_no"),
-					(party_is_active, ":party_no"),
-					(party_get_slot, ":cur_party_type", ":party_no", slot_party_type),
-					(store_faction_of_party, ":cur_faction", ":party_no"),
-					(eq, ":cur_party_type", ":party_type"),
-					(eq, ":cur_faction", ":faction_no"),
-					(val_add, reg0, 1),
-				(try_end),
-		]),
 		
 		# script_cf_get_random_enemy_center_within_range
 		# Input: arg1 = party_no, arg2 = range (in kms)
 		# Output: reg0 = center_no
-		("cf_get_random_enemy_center_within_range",
+cf_get_random_enemy_center_within_range = (
+			"cf_get_random_enemy_center_within_range",
 			[
 				(store_script_param, ":party_no", 1),
 				(store_script_param, ":range", 2),
@@ -819,13 +800,14 @@ party_count_fit_regulars = (
 					(assign, ":end_cond", 0),#break
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 
 
 		# script_get_closest_walled_center
 		# Input: arg1 = party_no
 		# Output: reg0 = center_no (closest)
-		("get_closest_walled_center",
+get_closest_walled_center = (
+			"get_closest_walled_center",
 			[
 				(store_script_param_1, ":party_no"),
 				(assign, ":min_distance", 9999999),
@@ -836,12 +818,13 @@ party_count_fit_regulars = (
 					(assign, ":min_distance", ":party_distance"),
 					(assign, reg0, ":center_no"),
 				(try_end),
-		]),
+		])
 		
 		# script_get_closest_center
 		# Input: arg1 = party_no
 		# Output: reg0 = center_no (closest)
-		("get_closest_center",
+get_closest_center = (
+			"get_closest_center",
 			[
 				(store_script_param_1, ":party_no"),
 				(assign, ":min_distance", 9999999),
@@ -852,12 +835,13 @@ party_count_fit_regulars = (
 					(assign, ":min_distance", ":party_distance"),
 					(assign, reg0, ":center_no"),
 				(try_end),
-		]),
+		])
 
 		# script_get_closest_center_of_faction
 		# Input: arg1 = party_no, arg2 = kingdom_no
 		# Output: reg0 = center_no (closest)
-		("get_closest_center_of_faction",
+get_closest_center_of_faction = (
+			"get_closest_center_of_faction",
 			[
 				(store_script_param_1, ":party_no"),
 				(store_script_param_2, ":kingdom_no"),
@@ -872,12 +856,13 @@ party_count_fit_regulars = (
 					(assign, ":result", ":center_no"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		# script_get_closest_walled_center_of_faction
 		# Input: arg1 = party_no, arg2 = kingdom_no
 		# Output: reg0 = center_no (closest)
-		("get_closest_walled_center_of_faction",
+get_closest_walled_center_of_faction = (
+			"get_closest_walled_center_of_faction",
 			[
 				(store_script_param_1, ":party_no"),
 				(store_script_param_2, ":kingdom_no"),
@@ -892,6 +877,49 @@ party_count_fit_regulars = (
 					(assign, ":result", ":center_no"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
+		
+		# script_calculate_battle_advantage
+		# Output: reg0 = battle advantage
+calculate_battle_advantage = (
+	"calculate_battle_advantage",
+			[
+				(call_script, "script_party_count_fit_for_battle", "p_collective_friends"),
+				(assign, ":friend_count", reg(0)),
+				
+				(party_get_skill_level, ":player_party_tactics",  "p_main_party", skl_tactics),
+				(party_get_skill_level, ":ally_party_tactics",  "p_collective_friends", skl_tactics),
+				(val_max, ":player_party_tactics", ":ally_party_tactics"),
+				
+				(call_script, "script_party_count_fit_for_battle", "p_collective_enemy"),
+				(assign, ":enemy_count", reg(0)),
+				
+				(party_get_skill_level, ":enemy_party_tactics",  "p_collective_enemy", skl_tactics),
+				
+				(val_add, ":friend_count", 1),
+				(val_add, ":enemy_count", 1),
+				
+				(try_begin),
+					(ge, ":friend_count", ":enemy_count"),
+					(val_mul, ":friend_count", 100),
+					(store_div, ":ratio", ":friend_count", ":enemy_count"),
+					(store_sub, ":raw_advantage", ":ratio", 100),
+				(else_try),
+					(val_mul, ":enemy_count", 100),
+					(store_div, ":ratio", ":enemy_count", ":friend_count"),
+					(store_sub, ":raw_advantage", 100, ":ratio"),
+				(try_end),
+				(val_mul, ":raw_advantage", 2),
+				
+				(val_mul, ":player_party_tactics", 30),
+				(val_mul, ":enemy_party_tactics", 30),
+				(val_add, ":raw_advantage", ":player_party_tactics"),
+				(val_sub, ":raw_advantage", ":enemy_party_tactics"),
+				(val_div, ":raw_advantage", 100),
+				
+				
+				(assign, reg0, ":raw_advantage"),
+				(display_message, "@Battle Advantage = {reg0}.", 0xFFFFFFFF),
+		])
 		
 		

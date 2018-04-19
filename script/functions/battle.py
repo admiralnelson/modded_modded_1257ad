@@ -3,7 +3,8 @@ from header import *
 
 		# script_calculate_battle_advantage
 		# Output: reg0 = battle advantage
-		("calculate_battle_advantage",
+calculate_battle_advantage = (
+	"calculate_battle_advantage",
 			[
 				(call_script, "script_party_count_fit_for_battle", "p_collective_friends"),
 				(assign, ":friend_count", reg(0)),
@@ -41,5 +42,5 @@ from header import *
 				
 				(assign, reg0, ":raw_advantage"),
 				(display_message, "@Battle Advantage = {reg0}.", 0xFFFFFFFF),
-		]),
+		])
 		

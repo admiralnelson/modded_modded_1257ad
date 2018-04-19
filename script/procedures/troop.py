@@ -65,7 +65,8 @@ setup_troop_meeting	= (
 		# script_change_troop_faction
 		# Implementation of "lord defected" logic  
 		# Input: arg1 = troop_no, arg2 = faction
-		("change_troop_faction",
+change_troop_faction = (
+	"change_troop_faction",
 			[
 				(store_script_param_1, ":troop_no"),
 				(store_script_param_2, ":faction_no"),
@@ -299,11 +300,12 @@ setup_troop_meeting	= (
 				# (call_script, "script_raf_set_ai_recalculation_flags", ":orig_faction"),
 				# (call_script, "script_raf_set_ai_recalculation_flags", ":faction_no"),
 				(assign, "$g_recalculate_ais", 1),
-		]),
+		])
 		
 		# script_troop_set_title_according_to_faction
 		# Input: arg1 = troop_no, arg2 = faction_no
-		("troop_set_title_according_to_faction",
+troop_set_title_according_to_faction = (
+	"troop_set_title_according_to_faction",
 			[
 				(store_script_param, ":troop_no", 1),
 				(store_script_param, ":faction_no", 2),
@@ -325,5 +327,6 @@ setup_troop_meeting	= (
 					(str_store_troop_name, s5, ":troop_no"),
 					(party_set_name, ":troop_party", "str_s5_s_party"),
 				(try_end),
-		]),
+		])
+		
 		

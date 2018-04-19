@@ -4,7 +4,8 @@ from header import *
 		# Shuffles a range of slots of a given troop.
 		# Used for exploiting a troop as an array.
 		# Input: arg1 = troop_no, arg2 = slot_begin, arg3 = slot_end
-		("shuffle_troop_slots",
+shuffle_troop_slots	= (
+	"shuffle_troop_slots",
 			[
 				(store_script_param, ":troop_no", 1),
 				(store_script_param, ":slots_begin", 2),
@@ -16,4 +17,4 @@ from header import *
 					(troop_set_slot, ":troop_no", ":cur_slot_no", ":random_slot_value"), # Now exchange the two...
 					(troop_set_slot, ":troop_no", ":random_slot_no", ":cur_slot_value"),
 				(try_end),
-		]),
+		])

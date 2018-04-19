@@ -4,7 +4,8 @@ from header import *
 		
 		# Input: arg1 = troop_no (of the troop in conversation), arg2 = min_importance (of the quest)
 		# Output: reg0 = quest_no (the slots of the quest will be filled after calling this script)
-		("get_quest",
+get_quest = (
+			"get_quest",
 			[
 				(store_script_param_1, ":giver_troop"),
 				
@@ -1271,7 +1272,7 @@ from header import *
 				(try_end),
 				
 				(assign, reg0, ":result"),
-		]),
+		])
 
 		# script_get_dynamic_quest - combines old get_random_quest with new get_dynamic_quest
 		
@@ -1280,7 +1281,8 @@ from header import *
 		#		 reg1 = relevant troop
 		#		 reg2 = relevant party
 		#		 reg3 = relevant faction
-		("get_dynamic_quest",
+get_dynamic_quest = (
+			"get_dynamic_quest",
 			#Dynamic quests are rarer, more important quests
 			#this is a separate script from get_quest, so that tavern keepers can scan all NPCs for quests
 			[
@@ -1491,7 +1493,7 @@ from header import *
 				(assign, reg2, ":relevant_party"),
 				(assign, reg3, ":relevant_faction"),
 				
-		]),
+		])
 
 		# script_get_political_quest- combines old get_random_quest with new get_dynamic_quest
 		# Political quests are given by the player's political "coach" -- ie, a spouse or the minister -- to improve standing in the faction
@@ -1499,7 +1501,8 @@ from header import *
 		# Output: reg0 = quest_no (the slots of the quest will be filled after calling this script)
 		#		 reg1 = quest_target_troop
 		#		 reg2 = quest_object_troop
-		("get_political_quest",
+get_political_quest = (
+			"get_political_quest",
 			#Political quests are given by the player's political "coach" -- ie, a spouse or the minister -- to improve standing in the faction
 			[
 				(store_script_param, ":giver_troop", 1),
@@ -1797,12 +1800,13 @@ from header import *
 				(assign, reg1, ":quest_target_troop"),
 				(assign, reg2, ":quest_object_troop"),
 				
-		]),
+		])
 
 		# script_npc_find_quest_for_player_to_s11
 		# Input: arg1 = faction_no
 		# Output: reg0 = quest_giver_found
-		("npc_find_quest_for_player_to_s11",
+npc_find_quest_for_player_to_s11 = (
+			"npc_find_quest_for_player_to_s11",
 			[
 				(store_script_param, ":faction", 1),
 				
@@ -1847,6 +1851,6 @@ from header import *
 				
 				(assign, reg0, ":quest_giver_found"),
 				
-		]),
+		])
 		
 		

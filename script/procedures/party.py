@@ -1005,7 +1005,8 @@ move_members_with_ratio = (
 		# WARNING : modified by 1257AD devs
 		# Input: arg1 = besiege_mode, arg2 = dont_add_friends_other_than_accompanying
 		# Output: none
-		("let_nearby_parties_join_current_battle",
+let_nearby_parties_join_current_battle = (
+	"let_nearby_parties_join_current_battle",
 			[
 				(store_script_param, ":besiege_mode", 1),
 				(store_script_param, ":dont_add_friends_other_than_accompanying", 2),
@@ -1203,5 +1204,41 @@ move_members_with_ratio = (
 					(try_end),
 			
 				(try_end),
-		]),
+		])
+		
+		# script_party_wound_all_members_aux
+		# Input: arg1 = party_no
+party_wound_all_members_aux = (
+	"party_wound_all_members_aux",
+			[
+				(store_script_param_1, ":party_no"),
+				
+				(party_get_num_companion_stacks, ":num_stacks",":party_no"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop",":party_no",":i_stack"),
+					(try_begin),
+						(neg|troop_is_hero, ":stack_troop"),
+						(party_stack_get_size, ":stack_size",":party_no",":i_stack"),
+						(party_wound_members, ":party_no", ":stack_troop", ":stack_size"),
+					(else_try),
+						(troop_set_health, ":stack_troop", 0),
+					(try_end),
+				(try_end),
+				(party_get_num_attached_parties, ":num_attached_parties", ":party_no"),
+				(try_for_range, ":attached_party_rank", 0, ":num_attached_parties"),
+					(party_get_attached_party_with_rank, ":attached_party", ":party_no", ":attached_party_rank"),
+					(call_script, "script_party_wound_all_members_aux", ":attached_party"),
+				(try_end),
+		])
+		
+		# script_party_wound_all_members
+		# Input: arg1 = party_no
+party_wound_all_members = (
+	"party_wound_all_members",
+			[
+				(store_script_param_1, ":party_no"),
+				
+				(call_script, "script_party_wound_all_members_aux", ":party_no"),
+		])
+		
 		

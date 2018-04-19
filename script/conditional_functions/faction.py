@@ -1,4 +1,4 @@
-from header import -
+from header import *
 
 #script_cf_select_random_town_with_faction:
 		# This script selects a random town in range [towns_begin, towns_end)
@@ -9,7 +9,8 @@ from header import -
 		#OUTPUT:
 		# This script may return false if there is no matching town.
 		# reg0 = town_no
-		("cf_select_random_town_with_faction",
+cf_select_random_town_with_faction = (
+			"cf_select_random_town_with_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":result", -1),
@@ -32,7 +33,7 @@ from header import -
 					(assign, ":result", ":cur_town"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		#script_cf_select_random_village_with_faction:
 		# This script selects a random village in range [villages_begin, villages_end)
@@ -43,7 +44,8 @@ from header import -
 		#OUTPUT:
 		# This script may return false if there is no matching village.
 		# reg0 = village_no
-		("cf_select_random_village_with_faction",
+cf_select_random_village_with_faction = (
+			"cf_select_random_village_with_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":result", -1),
@@ -66,7 +68,7 @@ from header import -
 					(assign, ":result", ":cur_village"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 
 		#script_cf_select_random_walled_center_with_faction:
 		# This script selects a random center in range [centers_begin, centers_end)
@@ -78,7 +80,8 @@ from header import -
 		#OUTPUT:
 		# This script may return false if there is no matching town.
 		# reg0 = town_no (Can fail)
-		("cf_select_random_walled_center_with_faction",
+cf_select_random_walled_center_with_faction = (
+			"cf_select_random_walled_center_with_faction",
 			[
 				(store_script_param, ":faction_no", 1),
 				(store_script_param, ":preferred_center_no", 2),
@@ -107,7 +110,7 @@ from header import -
 					(assign, ":result", ":cur_center"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		
 	#script_cf_select_random_walled_center_with_faction_and_owner_priority_no_siege:
@@ -117,7 +120,8 @@ from header import -
 	#OUTPUT:
 	# This script may return false if there is no matching town.
 	# reg0 = center_no (Can fail)
-	("cf_select_random_walled_center_with_faction_and_owner_priority_no_siege",
+cf_select_random_walled_center_with_faction_and_owner_priority_no_siege = (
+		"cf_select_random_walled_center_with_faction_and_owner_priority_no_siege",
 		[
 			(store_script_param, ":faction_no", 1),
 			(store_script_param, ":troop_no", 2),
@@ -176,7 +180,7 @@ from header import -
 				(assign, ":result", ":cur_center"),
 			(try_end),
 			(assign, reg0, ":result"),
-	]),
+	])
 
 	#script_cf_select_random_walled_center_with_faction_and_less_strength_priority:
 		# This script selects a random center in range [centers_begin, centers_end)
@@ -188,7 +192,8 @@ from header import -
 		#OUTPUT:
 		# This script may return false if there is no matching town.
 		# reg0 = town_no (Can fail)
-		("cf_select_random_walled_center_with_faction_and_less_strength_priority",
+cf_select_random_walled_center_with_faction_and_less_strength_priority = (
+			"cf_select_random_walled_center_with_faction_and_less_strength_priority",
 			[
 				(store_script_param, ":faction_no", 1),
 				(store_script_param, ":preferred_center_no", 2),
@@ -235,7 +240,7 @@ from header import -
 					(assign, ":result", ":cur_center"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 
 		#script_cf_select_random_town_at_peace_with_faction:
 		# This script selects a random town in range [towns_begin, towns_end)
@@ -246,7 +251,8 @@ from header import -
 		#OUTPUT:
 		# This script may return false if there is no matching town.
 		# reg0 = town_no
-		("cf_select_random_town_at_peace_with_faction",
+cf_select_random_town_at_peace_with_faction = (
+			"cf_select_random_town_at_peace_with_faction",
 			[
 				(store_script_param_1, ":faction_no"),
 				(assign, ":result", -1),
@@ -271,7 +277,7 @@ from header import -
 					(assign, ":result", ":cur_town"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 
 
 		#script_cf_select_random_town_at_peace_with_faction_in_trade_route
@@ -282,7 +288,8 @@ from header import -
 		#OUTPUT:
 		# This script may return false if there is no matching town.
 		# reg0 = town_no
-		("cf_select_random_town_at_peace_with_faction_in_trade_route",
+cf_select_random_town_at_peace_with_faction_in_trade_route = (
+			"cf_select_random_town_at_peace_with_faction_in_trade_route",
 			[
 				(store_script_param, ":town_no", 1),
 				(store_script_param, ":faction_no", 2),
@@ -310,15 +317,18 @@ from header import -
 					(assign, ":result", ":cur_town"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 
+		#script_cf_select_most_profitable_town_at_peace_with_faction_in_trade_route
 		#the following is a very simple adjustment - it measures the difference in prices between two towns
 		#all goods are weighted equally except for luxuries
 		#it does not take into account the prices of the goods, nor cargo capacity
 		#to do that properly, a merchant would have to virtually fill his baggage, slot by slot, for each town
 		#i also found that one needed to introduce demand inelasticity -- prices should vary a lot for grain,  relatively little for iron
-		
-		("cf_select_most_profitable_town_at_peace_with_faction_in_trade_route",
+		# INPUT: arg1 = town_no, arg2 = faction_no
+		# OUTPUT: reg0 = most profitable town
+cf_select_most_profitable_town_at_peace_with_faction_in_trade_route = (
+			"cf_select_most_profitable_town_at_peace_with_faction_in_trade_route",
 			[
 				(store_script_param, ":town_no", 1),
 				(store_script_param, ":faction_no", 2),
@@ -386,4 +396,4 @@ from header import -
 				##	    (display_message, "str_test__caravan_in_s3_selects_for_s4_trade_score_reg3"),
 				##	  (try_end),
 				
-		]),
+		])
