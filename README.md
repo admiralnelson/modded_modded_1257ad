@@ -20,6 +20,7 @@ Suggestion from last thread 211791549
 
 Might experiment with it
 - [ ] Custom troop trees
+- [ ] terrain generation algorithm (at: procedures/scene.py/setup_random_scene)
 
 logs:  
 (1%-ish, 41 out of 596 procedures/functions/cfunctions)   
