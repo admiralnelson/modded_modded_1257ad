@@ -4,7 +4,8 @@ from header import *
 		# script_find_travel_location
 		# Input: arg1 = center_no
 		# Output: reg0 = new_center_no (to travel within the same faction)
-		("find_travel_location",
+find_travel_location = (
+	"find_travel_location",
 			[
 				(store_script_param_1, ":center_no"),
 				(store_faction_of_party, ":faction_no", ":center_no"),
@@ -47,12 +48,13 @@ from header import *
 						(assign, ":done", 1),
 					(try_end),
 				(try_end),
-		]),
+		])
 
 		# script_create_cattle_herd
 		# Input: arg1 = center_no, arg2 = amount (0 = default)
 		# Output: reg0 = party_no
-		("create_cattle_herd",
+create_cattle_herd = (
+	"create_cattle_herd",
 			[
 				(store_script_param_1, ":center_no"),
 				(store_script_param_2, ":amount"),
@@ -79,13 +81,14 @@ from header import *
 				(try_end),
 				
 				(assign, reg0, ":herd_party"),
-		]),
+		])
 
 		
 		#script_buy_cattle_from_village
 		# Input: arg1 = village_no, arg2 = amount, arg3 = single_cost
 		# Output: reg0 = party_no
-		("buy_cattle_from_village",
+buy_cattle_from_village = (
+	"buy_cattle_from_village",
 			[
 				(store_script_param, ":village_no", 1),
 				(store_script_param, ":amount", 2),
@@ -124,12 +127,13 @@ from header import *
 					(eq, ":continue", 1),
 					(call_script, "script_create_cattle_herd", ":village_no", ":amount"),
 				(try_end),
-		]),
+		])
 
 		# script_center_get_food_consumption
 		# Input: arg1 = center_no
 		# Output: reg0: food consumption (1 food item counts as 100 units)
-		("center_get_food_consumption",
+center_get_food_consumption = (
+	"center_get_food_consumption",
 			[
 				(store_script_param_1, ":center_no"),
 				(assign, ":food_consumption", 0),
@@ -141,13 +145,14 @@ from header import *
 					(assign, ":food_consumption", 50),
 				(try_end),
 				(assign, reg0, ":food_consumption"),
-		]),
+		])
 
 		# script_center_get_food_store_limit
 		# WARNING: modified by 1257AD devs
 		# Input: arg1 = center_no
 		# Output: reg0: food consumption (1 food item counts as 100 units)
-		("center_get_food_store_limit",
+center_get_food_store_limit = (
+	"center_get_food_store_limit",
 			[
 				(store_script_param_1, ":center_no"),
 				(assign, ":food_store_limit", 0),
@@ -162,7 +167,7 @@ from header import *
 				(val_div, ":food_store_limit", 4),
 				# end rafi
 				(assign, reg0, ":food_store_limit"),
-		]),
+		])
 
 		# script_village_set_state
 		# no longer resemble script in native version
@@ -170,7 +175,8 @@ from header import *
 		# WARNING: heavily modified by 1257AD
 		# Input: arg1 = center_no arg2:new_state
 		# Output: reg0: food consumption (1 food item counts as 100 units)
-		("village_set_state",
+village_set_state = (
+	"village_set_state",
 			[
 				(store_script_param_1, ":village_no"),
 				(store_script_param_2, ":new_state"),
@@ -233,4 +239,4 @@ from header import *
 						(try_end),
 				(try_end),
 				(party_set_slot, ":village_no", slot_village_state, ":new_state"),
-		]),
+		])

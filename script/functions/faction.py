@@ -286,7 +286,8 @@ cf_get_random_lord_from_another_faction_in_a_center = (
 		# WARNING: modified by 1257AD devs
 		# Input: arg1 = faction_no, arg2 = party_type (variables beginning with spt_)
 		# Output: reg0 = party_no
-		("create_kingdom_party_if_below_limit",
+create_kingdom_party_if_below_limit	= (
+	"create_kingdom_party_if_below_limit",
 			[
 				(store_script_param_1, ":faction_no"),
 				(store_script_param_2, ":party_type"),
@@ -361,14 +362,15 @@ cf_get_random_lord_from_another_faction_in_a_center = (
 					(lt, ":party_count", ":party_count_limit"),
 						(call_script,"script_cf_create_kingdom_party", ":faction_no", ":party_type"),
 				(try_end),
-		]),
+		])
 		
-		
+
 		# script_cf_create_kingdom_party
 		# WARNING: modified by 1257AD devs
 		# Input: arg1 = faction_no, arg2 = party_type (variables beginning with spt_)
 		# Output: reg0 = party_no
-		("cf_create_kingdom_party",
+cf_create_kingdom_party	= (
+	"cf_create_kingdom_party",
 			[
 				(store_script_param_1, ":faction_no"),
 				(store_script_param_2, ":party_type"),
@@ -528,5 +530,5 @@ cf_get_random_lord_from_another_faction_in_a_center = (
 				(try_end),
 				(ge, ":result", 0),
 					(assign, reg0, ":result"),
-		]),
+		])
 		

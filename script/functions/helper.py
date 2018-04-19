@@ -2,8 +2,9 @@ from header import *
 
 # script_get_percentage_with_randomized_round
 		# Input: arg1 = value, arg2 = percentage
-		# Output: none
-		("get_percentage_with_randomized_round",
+		# Output: reg0 result percentage with randomised round
+get_percentage_with_randomized_round =	(
+	"get_percentage_with_randomized_round",
 			[
 				(store_script_param, ":value", 1),
 				(store_script_param, ":percentage", 2),
@@ -21,4 +22,4 @@ from header import *
 					(val_add, ":result", 1),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])

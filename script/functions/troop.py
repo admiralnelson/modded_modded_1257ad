@@ -472,7 +472,8 @@ cf_troop_get_random_enemy_troop_with_occupation = (
 # script_get_number_of_hero_centers
 		# Input: arg1 = troop_no
 		# Output: reg0 = number of centers that are ruled by the hero
-		("get_number_of_hero_centers",
+get_number_of_hero_centers	= (
+	"get_number_of_hero_centers",
 			[
 				(store_script_param_1, ":troop_no"),
 				(assign, ":result", 0),
@@ -481,11 +482,14 @@ cf_troop_get_random_enemy_troop_with_occupation = (
 					(val_add, ":result", 1),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		# script_give_center_to_lord
+		# WARNING: heavily modified by 1257AD devs
+		# includes diplomacy!
 		# Input: arg1 = center_no, arg2 = lord_troop, arg3 = add_garrison_to_center
-		("give_center_to_lord",
+give_center_to_lord	= (
+	"give_center_to_lord",
 			[
 				(store_script_param, ":center_no", 1),
 				(store_script_param, ":lord_troop_id", 2), #-1 only in the case of a player deferring ownership of a center
@@ -737,192 +741,13 @@ cf_troop_get_random_enemy_troop_with_occupation = (
 						(call_script, "script_give_center_to_lord", ":cur_village", ":lord_troop_id", 0),
 					(try_end),
 				(try_end),
-		]),
-
-
-		# script_calculate_hero_weekly_net_income_and_add_to_wealth
-		# no longer behaves like native
-		# WARNING: modified by 1257devs
-		# Input: arg1 = troop_no
-		# Output: none
-		("calculate_hero_weekly_net_income_and_add_to_wealth",
-			[
-					(store_script_param_1, ":troop_no"),
-					#tom
-					(assign, ":weekly_income", 0),
-					(assign, ":has_fief", -1),
-					(try_for_parties, ":center_no", centers_begin, centers_end),
-						(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
-						(val_add, ":weekly_income", 500), #for each fief
-						(assign, ":has_fief", 1),
-						(party_get_slot, ":accumulated_rents", ":center_no", slot_center_accumulated_rents),
-						(party_get_slot, ":accumulated_tariffs", ":center_no", slot_center_accumulated_tariffs),
-						(val_add, ":weekly_income", ":accumulated_rents"),
-						(val_add, ":weekly_income", ":accumulated_tariffs"),
-						(party_set_slot, ":center_no", slot_center_accumulated_rents, 0),
-						(party_set_slot, ":center_no", slot_center_accumulated_tariffs, 0),
-					(try_end),
-					#tom
-				
-					(try_begin), #no fief - give sum money for mercs
-						(eq, ":has_fief", -1),
-						(val_add, ":weekly_income", 2000), #one merc unit  +upkeep?
-					(try_end),
-				
-					(store_troop_faction,":faction_no", ":troop_no"),
-						# (assign, ":faction_has_settlements", 0),
-						# (try_for_parties, ":center_no", centers_begin, centers_end),
-							# (store_faction_of_party, ":center_faction", ":center_no"),
-							# (eq, ":center_faction", ":faction_no"),
-							# (val_add, ":faction_has_settlements", 1),
-						# (try_end),
-						
-					(troop_get_slot, ":party_no", ":troop_no", slot_troop_leaded_party),
-					(troop_get_slot, ":cur_wealth", ":troop_no", slot_troop_wealth),
-						
-						
-					(try_begin), #check if troop is kingdom leader
-						# (gt, ":faction_has_settlements", 0),
-						(faction_slot_eq, ":faction_no", slot_faction_leader, ":troop_no"),
-						(val_add, ":weekly_income", 2500),
-					(try_end),
-						
-				
-					(assign, ":cur_weekly_wage", 0),
-					(try_begin),
-						(gt, ":party_no",0),
-						(call_script, "script_calculate_weekly_party_wage", ":party_no"),
-						(assign, ":cur_weekly_wage", reg0),
-					(try_end),
-					(assign, ":backup", ":weekly_income"),
-					(val_sub, ":weekly_income", ":cur_weekly_wage"),
-					(val_add, ":cur_wealth", ":weekly_income"),
-					(try_begin),
-						(lt, ":cur_wealth", 0),
-						(store_sub, ":percent_under", 0, ":cur_wealth"),
-						(val_mul, ":percent_under", 100),
-						(val_div, ":percent_under", ":cur_weekly_wage"),
-						(val_div, ":percent_under", 5), #Max 20 percent
-						# rafi
-						(try_begin),
-							(eq, "$cheat_mode", 1),
-							(str_store_party_name, s25, ":party_no"),
-							(assign, reg25, ":percent_under"),
-							(assign, reg1, ":cur_weekly_wage"),
-							(assign, reg2, ":cur_wealth"),
-							(assign, reg3, ":backup"),
-							(display_message, "@!!!attrition {s25} - {reg25}, wage: {reg1}, wealth: {reg2}, weekly income: {reg3}"),
-						(try_end),
-					(try_end),
-						
-					#(val_max, ":cur_wealth", 0),
-					(val_clamp, ":cur_wealth", 0, 80000),
-					(troop_set_slot, ":troop_no", slot_troop_wealth, ":cur_wealth"),
-		]),
-
-				# script_hire_men_to_kingdom_hero_party
-		# WARNING: modified by 1257AD devs
-		# Input: arg1 = troop_no (hero of the party)
-		# Output: none
-		("hire_men_to_kingdom_hero_party",
-			[
-				(store_script_param_1, ":troop_no"),
-				
-				(troop_get_slot, ":party_no", ":troop_no", slot_troop_leaded_party),
-				(troop_get_slot, ":cur_wealth", ":troop_no", slot_troop_wealth),
-				
-				#while hiring reinforcements party leaders can only use 3/4 of their budget. This value is holding in ":hiring budget".
-				(assign, ":hiring_budget", ":cur_wealth"),
-				(val_mul, ":hiring_budget", 3),
-				(val_div, ":hiring_budget", 4),
-				
-				(call_script, "script_party_get_ideal_size", ":party_no"),
-				(assign, ":ideal_size", reg0),
-				(store_mul, ":ideal_top_size", ":ideal_size", 3),
-				(val_div, ":ideal_top_size", 2),
-				
-				#(try_begin),
-				#	(ge, "$cheat_mode", 1),
-				# (str_store_troop_name, s7, ":troop_no"),
-				# (assign, reg9, ":cur_wealth"),
-				# (display_message, "@{!}DEBUGS : {s7} total budget is {reg9}"),
-				# (assign, reg6, ":ideal_size"),
-				# (assign, reg7, ":ideal_top_size"),
-				# (assign, reg8, ":hiring_budget"),
-				# (display_message, "str_debug__hiring_men_to_s7_ideal_size__reg6_ideal_top_size__reg7_hiring_budget__reg8"),
-				#(try_end),
-				
-				(party_get_num_companions, ":party_size", ":party_no"),
-				#(store_faction_of_party, ":party_faction", ":party_no"),
-				(assign, ":reinforcement_cost", 0), #free-lances
-				#tom
-				#(try_for_range, ":unused", 0 , ":num_rounds"),
-					(try_begin),
-						(lt, ":party_size", ":ideal_size"),
-				#(gt, ":hiring_budget", ":reinforcement_cost"),
-						(gt, ":party_no", 0),
-			#tom - lance recruitment system
-							(try_begin),
-								(call_script, "script_cf_recruit_lance_for_npc", ":party_no"), #this recruits twice the amount
-							(else_try), #fill a merc lance - same shit but with cost
-								(gt, ":hiring_budget", merc_cost), #merc costs money
-									(assign, ":reinforcement_cost", merc_cost),
-									(call_script, "script_cf_recruit_merc_lance_for_npc", ":party_no"),
-									(val_sub, ":cur_wealth", ":reinforcement_cost"),
-									(troop_set_slot, ":troop_no", slot_troop_wealth, ":cur_wealth"),
-							(else_try), ##for whatever reason you can' recruit any of it - recruit some mercs from the town the lord is in, if any
-								(call_script, "script_cf_recruit_individual_merc", ":party_no"),
-							(try_end),
-			#tom
-					(else_try),
-						(gt, ":party_size", ":ideal_top_size"),
-							(store_troop_faction, ":troop_faction", ":troop_no"),
-							(party_get_num_companion_stacks, ":num_stacks", ":party_no"),
-							(assign, ":total_regulars", 0),
-							(assign, ":total_regular_levels", 0),
-							(try_for_range_backwards, ":i_stack", 0, ":num_stacks"),
-								(party_stack_get_troop_id, ":stack_troop", ":party_no", ":i_stack"),
-								(neg|troop_is_hero, ":stack_troop"),
-									(party_stack_get_size, ":stack_size", ":party_no", ":i_stack"),
-									(store_character_level, ":stack_level", ":stack_troop"),
-									(store_troop_faction, ":stack_faction", ":stack_troop"),
-								(try_begin),
-									(eq, ":troop_faction", ":stack_faction"),
-										(val_mul, ":stack_level", 3), #reducing the chance of the faction troops' removal
-								(try_end),
-								(val_mul, ":stack_level", ":stack_size"),
-								(val_add, ":total_regulars", ":stack_size"),
-								(val_add, ":total_regular_levels", ":stack_level"),
-							(try_end),
-							(gt, ":total_regulars", 0),
-								(store_div, ":average_level", ":total_regular_levels", ":total_regulars"),
-								(try_for_range_backwards, ":i_stack", 0, ":num_stacks"),
-									(party_stack_get_troop_id, ":stack_troop", ":party_no", ":i_stack"),
-									(neg|troop_is_hero, ":stack_troop"),
-									(party_stack_get_size, ":stack_size", ":party_no", ":i_stack"),
-									(store_character_level, ":stack_level", ":stack_troop"),
-									(store_troop_faction, ":stack_faction", ":stack_troop"),
-									(try_begin),
-										(eq, ":troop_faction", ":stack_faction"),
-											(val_mul, ":stack_level", 3),
-									(try_end),
-									(store_sub, ":level_dif", ":average_level", ":stack_level"),
-									(val_div, ":level_dif", 3),
-									(store_add, ":prune_chance", 10, ":level_dif"),
-									(gt, ":prune_chance", 0),
-										(call_script, "script_get_percentage_with_randomized_round", ":stack_size", ":prune_chance"),
-									(gt, reg0, 0),
-									(party_remove_members, ":party_no", ":stack_troop", reg0),
-								(try_end),
-					(try_end),
-			 #(try_end),
-		]),
-
+		])
 
 		# script_get_troop_attached_party
 		# Input: arg1 = troop_no
 		# Output: reg0 = party_no (-1 if troop's party is not attached to a party)
-		("get_troop_attached_party",
+get_troop_attached_party	= (
+	"get_troop_attached_party",
 			[
 				(store_script_param_1, ":troop_no"),
 				
@@ -933,5 +758,5 @@ cf_troop_get_random_enemy_troop_with_occupation = (
 					(party_get_attached_to, ":attached_party_no", ":party_no"),
 				(try_end),
 				(assign, reg0, ":attached_party_no"),
-		]),
+		])
 		

@@ -5,7 +5,8 @@ from header import *
 		# INPUT: arg1 = party_no
 		# OUTPUT: none. Can fail!
 
-		("cf_party_under_player_suggestion",
+cf_party_under_player_suggestion =	(
+	"cf_party_under_player_suggestion",
 			[
 				(store_script_param, ":party_no", 1),
 				
@@ -22,4 +23,4 @@ from header import *
 				
 				(val_sub, ":hours_since_orders_given", ":orders_time"),
 				(lt, ":hours_since_orders_given", 12),
-		]),
+		])

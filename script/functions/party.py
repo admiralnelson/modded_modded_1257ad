@@ -925,7 +925,8 @@ calculate_battle_advantage = (
 		# script_cf_get_random_enemy_center
 		# Input: arg1 = party_no
 		# Output: reg0 = center_no
-		("cf_get_random_enemy_center",
+cf_get_random_enemy_center	=(
+	"cf_get_random_enemy_center",
 			[
 				(store_script_param_1, ":party_no"),
 				
@@ -953,14 +954,15 @@ calculate_battle_advantage = (
 					(assign, ":result", ":center_no"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 
 
 		# script_get_relation_between_parties
 		# Input: arg1 = party_no_1, arg2 = party_no_2
 		# Output: reg0 = relation between parties
-		("get_relation_between_parties",
+get_relation_between_parties	=(
+	"get_relation_between_parties",
 			[
 				(store_script_param_1, ":party_no_1"),
 				(store_script_param_2, ":party_no_2"),
@@ -974,14 +976,15 @@ calculate_battle_advantage = (
 					(store_relation, ":relation", ":party_no_1_faction", ":party_no_2_faction"),
 					(assign, reg0, ":relation"),
 				(try_end),
-		]),
+		])
 
 		# script_calculate_weekly_party_wage
 		# no longer behaves like native
 		# WARNING: modified by 1257devs
 		# Input: arg1 = party_no
 		# Output: reg0 = weekly wage
-		("calculate_weekly_party_wage",
+calculate_weekly_party_wage	=(
+	"calculate_weekly_party_wage",
 			[
 				(store_script_param_1, ":party_no"),
 				
@@ -998,14 +1001,15 @@ calculate_battle_advantage = (
 					(val_add, ":result", ":cur_wage"),
 				(try_end),
 				(assign, reg0, ":result"),
-		]),
+		])
 		
 		# script_calculate_player_faction_wage
 		# no longer behaves like native
 		# WARNING: modified by 1257devs
 		# Input: arg1 = party_no
 		# Output: reg0 = weekly wage
-		("calculate_player_faction_wage",
+calculate_player_faction_wage = (
+	"calculate_player_faction_wage",
 			[(assign, ":nongarrison_wages", 0),
 				(assign, ":garrison_wages", 0),
 				(try_for_parties, ":party_no"),
@@ -1038,5 +1042,5 @@ calculate_battle_advantage = (
 				(val_mul, ":nongarrison_wages", ":total_payment"),
 				(val_div, ":nongarrison_wages", 14),
 				(store_add, reg0, ":nongarrison_wages", ":garrison_wages"),
-		]),
+		])
 		

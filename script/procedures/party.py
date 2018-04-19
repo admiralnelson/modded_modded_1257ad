@@ -1249,7 +1249,8 @@ party_wound_all_members = (
 		# Output: none
 		# Adds reinforcement to party according to its type and faction
 		# Called from several places, simple_triggers for centers, script_hire_men_to_kingdom_hero_party for hero parties
-		("cf_reinforce_party",
+cf_reinforce_party = (
+	"cf_reinforce_party",
 		[
 			(store_script_param_1, ":party_no"),
 			(store_faction_of_party, ":party_faction", ":party_no"),
@@ -1311,13 +1312,14 @@ party_wound_all_members = (
 				(party_add_template, ":party_no", ":party_template_c"),
 			(try_end),
 				(call_script, "script_party_calculate_strength", ":party_no", 1, 0),
-		]),
+		])
 
-
+		
 		#script_kill_cattle_from_herd
 		# Input: arg1 = party_no, arg2 = amount
 		# Output: none (fills trp_temp_troop's inventory)
-		("kill_cattle_from_herd",
+kill_cattle_from_herd = (
+	"kill_cattle_from_herd",
 			[
 				(store_script_param_1, ":party_no"),
 				(store_script_param_2, ":amount"),
@@ -1340,7 +1342,7 @@ party_wound_all_members = (
 				(else_try),
 					(party_remove_members, ":party_no", "trp_cattle", ":amount"),
 				(try_end),
-		]),
+		])
 		
 		# script_party_set_ai_state
 		# sets party AI state
@@ -1348,7 +1350,8 @@ party_wound_all_members = (
 		# WARNING: modified by 1257AD devs
 		# Input: arg1 = party_no, arg2 = new_ai_state, arg3 = action_object (if necessary)
 		# Output: none (Can fail)
-		("party_set_ai_state",
+party_set_ai_state = (
+	"party_set_ai_state",
 			[
 		 
 				(store_script_param, ":party_no", 1),
@@ -1652,5 +1655,5 @@ party_wound_all_members = (
 						(party_set_helpfulness, ":party_no", 50),
 					(try_end),
 				(try_end),
-		]),
+		])
 		

@@ -167,7 +167,8 @@ game_event_party_encounter = (
 		# WARNING: modified by 1257AD devs
 		# Input: none
 		# Output: none
-		("process_village_raids",
+process_village_raids = (
+	"process_village_raids",
 			[
 				(try_for_range, ":village_no", villages_begin, villages_end),
 					(party_get_slot, ":village_raid_progress", ":village_no", slot_village_raid_progress),
@@ -318,7 +319,7 @@ game_event_party_encounter = (
 						(try_end),
 					(try_end),
 				(try_end),
-		]),
+		])
 		
 		## campaign
 		# script_process_sieges
@@ -326,7 +327,8 @@ game_event_party_encounter = (
 		# WARNING: heavily modified by 1257AD devs
 		# Input: none
 		# Output: none
-		("process_sieges",
+process_sieges = (
+	"process_sieges",
 			[
 				(try_for_range, ":center_no", walled_centers_begin, walled_centers_end),
 					#Reducing siege hardness every day by 20
@@ -445,12 +447,13 @@ game_event_party_encounter = (
 					(val_max, ":town_food_store", 0),
 					(party_set_slot, ":center_no", slot_party_food_store, ":town_food_store"),
 				(try_end),
-		]),
+		])
 
 # script_allow_vassals_to_join_indoor_battle
 		# Input: none
 		# Output: none
-		("allow_vassals_to_join_indoor_battle",
+allow_vassals_to_join_indoor_battle = (
+	"allow_vassals_to_join_indoor_battle",
 			[
 				#if our commander attacks an enemy army
 				(try_for_range, ":troop_no", active_npcs_begin, active_npcs_end),
@@ -541,7 +544,7 @@ game_event_party_encounter = (
 						#(party_set_slot, ":party_no", slot_party_ai_substate, 1), #is these needed?
 					(try_end),
 				(try_end),
-		]),
+		])
 
 # script_process_kingdom_parties_ai
 		# This is called more frequently than decide_kingdom_parties_ai
@@ -549,7 +552,8 @@ game_event_party_encounter = (
 		# Input: none
 		# Output: none
 		#called from triggers
-		("process_kingdom_parties_ai",
+process_kingdom_parties_ai = (
+	"process_kingdom_parties_ai",
 			[
 			#tom
 		# (assign, ":max_mod", 2), #tom was 3
@@ -570,7 +574,7 @@ game_event_party_encounter = (
 					(gt, ":party_no", 0),
 					(call_script, "script_process_hero_ai", ":troop_no"),
 				(try_end),
-		]),
+		])
 
 		# script_process_hero_ai
 		# This is called more frequently than script_decide_kingdom_party_ais
@@ -580,7 +584,8 @@ game_event_party_encounter = (
 		# Input: none
 		# Output: none
 		
-		("process_hero_ai",
+process_hero_ai = (
+	"process_hero_ai",
 			[
 				(store_script_param_1, ":troop_no"),
 				(troop_get_slot, ":party_no", ":troop_no", slot_troop_leaded_party),
@@ -734,14 +739,15 @@ game_event_party_encounter = (
 						(eq, ":ai_state", spai_holding_center),
 					(try_end),
 				(try_end),
-		]),
+		])
 
 
 		# script_begin_assault_on_center
 		# called from triggers
 		# Input: arg1: faction_no
 		# Output: none
-		("begin_assault_on_center",
+begin_assault_on_center = (
+	"begin_assault_on_center",
 			[
 				(store_script_param, ":center_no", 1),
 				
@@ -776,4 +782,27 @@ game_event_party_encounter = (
 					(party_set_flags, ":party_no", pf_default_behavior, 1),
 					(party_set_slot, ":party_no", slot_party_ai_substate, 1),
 				(try_end),
-		]),
+		])
+
+
+    # script_lift_siege
+    # Input: arg1 = center_no, arg2 = display_message
+    # Output: none
+    #called from triggers
+lift_siege = (
+	"lift_siege",
+	[
+		(store_script_param, ":center_no", 1),
+		(store_script_param, ":display_message", 2),
+		(party_set_slot, ":center_no", slot_center_is_besieged_by, -1), #clear siege
+		(call_script, "script_village_set_state",  ":center_no", 0), #clear siege flag
+		(try_begin),
+			(eq, ":center_no", "$g_player_besiege_town"),
+			(assign, "$g_siege_method", 0), #remove siege progress
+		(try_end),
+		(try_begin),
+         	(eq, ":display_message", 1),
+         	(str_store_party_name_link, s3, ":center_no"),
+         	(display_message, "@{s3} is no longer under siege."),
+        (try_end),
+    ])

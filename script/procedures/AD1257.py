@@ -6,7 +6,8 @@ from header import *
 	# todo "#maybe do audio sound?"
 	# INPUT: center
 	# OUTPUT: none
-	("process_alarms_new",
+process_alarms_new = (
+	"process_alarms_new",
 			[
 			(store_script_param, ":center_no", 1),
 			(try_begin),
@@ -214,15 +215,16 @@ from header import *
 					#maybe do audio sound?
 					
 				(try_end),
-		]
-	),
+		])
 	
 	# script_process_alarms
 		# WARNING: this is totally new procedure (not present in native). 1257AD devs
+		# probably this one is deprecated(?)
 		# this script is called in from a simple triger
 		# Input: none
 		# Output: none
-		("process_alarms",
+process_alarms = (
+	"process_alarms",
 			[
 				# rafi
 				(assign, ":max_mod", 60), #tom was 3 
@@ -437,4 +439,4 @@ from header import *
 					#maybe do audio sound?
 					
 				(try_end),
-		]),
+		])
