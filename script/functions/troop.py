@@ -869,3 +869,402 @@ get_information_about_troops_position = (
 				(assign, reg0, ":found"),
 		])
 		
+		
+		# script_search_troop_prisoner_of_party
+		# Input: arg1 = troop_no
+		# Output: reg0 = party_no (-1 if troop is not a prisoner.)
+search_troop_prisoner_of_party=(
+	"search_troop_prisoner_of_party",
+			[
+				(store_script_param_1, ":troop_no"),
+				(assign, ":prisoner_of", -1),
+				(try_for_parties, ":party_no"),
+					(eq,  ":prisoner_of", -1),
+					(this_or_next|eq, ":party_no", "p_main_party"),
+					(ge, ":party_no", centers_begin),
+					(party_count_prisoners_of_type, ":troop_found", ":party_no", ":troop_no"),
+					(gt, ":troop_found", 0),
+					(assign, ":prisoner_of", ":party_no"),
+				(try_end),
+				(assign, reg0, ":prisoner_of"),
+		])
+		
+		
+		# script_troop_get_leaded_center_with_index
+		# Input: arg1 = troop_no, arg2 = center index within range between zero and the number of centers that troop owns
+		# Output: reg0 = center_no
+troop_get_leaded_center_with_index=(
+	"troop_get_leaded_center_with_index",
+			[
+				(store_script_param_1, ":troop_no"),
+				(store_script_param_2, ":random_center"),
+				(assign, ":result", -1),
+				(assign, ":center_count", 0),
+				(try_for_range, ":center_no", centers_begin, centers_end),
+					(eq, ":result", -1),
+					(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+					(val_add, ":center_count", 1),
+					(gt, ":center_count", ":random_center"),
+					(assign, ":result", ":center_no"),
+				(try_end),
+				(assign, reg0, ":result"),
+		])
+
+		# script_cf_troop_get_random_leaded_walled_center_with_less_strength_priority
+		# Input: arg1 = troop_no, arg2 = preferred_center_no
+		# Output: reg0 = center_no (Can fail)
+cf_troop_get_random_leaded_walled_center_with_less_strength_priority=(
+	"cf_troop_get_random_leaded_walled_center_with_less_strength_priority",
+			[
+				(store_script_param, ":troop_no", 1),
+				(store_script_param, ":preferred_center_no", 2),
+				
+				(assign, ":num_centers", 0),
+				(try_for_range, ":center_no", walled_centers_begin, walled_centers_end),
+					(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+					(party_slot_eq, ":center_no", slot_center_is_besieged_by, -1),
+					(val_add, ":num_centers", 1),
+					(try_begin),
+						(eq, ":center_no", ":preferred_center_no"),
+						(val_add, ":num_centers", 99),
+					(try_end),
+					##        (call_script, "script_party_calculate_regular_strength", ":center_no"),
+					##        (assign, ":strength", reg0),
+					##        (lt, ":strength", 80),
+					##        (store_sub, ":strength", 100, ":strength"),
+					##        (val_div, ":strength", 20),
+					##        (val_add, ":num_centers", ":strength"),
+				(try_end),
+				(gt, ":num_centers", 0),
+				(store_random_in_range, ":random_center", 0, ":num_centers"),
+				(assign, ":result", -1),
+				(try_for_range, ":center_no", walled_centers_begin, walled_centers_end),
+					(eq, ":result", -1),
+					(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+					(party_slot_eq, ":center_no", slot_center_is_besieged_by, -1),
+					(val_sub, ":random_center", 1),
+					(try_begin),
+						(eq, ":center_no", ":preferred_center_no"),
+						(val_sub, ":random_center", 99),
+					(try_end),
+					##        (try_begin),
+					##          (call_script, "script_party_calculate_regular_strength", ":center_no"),
+					##          (assign, ":strength", reg0),
+					##          (lt, ":strength", 80),
+					##          (store_sub, ":strength", 100, ":strength"),
+					##          (val_div, ":strength", 20),
+					##          (val_sub, ":random_center", ":strength"),
+					##        (try_end),
+					(lt, ":random_center", 0),
+					(assign, ":result", ":center_no"),
+				(try_end),
+				(assign, reg0, ":result"),
+		])
+		
+		# script_cf_troop_get_random_leaded_town_or_village_except_center
+		# Input: arg1 = troop_no, arg2 = except_center_no
+		# Output: reg0 = center_no (Can fail)
+cf_troop_get_random_leaded_town_or_village_except_center=(
+	"cf_troop_get_random_leaded_town_or_village_except_center",
+			[
+				(store_script_param_1, ":troop_no"),
+				(store_script_param_2, ":except_center_no"),
+				
+				(assign, ":num_centers", 0),
+				(try_for_range, ":center_no", centers_begin, centers_end),
+					(neg|party_slot_eq, ":center_no", slot_party_type, spt_castle),
+					(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+					(neq, ":center_no", ":except_center_no"),
+					(val_add, ":num_centers", 1),
+				(try_end),
+				
+				(gt, ":num_centers", 0),
+				(store_random_in_range, ":random_center", 0, ":num_centers"),
+				(assign, ":end_cond", centers_end),
+				(try_for_range, ":center_no", centers_begin, ":end_cond"),
+					(neg|party_slot_eq, ":center_no", slot_party_type, spt_castle),
+					(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+					(neq, ":center_no", ":except_center_no"),
+					(val_sub, ":random_center", 1),
+					(lt, ":random_center", 0),
+					(assign, ":target_center", ":center_no"),
+					(assign, ":end_cond", 0),
+				(try_end),
+				(assign, reg0, ":target_center"),
+		])
+
+				# script_write_family_relation_as_s3s_s2_to_s4
+		# Inputs: arg1 = troop_no, arg2 = family_no (valid slot no after slot_troop_family_begin)
+		# Outputs: s11 = what troop_1 is to troop_2, reg0 = strength of relationship. Normally, "$g_talk_troop" should be troop_2
+troop_get_family_relation_to_troop=(
+	"troop_get_family_relation_to_troop",
+			[
+				(store_script_param_1, ":troop_1"),
+				(store_script_param_2, ":troop_2"),
+				
+				(troop_get_type, ":gender_1", ":troop_1"),
+				(assign, ":relation_strength", 0),
+				
+				(troop_get_slot, ":spouse_of_1", ":troop_1", slot_troop_spouse),
+				(troop_get_slot, ":spouse_of_2", ":troop_2", slot_troop_spouse),
+				
+				(try_begin),
+					(gt, ":spouse_of_1", -1),
+					(troop_get_slot, ":father_of_spouse_of_1", ":spouse_of_1", slot_troop_father),
+				(else_try),
+					(assign, ":father_of_spouse_of_1", -1),
+				(try_end),
+				
+				(try_begin),
+					(gt, ":spouse_of_2", -1),
+					(troop_get_slot, ":father_of_spouse_of_2", ":spouse_of_2", slot_troop_father),
+				(else_try),
+					(assign, ":father_of_spouse_of_2", -1),
+				(try_end),
+				
+				(try_begin),
+					(gt, ":spouse_of_2", -1),
+					(troop_get_slot, ":mother_of_spouse_of_2", ":spouse_of_2", slot_troop_mother),
+				(else_try),
+					(assign, ":mother_of_spouse_of_2", -1),
+				(try_end),
+				
+				(troop_get_slot, ":father_of_1", ":troop_1", slot_troop_father),
+				(troop_get_slot, ":father_of_2", ":troop_2", slot_troop_father),
+				
+				#For the sake of simplicity, we can assume that all male aristocrats in prior generations either married commoners or procured their brides from the Old Country, thus discounting intermarriage
+				(troop_get_slot, ":mother_of_1", ":troop_1", slot_troop_mother),
+				(troop_get_slot, ":mother_of_2", ":troop_2", slot_troop_mother),
+				
+				(try_begin),
+					(is_between, ":father_of_1", companions_begin, kingdom_ladies_end),
+					(troop_get_slot, ":paternal_grandfather_of_1", ":father_of_1", slot_troop_father),
+				(else_try),
+					(assign, ":paternal_grandfather_of_1", -1),
+				(try_end),
+				
+				(try_begin),
+					(is_between, ":father_of_2", companions_begin, kingdom_ladies_end),
+					(troop_get_slot, ":paternal_grandfather_of_2", ":father_of_2", slot_troop_father),
+				(else_try),
+					(assign, ":paternal_grandfather_of_2", -1),
+				(try_end),
+				
+				(troop_get_slot, ":guardian_of_1", ":troop_1", slot_troop_guardian),
+				(troop_get_slot, ":guardian_of_2", ":troop_2", slot_troop_guardian),
+				
+				(str_store_string, s11, "str_no_relation"),
+				
+				(try_begin),
+					(eq, ":troop_1", ":troop_2"),
+					#self
+				(else_try),
+					(eq, ":spouse_of_1", ":troop_2"),
+					(assign, ":relation_strength", 20),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_wife"),
+					(else_try),
+						(str_store_string, s11, "str_husband"),
+					(try_end),
+				(else_try),
+					(eq, ":father_of_2", ":troop_1"),
+					(assign, ":relation_strength", 15),
+					(str_store_string, s11, "str_father"),
+				(else_try),
+					(eq, ":mother_of_2", ":troop_1"),
+					(assign, ":relation_strength", 15),
+					(str_store_string, s11, "str_mother"),
+				(else_try),
+					(this_or_next|eq, ":father_of_1", ":troop_2"),
+					(eq, ":mother_of_1", ":troop_2"),
+					(assign, ":relation_strength", 15),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_daughter"),
+					(else_try),
+						(str_store_string, s11, "str_son"),
+					(try_end),
+				(else_try),
+					(gt, ":father_of_1", -1), #necessary, as some lords do not have the father registered
+					(eq, ":father_of_1", ":father_of_2"),
+					(assign, ":relation_strength", 10),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sister"),
+					(else_try),
+						(str_store_string, s11, "str_brother"),
+					(try_end),
+				(else_try),
+					(eq, ":guardian_of_2", ":troop_1"),
+					(assign, ":relation_strength", 10),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sister"),
+					(else_try),
+						(str_store_string, s11, "str_brother"),
+					(try_end),
+				(else_try),
+					(eq, ":guardian_of_1", ":troop_2"),
+					(assign, ":relation_strength", 10),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sister"),
+					(else_try),
+						(str_store_string, s11, "str_brother"),
+					(try_end),
+				(else_try),
+					(gt, ":paternal_grandfather_of_1", -1),
+					(eq, ":paternal_grandfather_of_1", ":father_of_2"),
+					(assign, ":relation_strength", 4),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_niece"),
+					(else_try),
+						(str_store_string, s11, "str_nephew"),
+					(try_end),
+				(else_try), #specifically aunt and uncle by blood -- i assume that in a medieval society with lots of internal family conflicts, they would not include aunts and uncles by marriage
+					(gt, ":paternal_grandfather_of_2", -1),
+					(eq, ":paternal_grandfather_of_2", ":father_of_1"),
+					(assign, ":relation_strength", 4),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_aunt"),
+					(else_try),
+						(str_store_string, s11, "str_uncle"),
+					(try_end),
+				(else_try),
+					(gt, ":paternal_grandfather_of_1", 0),
+					(eq, ":paternal_grandfather_of_2", ":paternal_grandfather_of_1"),
+					(assign, ":relation_strength", 2),
+					(str_store_string, s11, "str_cousin"),
+				(else_try),
+					(eq, ":father_of_spouse_of_1", ":troop_2"),
+					(assign, ":relation_strength", 5),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_daughterinlaw"),
+					(else_try),
+						(str_store_string, s11, "str_soninlaw"),
+					(try_end),
+				(else_try),
+					(eq, ":father_of_spouse_of_2", ":troop_1"),
+					(assign, ":relation_strength", 5),
+					(str_store_string, s11, "str_fatherinlaw"),
+				(else_try),
+					(eq, ":mother_of_spouse_of_2", ":troop_1"),
+					(neq, ":mother_of_spouse_of_2", "trp_player"), #May be necessary if mother for troops not set to -1
+					(assign, ":relation_strength", 5),
+					(str_store_string, s11, "str_motherinlaw"),
+					
+				(else_try),
+					(gt, ":father_of_spouse_of_1", -1), #necessary
+					(eq, ":father_of_spouse_of_1", ":father_of_2"),
+					(assign, ":relation_strength", 5),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sisterinlaw"),
+					(else_try),
+						(str_store_string, s11, "str_brotherinlaw"),
+					(try_end),
+				(else_try),
+					(gt, ":father_of_spouse_of_2", -1), #necessary
+					(eq, ":father_of_spouse_of_2", ":father_of_1"),
+					(assign, ":relation_strength", 5),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sisterinlaw"),
+					(else_try),
+						(str_store_string, s11, "str_brotherinlaw"),
+					(try_end),
+				(else_try),
+					(gt, ":spouse_of_2", -1), #necessary to avoid bug
+					(troop_slot_eq, ":spouse_of_2", slot_troop_guardian, ":troop_1"),
+					(assign, ":relation_strength", 5),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sisterinlaw"),
+					(else_try),
+						(str_store_string, s11, "str_brotherinlaw"),
+					(try_end),
+				(else_try),
+					(gt, ":spouse_of_1", -1), #necessary to avoid bug
+					(troop_slot_eq, ":spouse_of_1", slot_troop_guardian, ":troop_2"),
+					(assign, ":relation_strength", 5),
+					(try_begin),
+						(eq, ":gender_1", 1),
+						(str_store_string, s11, "str_sisterinlaw"),
+					(else_try),
+						(str_store_string, s11, "str_brotherinlaw"),
+					(try_end),
+				(try_end),
+				
+				(assign, reg4, ":gender_1"),
+				(assign, reg0, ":relation_strength"),
+		])
+		
+		
+		# script_get_first_agent_with_troop_id
+		# called during battle
+		# Input: arg1 = troop_no
+		# Output: agent_id
+cf_get_first_agent_with_troop_id=(
+	"cf_get_first_agent_with_troop_id",
+			[
+				(store_script_param_1, ":troop_no"),
+				#      (store_script_param_2, ":agent_no_to_begin_searching_after"),
+				(assign, ":result", -1),
+				(try_for_agents, ":cur_agent"),
+					(eq, ":result", -1),
+					##        (try_begin),
+					##          (eq, ":cur_agent", ":agent_no_to_begin_searching_after"),
+					##          (assign, ":agent_no_to_begin_searching_after", -1),
+					##        (try_end),
+					##        (eq, ":agent_no_to_begin_searching_after", -1),
+					(agent_get_troop_id, ":cur_troop_no", ":cur_agent"),
+					(eq, ":cur_troop_no", ":troop_no"),
+					(assign, ":result", ":cur_agent"),
+				(try_end),
+				(assign, reg0, ":result"),
+				(neq, reg0, -1),
+		])
+		
+		# script_troop_write_owned_centers_to_s2
+		# Input: arg1 = troop_no
+		# Output: s2
+troop_write_owned_centers_to_s2=(
+	"troop_write_owned_centers_to_s2",
+			[
+				(store_script_param_1, ":troop_no"),
+				
+				(call_script, "script_get_number_of_hero_centers", ":troop_no"),
+				(assign, ":no_centers", reg0),
+				
+				(str_store_troop_name, s5, ":troop_no"),
+				
+				(try_begin),
+					(gt, ":no_centers", 1),
+					(try_for_range, ":i_center", 1, ":no_centers"),
+						(call_script, "script_troop_get_leaded_center_with_index", ":troop_no", ":i_center"),
+						(str_store_party_name_link, s50, reg0),
+						(try_begin),
+							(eq, ":i_center", 1),
+							(call_script, "script_troop_get_leaded_center_with_index", ":troop_no", 0),
+							(str_store_party_name_link, s51, reg0),
+							(str_store_string, s51, "str_s50_and_s51"),
+						(else_try),
+							(str_store_string, s51, "str_s50_comma_s51"),
+						(try_end),
+					(try_end),
+					(str_store_string, s2, "str_s5_is_the_ruler_of_s51"),
+				(else_try),
+					(eq, ":no_centers", 1),
+					(call_script, "script_troop_get_leaded_center_with_index", ":troop_no", 0),
+					(str_store_party_name_link, s51, reg0),
+					(str_store_string, s2, "str_s5_is_the_ruler_of_s51"),
+				(else_try),
+					(store_troop_faction, ":faction_no", ":troop_no"),
+					(str_store_faction_name_link, s6, ":faction_no"),
+					(str_store_string, s2, "str_s5_is_a_nobleman_of_s6"),
+				(try_end),
+		])

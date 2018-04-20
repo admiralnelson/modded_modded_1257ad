@@ -831,4 +831,82 @@ change_troop_renown = (
 				(call_script, "script_update_troop_notes", ":troop_no"),
 		])
 
+		# script_change_debt_to_troop
+		# Input: arg1 = troop_no, arg2 = new debt amount
+		# Output: none
+change_debt_to_troop=(
+	"change_debt_to_troop",
+			[
+				(store_script_param_1, ":troop_no"),
+				(store_script_param_2, ":new_debt"),
+				
+				(troop_get_slot, ":cur_debt", ":troop_no", slot_troop_player_debt),
+				(assign, reg1, ":cur_debt"),
+				(val_add, ":cur_debt", ":new_debt"),
+				(assign, reg2, ":cur_debt"),
+				(troop_set_slot, ":troop_no", slot_troop_player_debt, ":cur_debt"),
+				(str_store_troop_name_link, s1, ":troop_no"),
+				(display_message, "@You now owe {reg2} denars to {s1}."),
+		])
+
+		# script_complete_family_relations
+		# Inputs: none
+		# Outputs: none
+		#complete family relations removed
+		# script_collect_friendly_parties
+		# Fills the party p_collective_friends with the members of parties attached to main_party and ally_party_no
+collect_friendly_parties=(
+	"collect_friendly_parties",
+			[
+				(party_collect_attachments_to_party, "p_main_party", "p_collective_friends"),
+				(try_begin),
+					(gt, "$g_ally_party", 0),
+					(party_collect_attachments_to_party, "$g_ally_party", "p_temp_party"),
+					(assign, "$g_move_heroes", 1),
+					(call_script, "script_party_add_party", "p_collective_friends", "p_temp_party"),
+				(try_end),
+		])
+		
+troop_write_family_relations_to_s1=(
+	"troop_write_family_relations_to_s1",
+			[
+				(str_clear, s1),
+				#redo, possibly using base from update_troop_notes
+				
+		])
+
+# script_calculate_renown_value
+		# WARNING: slightly modified by 1257AD devs
+		# Input: arg1 = troop_no
+		# Output: fills $battle_renown_value
+calculate_renown_value=(
+	"calculate_renown_value",
+			[
+				(call_script, "script_party_calculate_strength", "p_main_party", 0),
+				(assign, ":main_party_strength", reg0),
+				(call_script, "script_party_calculate_strength", "p_collective_enemy", 0),
+				(assign, ":enemy_strength", reg0),
+				(call_script, "script_party_calculate_strength", "p_collective_friends", 0),
+				(assign, ":friends_strength", reg0),
+				
+				(val_add, ":friends_strength", 1),
+				(store_mul, ":enemy_strength_ratio", ":enemy_strength", 100),
+				(val_div, ":enemy_strength_ratio", ":friends_strength"),
+				
+				(assign, ":renown_val", ":enemy_strength"),
+				(val_mul, ":renown_val", ":enemy_strength_ratio"),
+				(val_div, ":renown_val", 100),
+				
+				(val_mul, ":renown_val", ":main_party_strength"),
+				(val_div, ":renown_val",":friends_strength"),
+				
+				(store_div, "$battle_renown_value", ":renown_val", 5),
+				#(store_div, "$battle_renown_value", ":renown_val", 250), #oh yes, grind fiest - how about no, modded2x anon: lmao I agree
+				(val_min, "$battle_renown_value", 2500),
+				(convert_to_fixed_point, "$battle_renown_value"),
+				(store_sqrt, "$battle_renown_value", "$battle_renown_value"),
+				(convert_from_fixed_point, "$battle_renown_value"),
+				(assign, reg8, "$battle_renown_value"),
+				(display_message, "@Renown value for this battle is {reg8}.",0xFFFFFFFF),
+		])
 		

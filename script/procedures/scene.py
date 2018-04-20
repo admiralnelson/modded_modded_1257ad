@@ -701,3 +701,417 @@ setup_meet_lady=(
 				(change_screen_mission),
 		])
 		
+
+		# script_cf_turn_windmill_fans
+		# Input: arg1 = instance_no (none = 0)
+		# Output: none
+cf_turn_windmill_fans=(
+	"cf_turn_windmill_fans",
+			[(store_script_param_1, ":instance_no"),
+				(scene_prop_get_instance, ":windmill_fan_object", "spr_windmill_fan_turning", ":instance_no"),
+				(ge, ":windmill_fan_object", 0),
+				(prop_instance_get_position, pos1, ":windmill_fan_object"),
+				(position_rotate_y, pos1, 10),
+				(prop_instance_animate_to_position, ":windmill_fan_object", pos1, 100),
+				(val_add, ":instance_no", 1),
+				(call_script, "script_cf_turn_windmill_fans", ":instance_no"),
+		])
+
+		# script_remove_siege_objects
+		# WARNING: modified by 1257AD devs
+		# Input: none
+		# Output: none
+remove_siege_objects=(
+	"remove_siege_objects",
+			[
+				(replace_scene_props, "spr_eastroman_wall_destroyed", "spr_eastroman_wall"),
+				(replace_scene_props, "spr_battlement_a_destroyed", "spr_battlement_a"),
+				(replace_scene_props, "spr_snowy_castle_battlement_a_destroyed", "spr_snowy_castle_battlement_a"),
+				(replace_scene_props, "spr_castle_e_battlement_a_destroyed", "spr_castle_e_battlement_a"),
+				(replace_scene_props, "spr_castle_battlement_a_destroyed", "spr_castle_battlement_a"),
+				(replace_scene_props, "spr_castle_battlement_b_destroyed", "spr_castle_battlement_b"),
+				(replace_scene_props, "spr_earth_wall_a2", "spr_earth_wall_a"),
+				(replace_scene_props, "spr_earth_wall_b2", "spr_earth_wall_b"),
+				(replace_scene_props, "spr_belfry_platform_b", "spr_empty"),
+				(replace_scene_props, "spr_belfry_platform_a", "spr_empty"),
+				(replace_scene_props, "spr_belfry_a", "spr_empty"),
+				(replace_scene_props, "spr_belfry_wheel", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_move_6m", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_move_8m", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_move_10m", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_move_12m", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_move_14m", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_12m", "spr_empty"),
+				(replace_scene_props, "spr_siege_ladder_14m", "spr_empty"),
+				(replace_scene_props, "spr_mangonel", "spr_empty"),
+				(replace_scene_props, "spr_trebuchet_old", "spr_empty"),
+				(replace_scene_props, "spr_trebuchet_new", "spr_empty"),
+				(replace_scene_props, "spr_stone_ball", "spr_empty"),
+				(replace_scene_props, "spr_Village_fire_big", "spr_empty"),
+				###tom 1257ad
+				(replace_scene_props, "spr_1257_earth_gate", "spr_empty"),
+				(replace_scene_props, "spr_1257_portcullis", "spr_empty"),
+				(replace_scene_props, "spr_1257_tavern_door_a", "spr_empty"),
+				(replace_scene_props, "spr_1257_tavern_door_b", "spr_empty"),
+				(replace_scene_props, "spr_1257_castle_f_door_a", "spr_empty"),
+		])
+	
+
+		# script_center_ambiance_sounds
+		# Input: none
+		# Output: none
+		# to be called every two seconds
+center_ambiance_sounds=(
+	"center_ambiance_sounds",
+			[
+				(assign, ":sound_1", -1),
+				(assign, ":sound_2", -1),
+				(assign, ":sound_3", -1),
+				(assign, ":sound_4", -1),
+				(assign, ":sound_5", -1),
+				(try_begin),
+					(party_slot_eq, "$g_encountered_party", slot_party_type, spt_village),
+					(try_begin),
+						(neg|is_currently_night),
+						(assign, ":sound_3", "snd_distant_dog_bark"),
+						(assign, ":sound_3", "snd_distant_chicken"),
+					(else_try),
+						(assign, ":sound_1", "snd_distant_dog_bark"),
+						(assign, ":sound_2", "snd_distant_owl"),
+					(try_end),
+				(else_try),
+					(party_slot_eq, "$g_encountered_party", slot_party_type, spt_town),
+					(try_begin),
+						(neg|is_currently_night),
+						(assign, ":sound_1", "snd_distant_carpenter"),
+						(assign, ":sound_2", "snd_distant_blacksmith"),
+						(assign, ":sound_3", "snd_distant_dog_bark"),
+					(else_try),
+						(assign, ":sound_1", "snd_distant_dog_bark"),
+					(try_end),
+				(try_end),
+				(try_begin),
+					(store_random_in_range, ":r", 0, 7),
+					(try_begin),
+						(eq, ":r", 1),
+						(ge, ":sound_1", 0),
+						(play_sound, ":sound_1"),
+					(else_try),
+						(eq, ":r", 2),
+						(ge, ":sound_2", 0),
+						(play_sound, ":sound_2"),
+					(else_try),
+						(eq, ":r", 3),
+						(ge, ":sound_3", 0),
+						(play_sound, ":sound_3"),
+					(else_try),
+						(eq, ":r", 4),
+						(ge, ":sound_4", 0),
+						(play_sound, ":sound_4"),
+					(else_try),
+						(eq, ":r", 5),
+						(ge, ":sound_5", 0),
+						(play_sound, ":sound_5"),
+					(try_end),
+				(try_end),
+		])
+		
+		# script_center_set_walker_to_type
+		# Input: arg1 = center_no, arg2 = walker_no, arg3 = walker_type,
+		# Output: none
+center_set_walker_to_type=(
+	"center_set_walker_to_type",
+			[
+				(store_script_param, ":center_no", 1),
+				(store_script_param, ":walker_no", 2),
+				(store_script_param, ":walker_type", 3),
+				(store_add, ":type_slot", slot_center_walker_0_type, ":walker_no"),
+				(party_set_slot, ":center_no", ":type_slot", ":walker_type"),
+				(party_get_slot, ":center_faction", ":center_no", slot_center_original_faction),
+				(faction_get_slot, ":center_culture", ":center_faction", slot_faction_culture),
+				(store_random_in_range, ":walker_troop_slot", 0, 2),
+				(try_begin),
+					(party_slot_eq, ":center_no", slot_party_type, spt_village),
+					(val_add, ":walker_troop_slot", slot_faction_village_walker_male_troop),
+				(else_try),
+					(val_add, ":walker_troop_slot", slot_faction_town_walker_male_troop),
+				(try_end),
+				(try_begin),
+					(eq,":walker_type", walkert_spy),
+					(assign,":original_walker_slot",":walker_troop_slot"),
+					(val_add,":walker_troop_slot",4), # select spy troop id slot
+				(try_end),
+				(faction_get_slot, ":walker_troop_id", ":center_culture", ":walker_troop_slot"),
+				(try_begin),
+					(eq,":walker_type", walkert_spy),
+					(faction_get_slot, ":original_walker", ":center_culture", ":original_walker_slot"),
+					# restore spy inventory
+					(try_for_range,":item_no","itm_horse_meat","itm_wooden_stick"),
+						(store_item_kind_count,":num_items",":item_no",":original_walker"),
+						(ge,":num_items",1),
+						(store_item_kind_count,":num_items",":item_no",":walker_troop_id"),
+						(lt,":num_items",1),
+						(troop_add_items,":walker_troop_id",":item_no",1),
+					(try_end),
+					# determine spy recognition item
+					(store_random_in_range,":spy_item_type",itp_type_head_armor,itp_type_hand_armor),
+					(assign,":num",0),
+					(try_for_range,":item_no","itm_horse_meat","itm_wooden_stick"),
+						(store_item_kind_count,":num_items",":item_no",":walker_troop_id"),
+						(ge,":num_items",1),
+						(item_get_type, ":itp", ":item_no"),
+						(eq,":itp",":spy_item_type"),
+						(val_add,":num",1),
+						(troop_remove_items,":walker_troop_id",":item_no",":num_items"),
+					(try_end),
+					(store_random_in_range,":random_item",0,":num"),
+					(assign,":num",-1),
+					(try_for_range,":item_no","itm_horse_meat","itm_wooden_stick"),
+						(store_item_kind_count,":num_items",":item_no",":original_walker"),
+						(ge,":num_items",1),
+						(item_get_type, ":itp", ":item_no"),
+						(eq,":itp",":spy_item_type"),
+						(val_add,":num",1),
+						(eq,":num",":random_item"),
+						(troop_add_items,":walker_troop_id",":item_no",1),
+						(assign,":spy_item",":item_no"),
+					(try_end),
+					(assign,"$spy_item_worn",":spy_item"),
+					(assign,"$spy_quest_troop",":walker_troop_id"),
+					(troop_equip_items,":walker_troop_id"),
+				(try_end),
+				(store_add, ":troop_slot", slot_center_walker_0_troop, ":walker_no"),
+				(party_set_slot, ":center_no", ":troop_slot", ":walker_troop_id"),
+				(store_random_in_range, ":walker_dna", 0, 1000000),
+				(store_add, ":dna_slot", slot_center_walker_0_dna, ":walker_no"),
+				(party_set_slot, ":center_no", ":dna_slot", ":walker_dna"),
+		])
+		
+
+		# script_init_town_walkers
+		# Input: none
+		# Output: none
+init_town_walkers=(
+	"init_town_walkers",
+			[
+				(try_begin),
+					(eq, "$town_nighttime", 0),
+					(try_for_range, ":walker_no", 0, num_town_walkers),
+						(store_add, ":troop_slot", slot_center_walker_0_troop, ":walker_no"),
+						(party_get_slot, ":walker_troop_id", "$current_town", ":troop_slot"),
+						(gt, ":walker_troop_id", 0),
+						(store_add, ":entry_no", town_walker_entries_start, ":walker_no"),
+						#(set_visitor, ":entry_no", ":walker_troop_id"),
+						#tom
+						(try_for_range, reg0, 0, 4),
+							(set_visitor, ":entry_no", ":walker_troop_id"),
+						(try_end),
+					(try_end), 
+				(try_end),
+		])
+		
+
+		# script_init_town_agent
+		# Input: none
+		# Output: none
+init_town_agent=(
+	"init_town_agent",
+			[
+				(store_script_param, ":agent_no", 1),
+				(agent_get_troop_id, ":troop_no", ":agent_no"),
+				(set_fixed_point_multiplier, 100),
+				(assign, ":stand_animation", -1),
+				(try_begin),
+					(this_or_next|is_between, ":troop_no", armor_merchants_begin, armor_merchants_end),
+					(is_between, ":troop_no", weapon_merchants_begin, weapon_merchants_end),
+					(try_begin),
+						(troop_get_type, ":cur_troop_gender", ":troop_no"),
+						(eq, ":cur_troop_gender", 0),
+						(agent_set_animation, ":agent_no", "anim_stand_townguard"),
+					(else_try),
+						(agent_set_animation, ":agent_no", "anim_stand_townguard"),
+					(end_try),
+				(else_try),
+					(is_between, ":troop_no", kingdom_ladies_begin, kingdom_ladies_end),
+					(assign, ":stand_animation", "anim_stand_lady"),
+				(else_try),
+					(is_between, ":troop_no", active_npcs_begin, active_npcs_end),
+					(assign, ":stand_animation", "anim_stand_lord"),
+				(else_try),
+					(is_between, ":troop_no", soldiers_begin, soldiers_end),
+					(assign, ":stand_animation", "anim_stand_townguard"),
+				(try_end),
+				(try_begin),
+					(ge, ":stand_animation", 0),
+					(agent_set_stand_animation, ":agent_no", ":stand_animation"),
+					(agent_set_animation, ":agent_no", ":stand_animation"),
+					(store_random_in_range, ":random_no", 0, 100),
+					(agent_set_animation_progress, ":agent_no", ":random_no"),
+				(try_end),
+		])
+		
+		# script_init_town_walker_agents
+		# Input: none
+		# Output: none
+init_town_walker_agents=(
+	"init_town_walker_agents",
+			[(assign, ":num_walkers", 0),
+				(try_for_agents, ":cur_agent"),
+					(agent_get_troop_id, ":cur_troop", ":cur_agent"),
+					(is_between, ":cur_troop", walkers_begin, walkers_end),
+					(val_add, ":num_walkers", 1),
+			(agent_get_position, pos1, ":cur_agent"),
+					(try_for_range, ":i_e_p", 9, 40),#Entry points
+						(entry_point_get_position, pos2, ":i_e_p"),
+						(get_distance_between_positions, ":distance", pos1, pos2),
+						(lt, ":distance", 200),
+						(agent_set_slot, ":cur_agent", 0, ":i_e_p"),
+					(try_end),
+					(call_script, "script_set_town_walker_destination", ":cur_agent"),
+				(try_end),
+		])
+		
+		# script_tick_town_walkers
+		# Input: none
+		# Output: none
+tick_town_walkers=(
+	"tick_town_walkers",
+			[(try_for_agents, ":cur_agent"),
+					(agent_get_troop_id, ":cur_troop", ":cur_agent"),
+					(is_between, ":cur_troop", walkers_begin, walkers_end),
+					(agent_get_slot, ":target_entry_point", ":cur_agent", 0),
+					(entry_point_get_position, pos1, ":target_entry_point"),
+					(try_begin),
+						(lt, ":target_entry_point", 32),
+						(init_position, pos2),
+						(position_set_y, pos2, 250),
+						(position_transform_position_to_parent, pos1, pos1, pos2),
+					(try_end),
+					(agent_get_position, pos2, ":cur_agent"),
+					(get_distance_between_positions, ":distance", pos1, pos2),
+					(lt, ":distance", 400),
+					(assign, ":random_no", 0),
+					(try_begin),
+						(lt, ":target_entry_point", 32),
+						(store_random_in_range, ":random_no", 0, 100),
+					(try_end),
+					(lt, ":random_no", 20),
+					(call_script, "script_set_town_walker_destination", ":cur_agent"),
+				(try_end),
+		])
+
+		# script_set_town_walker_destination
+		# WARNING: modified by 1257AD devs
+		# Input: arg1 = agent_no
+		# Output: none
+set_town_walker_destination=(
+	"set_town_walker_destination",
+			[
+				#TOM
+				(store_script_param_1, ":agent_no"),
+				#(store_random_in_range, ":rand_dest", 32, 42),
+		(store_random_in_range, ":rand_dest", 32, 40),
+				(try_begin),
+					# (eq, ":rand_dest", 41),
+					# (assign, ":target_entry_point", 9),
+				# (else_try),
+					# (eq, ":rand_dest", 40),
+					# (assign, ":target_entry_point", 10),
+				# (else_try),
+					# (eq, ":rand_dest", 39),
+					# (assign, ":target_entry_point", 12),
+				# (else_try),
+					(assign, ":target_entry_point", ":rand_dest"),
+				(try_end),
+				
+				(try_begin),
+					(agent_set_slot, ":agent_no", 0, ":target_entry_point"),
+					(entry_point_get_position, pos1, ":target_entry_point"),
+					(try_begin),
+						(init_position, pos2),
+						(position_set_y, pos2, 250),
+						(position_transform_position_to_parent, pos1, pos1, pos2),
+					(try_end),
+					(agent_set_scripted_destination, ":agent_no", pos1, 0),
+					(agent_set_speed_limit, ":agent_no", 5),
+				(try_end),
+		])
+		
+		# script_town_init_doors
+		# Input: door_state (-1 = closed, 1 = open, 0 = use $town_nighttime)
+		# Output: none (required for siege mission templates)
+town_init_doors=(
+	"town_init_doors",
+			[(store_script_param, ":door_state", 1),
+				(try_begin),
+					(assign, ":continue", 0),
+					(try_begin),
+						(eq, ":door_state", 1),
+						(assign, ":continue", 1),
+					(else_try),
+						(eq, ":door_state", 0),
+						(eq, "$town_nighttime", 0),
+						(assign, ":continue", 1),
+					(try_end),
+					(eq, ":continue", 1),# open doors
+					(assign, ":end_cond", 1),
+					(try_for_range, ":i_instance", 0, ":end_cond"),
+						(scene_prop_get_instance, ":object", "spr_towngate_door_left", ":i_instance"),
+						(ge, ":object", 0),
+						(val_add, ":end_cond", 1),
+						(prop_instance_get_position, pos1, ":object"),
+						(position_rotate_z, pos1, -100),
+						(prop_instance_animate_to_position, ":object", pos1, 1),
+					(try_end),
+					(assign, ":end_cond", 1),
+					(try_for_range, ":i_instance", 0, ":end_cond"),
+						(scene_prop_get_instance, ":object", "spr_towngate_rectangle_door_left", ":i_instance"),
+						(ge, ":object", 0),
+						(val_add, ":end_cond", 1),
+						(prop_instance_get_position, pos1, ":object"),
+						(position_rotate_z, pos1, -80),
+						(prop_instance_animate_to_position, ":object", pos1, 1),
+					(try_end),
+					(assign, ":end_cond", 1),
+					(try_for_range, ":i_instance", 0, ":end_cond"),
+						(scene_prop_get_instance, ":object", "spr_towngate_door_right", ":i_instance"),
+						(ge, ":object", 0),
+						(val_add, ":end_cond", 1),
+						(prop_instance_get_position, pos1, ":object"),
+						(position_rotate_z, pos1, 100),
+						(prop_instance_animate_to_position, ":object", pos1, 1),
+					(try_end),
+					(assign, ":end_cond", 1),
+					(try_for_range, ":i_instance", 0, ":end_cond"),
+						(scene_prop_get_instance, ":object", "spr_towngate_rectangle_door_right", ":i_instance"),
+						(ge, ":object", 0),
+						(val_add, ":end_cond", 1),
+						(prop_instance_get_position, pos1, ":object"),
+						(position_rotate_z, pos1, 80),
+						(prop_instance_animate_to_position, ":object", pos1, 1),
+					(try_end),
+				(try_end),
+		])
+
+
+		# script_change_banners_and_chest
+		# Input: none
+		# Output: none
+change_banners_and_chest=(
+	"change_banners_and_chest",
+			[(party_get_slot, ":cur_leader", "$g_encountered_party", slot_town_lord),
+				(try_begin),
+					(ge, ":cur_leader", 0),
+					#normal_banner_begin
+					(troop_get_slot, ":troop_banner_object", ":cur_leader", slot_troop_banner_scene_prop),
+					(gt, ":troop_banner_object", 0),
+					(replace_scene_props, banner_scene_props_begin, ":troop_banner_object"),
+				(else_try),
+					(replace_scene_props, banner_scene_props_begin, "spr_empty"),
+				(try_end),
+				(try_begin),
+					(neq, ":cur_leader", "trp_player"),
+					(replace_scene_props, "spr_player_chest", "spr_locked_player_chest"),
+				(try_end),
+		])
+		

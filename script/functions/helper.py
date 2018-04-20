@@ -23,3 +23,64 @@ get_percentage_with_randomized_round =	(
 				(try_end),
 				(assign, reg0, ":result"),
 		])
+
+
+		# script_round_value
+		# really? the power of talesworlds's ""scripting engine""
+		# Input: arg1 = value
+		# Output: reg0 = rounded_value
+round_value=(
+	"round_value",
+			[
+				(store_script_param_1, ":value"),
+				(try_begin),
+					(lt, ":value", 100),
+					(neq, ":value", 0),
+					(val_add, ":value", 5),
+					(val_div, ":value", 10),
+					(val_mul, ":value", 10),
+					(try_begin),
+						(eq, ":value", 0),
+						(assign, ":value", 5),
+					(try_end),
+				(else_try),
+					(lt, ":value", 300),
+					(val_add, ":value", 25),
+					(val_div, ":value", 50),
+					(val_mul, ":value", 50),
+				(else_try),
+					(val_add, ":value", 50),
+					(val_div, ":value", 100),
+					(val_mul, ":value", 100),
+				(try_end),
+				(assign, reg0, ":value"),
+		])
+
+		# script_describe_relation_to_s63
+		# Input: arg1 = relation (-100 .. 100)
+		# Output: s63
+describe_relation_to_s63=(
+	"describe_relation_to_s63",
+			[(store_script_param_1, ":relation"),
+				(store_add, ":normalized_relation", ":relation", 100),
+				(val_add, ":normalized_relation", 5),
+				(store_div, ":str_offset", ":normalized_relation", 10),
+				(val_clamp, ":str_offset", 0, 20),
+				(store_add, ":str_id", "str_relation_mnus_100",  ":str_offset"),
+				(str_store_string, s63, ":str_id"),
+		])
+		
+		# script_describe_center_relation_to_s3
+		# Input: arg1 = relation (-100 .. 100)
+		# Output: s3
+describe_center_relation_to_s3=(
+	"describe_center_relation_to_s3",
+			[(store_script_param_1, ":relation"),
+				(store_add, ":normalized_relation", ":relation", 100),
+				(val_add, ":normalized_relation", 5),
+				(store_div, ":str_offset", ":normalized_relation", 10),
+				(val_clamp, ":str_offset", 0, 20),
+				(store_add, ":str_id", "str_center_relation_mnus_100",  ":str_offset"),
+				(str_store_string, s3, ":str_id"),
+		])
+		

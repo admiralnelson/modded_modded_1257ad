@@ -284,3 +284,280 @@ orig_battle_tactic_apply_aux = (
 				(try_end),
 				(assign, reg0, ":battle_tactic"),
 		])
+
+# script_battle_tactic_apply_aux
+		# Input: team_no, battle_tactic
+		# Output: battle_tactic
+orig_battle_tactic_apply_aux=(
+	"orig_battle_tactic_apply_aux",
+			[
+				(store_script_param, ":team_no", 1),
+				(store_script_param, ":battle_tactic", 2),
+				(store_mission_timer_a, ":mission_time"),
+				(try_begin),
+					(eq, ":battle_tactic", btactic_hold),
+					(copy_position, pos1, pos52),
+					(call_script, "script_get_closest3_distance_of_enemies_at_pos1", ":team_no", 1),
+					(assign, ":avg_dist", reg0),
+					(assign, ":min_dist", reg1),
+					(try_begin),
+						(this_or_next|lt, ":min_dist", 1000),
+						(lt, ":avg_dist", 4000),
+						(assign, ":battle_tactic", 0),
+						(team_give_order, ":team_no", grc_everyone, mordr_charge),
+					(try_end),
+				(else_try),
+					(eq, ":battle_tactic", btactic_follow_leader),
+					(team_get_leader, ":ai_leader", ":team_no"),
+					(try_begin),
+						(ge, ":ai_leader", 0),
+						(agent_is_alive, ":ai_leader"),
+						(agent_set_speed_limit, ":ai_leader", 9),
+						(call_script, "script_team_get_average_position_of_enemies", ":team_no"),
+						(copy_position, pos60, pos0),
+						(agent_get_position, pos61, ":ai_leader"),
+						(position_transform_position_to_local, pos62, pos61, pos60), #pos62 = vector to enemy w.r.t leader
+						(position_normalize_origin, ":distance_to_enemy", pos62),
+						(convert_from_fixed_point, ":distance_to_enemy"),
+						(assign, reg17, ":distance_to_enemy"),
+						(position_get_x, ":dir_x", pos62),
+						(position_get_y, ":dir_y", pos62),
+						(val_mul, ":dir_x", 23),
+						(val_mul, ":dir_y", 23), #move 23 meters
+						(position_set_x, pos62, ":dir_x"),
+						(position_set_y, pos62, ":dir_y"),
+						
+						(position_transform_position_to_parent, pos63, pos61, pos62), #pos63 is 23m away from leader in the direction of the enemy.
+						(position_set_z_to_ground_level, pos63),
+						
+						(team_give_order, ":team_no", grc_everyone, mordr_hold),
+						(team_set_order_position, ":team_no", grc_everyone, pos63),
+						(agent_get_position, pos1, ":ai_leader"),
+						(try_begin),
+							(lt, ":distance_to_enemy", 50),
+							(ge, ":mission_time", 30),
+							(assign, ":battle_tactic", 0),
+							(team_give_order, ":team_no", grc_everyone, mordr_charge),
+							(agent_set_speed_limit, ":ai_leader", 60),
+						(try_end),
+					(else_try),
+						(assign, ":battle_tactic", 0),
+						(team_give_order, ":team_no", grc_everyone, mordr_charge),
+					(try_end),
+				(try_end),
+				
+				(try_begin), # charge everyone after a while
+					(neq, ":battle_tactic", 0),
+					(ge, ":mission_time", 300),
+					(assign, ":battle_tactic", 0),
+					(team_give_order, ":team_no", grc_everyone, mordr_charge),
+					(team_get_leader, ":ai_leader", ":team_no"),
+					(agent_set_speed_limit, ":ai_leader", 60),
+				(try_end),
+				(assign, reg0, ":battle_tactic"),
+		])
+
+		# script_team_get_class_percentages
+		# Input: arg1: team_no, arg2: try for team's enemies
+		# Output: reg0: percentage infantry, reg1: percentage archers, reg2: percentage cavalry
+team_get_class_percentages=(
+	"team_get_class_percentages",
+			[
+				(assign, ":num_infantry", 0),
+				(assign, ":num_archers", 0),
+				(assign, ":num_cavalry", 0),
+				(assign, ":num_total", 0),
+				(store_script_param, ":team_no", 1),
+				(store_script_param, ":negate", 2),
+				(try_for_agents,":cur_agent"),
+					(agent_is_alive, ":cur_agent"),
+					(agent_is_human, ":cur_agent"),
+					(agent_get_team, ":agent_team", ":cur_agent"),
+					(assign, ":continue", 0),
+					(try_begin),
+						(eq, ":negate", 1),
+						(teams_are_enemies, ":agent_team", ":team_no"),
+						(assign, ":continue", 1),
+					(else_try),
+						(eq, ":agent_team", ":team_no"),
+						(assign, ":continue", 1),
+					(try_end),
+					(eq, ":continue", 1),
+					(val_add, ":num_total", 1),
+					(agent_get_class, ":agent_class", ":cur_agent"),
+					(try_begin),
+						(eq, ":agent_class", grc_infantry),
+						(val_add,  ":num_infantry", 1),
+					(else_try),
+						(eq, ":agent_class", grc_archers),
+						(val_add,  ":num_archers", 1),
+					(else_try),
+						(eq, ":agent_class", grc_cavalry),
+						(val_add,  ":num_cavalry", 1),
+					(try_end),
+				(try_end),
+				(try_begin),
+					(eq,  ":num_total", 0),
+					(assign,  ":num_total", 1),
+				(try_end),
+				(store_mul, ":perc_infantry",":num_infantry",100),
+				(val_div, ":perc_infantry",":num_total"),
+				(store_mul, ":perc_archers",":num_archers",100),
+				(val_div, ":perc_archers",":num_total"),
+				(store_mul, ":perc_cavalry",":num_cavalry",100),
+				(val_div, ":perc_cavalry",":num_total"),
+				(assign, reg0, ":perc_infantry"),
+				(assign, reg1, ":perc_archers"),
+				(assign, reg2, ":perc_cavalry"),
+		])
+		
+		# script_get_closest3_distance_of_enemies_at_pos1
+		# Input: arg1: team_no, pos1
+		# Output: reg0: distance in cms. tom: reg4 - the closest agent id
+get_closest3_distance_of_enemies_at_pos1=(
+	"get_closest3_distance_of_enemies_at_pos1",
+			[
+				(assign, ":min_distance_1", 100000),
+				(assign, ":min_distance_2", 100000),
+				(assign, ":min_distance_3", 100000),
+				(assign, ":closest_agent", -1), #tom
+		
+				(store_script_param, ":team_no", 1),
+				(try_for_agents,":cur_agent"),
+					(agent_is_alive, ":cur_agent"),
+					(agent_is_human, ":cur_agent"),
+					(agent_get_team, ":agent_team", ":cur_agent"),
+					(teams_are_enemies, ":agent_team", ":team_no"),
+					
+					(agent_get_position, pos2, ":cur_agent"),
+					(get_distance_between_positions,":cur_dist",pos2,pos1),
+					(try_begin),
+						(lt, ":cur_dist", ":min_distance_1"),
+						(assign, ":min_distance_3", ":min_distance_2"),
+						(assign, ":min_distance_2", ":min_distance_1"),
+						(assign, ":min_distance_1", ":cur_dist"),
+			(assign, ":closest_agent", ":cur_agent"), #tom
+					(else_try),
+						(lt, ":cur_dist", ":min_distance_2"),
+						(assign, ":min_distance_3", ":min_distance_2"),
+						(assign, ":min_distance_2", ":cur_dist"),
+					(else_try),
+						(lt, ":cur_dist", ":min_distance_3"),
+						(assign, ":min_distance_3", ":cur_dist"),
+					(try_end),
+				(try_end),
+				
+				(assign, ":total_distance", 0),
+				(assign, ":total_count", 0),
+				(try_begin),
+					(lt, ":min_distance_1", 100000),
+					(val_add, ":total_distance", ":min_distance_1"),
+					(val_add, ":total_count", 1),
+				(try_end),
+				(try_begin),
+					(lt, ":min_distance_2", 100000),
+					(val_add, ":total_distance", ":min_distance_2"),
+					(val_add, ":total_count", 1),
+				(try_end),
+				(try_begin),
+					(lt, ":min_distance_3", 100000),
+					(val_add, ":total_distance", ":min_distance_3"),
+					(val_add, ":total_count", 1),
+				(try_end),
+				(assign, ":average_distance", 100000),
+				(try_begin),
+					(gt, ":total_count", 0),
+					(store_div, ":average_distance", ":total_distance", ":total_count"),
+				(try_end),
+				(assign, reg0, ":average_distance"),
+				(assign, reg1, ":min_distance_1"),
+				(assign, reg2, ":min_distance_2"),
+				(assign, reg3, ":min_distance_3"),
+				(assign, reg4, ":closest_agent"), #tom
+		])
+
+		# script_team_get_average_position_of_enemies
+		# Input: arg1: team_no,
+		# Output: pos0: average position.
+team_get_average_position_of_enemies=(
+	"team_get_average_position_of_enemies",
+			[
+				(store_script_param_1, ":team_no"),
+				(init_position, pos0),
+				(assign, ":num_enemies", 0),
+				(assign, ":accum_x", 0),
+				(assign, ":accum_y", 0),
+				(assign, ":accum_z", 0),
+				(try_for_agents,":enemy_agent"),
+					(agent_is_alive, ":enemy_agent"),
+					(agent_is_human, ":enemy_agent"),
+					(agent_get_team, ":enemy_team", ":enemy_agent"),
+					(teams_are_enemies, ":team_no", ":enemy_team"),
+					
+					(agent_get_position, pos62, ":enemy_agent"),
+					
+					(position_get_x, ":x", pos62),
+					(position_get_y, ":y", pos62),
+					(position_get_z, ":z", pos62),
+					
+					(val_add, ":accum_x", ":x"),
+					(val_add, ":accum_y", ":y"),
+					(val_add, ":accum_z", ":z"),
+					(val_add, ":num_enemies", 1),
+				(try_end),
+				
+				(try_begin), #to avoid division by zeros at below division part.
+					(le, ":num_enemies", 0),
+					(assign, ":num_enemies", 1),
+				(try_end),
+				
+				(store_div, ":average_x", ":accum_x", ":num_enemies"),
+				(store_div, ":average_y", ":accum_y", ":num_enemies"),
+				(store_div, ":average_z", ":accum_z", ":num_enemies"),
+				
+				(position_set_x, pos0, ":average_x"),
+				(position_set_y, pos0, ":average_y"),
+				(position_set_z, pos0, ":average_z"),
+				
+				(assign, reg0, ":num_enemies"),
+		])
+
+		# script_cf_team_get_average_position_of_agents_with_type_to_pos1
+		# Input: arg1 = team_no, arg2 = class_no (grc_everyone, grc_infantry, grc_cavalry, grc_archers, grc_heroes)
+		# Output: none, pos1 = average_position (0,0,0 if there are no matching agents)
+cf_team_get_average_position_of_agents_with_type_to_pos1=(
+	"cf_team_get_average_position_of_agents_with_type_to_pos1",
+			[
+				(store_script_param_1, ":team_no"),
+				(store_script_param_2, ":division_no"),
+				(assign, ":total_pos_x", 0),
+				(assign, ":total_pos_y", 0),
+				(assign, ":total_pos_z", 0),
+				(assign, ":num_agents", 0),
+				(set_fixed_point_multiplier, 100),
+				(try_for_agents, ":cur_agent"),
+					(agent_is_alive, ":cur_agent"),
+					(agent_is_human, ":cur_agent"),
+					(agent_get_team, ":cur_team_no", ":cur_agent"),
+					(eq, ":cur_team_no", ":team_no"),
+					(agent_get_division, ":cur_agent_division", ":cur_agent"),
+					(this_or_next|eq, ":division_no", grc_everyone),
+					(eq, ":division_no", ":cur_agent_division"),
+					(agent_get_position, pos1, ":cur_agent"),
+					(position_get_x, ":cur_pos_x", pos1),
+					(val_add, ":total_pos_x", ":cur_pos_x"),
+					(position_get_y, ":cur_pos_y", pos1),
+					(val_add, ":total_pos_y", ":cur_pos_y"),
+					(position_get_z, ":cur_pos_z", pos1),
+					(val_add, ":total_pos_z", ":cur_pos_z"),
+					(val_add, ":num_agents", 1),
+				(try_end),
+				(gt, ":num_agents", 1),
+				(val_div, ":total_pos_x", ":num_agents"),
+				(val_div, ":total_pos_y", ":num_agents"),
+				(val_div, ":total_pos_z", ":num_agents"),
+				(init_position, pos1),
+				(position_move_x, pos1, ":total_pos_x"),
+				(position_move_y, pos1, ":total_pos_y"),
+				(position_move_z, pos1, ":total_pos_z"),
+		])

@@ -1512,3 +1512,142 @@ decide_faction_ai = (
 					(faction_set_slot, ":faction_no", slot_faction_ai_last_rest_time, ":hours"),
 				(try_end),
 		])
+
+# script_encounter_calculate_fit
+		# Input: arg1 = troop_no
+		# Output: none
+encounter_calculate_fit = (
+	"encounter_calculate_fit",
+			[
+				#(assign, "$g_enemy_fit_for_battle_old",  "$g_enemy_fit_for_battle"),
+				#(assign, "$g_friend_fit_for_battle_old", "$g_friend_fit_for_battle"),
+				#(assign, "$g_main_party_fit_for_battle_old", "$g_main_party_fit_for_battle"),
+				(call_script, "script_party_count_fit_for_battle", "p_main_party"),
+				#(assign, "$g_main_party_fit_for_battle", reg(0)),
+				(call_script, "script_collect_friendly_parties"),
+				(call_script, "script_party_count_fit_for_battle", "p_collective_friends"),
+				(assign, "$g_friend_fit_for_battle", reg(0)),
+				
+				(party_clear, "p_collective_ally"),
+				(try_begin),
+					(gt, "$g_ally_party", 0),
+					(party_is_active, "$g_ally_party"),
+					(party_collect_attachments_to_party, "$g_ally_party", "p_collective_ally"),
+					#(call_script, "script_party_count_fit_for_battle", "p_collective_ally"),
+					#(val_add, "$g_friend_fit_for_battle", reg(0)),
+				(try_end),
+				
+				(party_clear, "p_collective_enemy"),
+				(try_begin),
+					(party_is_active, "$g_enemy_party"),
+					(party_collect_attachments_to_party, "$g_enemy_party", "p_collective_enemy"),
+				(try_end),
+				(call_script, "script_party_count_fit_for_battle", "p_collective_enemy"),
+				(assign, "$g_enemy_fit_for_battle", reg(0)),
+				(assign, reg11, "$g_enemy_fit_for_battle"),
+				(assign, reg10, "$g_friend_fit_for_battle"),
+		])
+		
+		# script_encounter_init_variables
+		# part of freelancer script is in this procedure
+		# WARNING : HEAVILY modified by 1257AD devs
+		# Input: arg1 = troop_no
+		# Output: none
+encounter_init_variables = (
+	"encounter_init_variables",
+			[
+				(assign, "$capture_screen_shown", 0),
+				(assign, "$loot_screen_shown", 0),
+				(assign, "$thanked_by_ally_leader", 0),
+				(assign, "$g_battle_result", 0),
+				(assign, "$cant_leave_encounter", 0),
+				(assign, "$cant_talk_to_enemy", 0),
+				(assign, "$last_defeated_hero", 0),
+				(assign, "$last_freed_hero", 0),
+				
+				(call_script, "script_encounter_calculate_fit"),
+				(call_script, "script_party_copy", "p_main_party_backup", "p_main_party"),
+				(call_script, "script_party_calculate_strength", "p_main_party", 0),
+				(assign, "$g_starting_strength_main_party", reg0),
+				(call_script, "script_party_copy", "p_encountered_party_backup", "p_collective_enemy"),
+				(call_script, "script_party_calculate_strength", "p_collective_enemy", 0),
+				(assign, "$g_starting_strength_enemy_party", reg0),
+				(assign, "$g_strength_contribution_of_player", 100),
+				
+				(call_script, "script_party_copy", "p_collective_friends_backup", "p_collective_friends"),
+				(call_script, "script_party_calculate_strength", "p_collective_friends", 0),
+				(assign, "$g_starting_strength_friends", reg0),
+				
+				(store_mul, "$g_strength_contribution_of_player","$g_starting_strength_main_party", 100), # reduce contribution if we are helping someone.
+				
+				(try_begin),
+		#Caba freelancer fixes chief
+			(eq, "$freelancer_state", 1),
+			(store_character_level, "$g_strength_contribution_of_player", "$player_cur_troop"),
+			(val_div, "$g_strength_contribution_of_player", 2),
+			(val_max, "$g_strength_contribution_of_player", 5), #contribution(scale 0-100) = level/2, min 5 (so about 5-25)
+			#(store_character_level, ":freelancer_player_contribution", "$player_cur_troop"),
+			#(val_mul, ":freelancer_player_contribution", 6),
+			#(val_div, ":freelancer_player_contribution", 5), #level * 1.2 (for a bit of a scaling bump)
+			#(val_max, ":freelancer_player_contribution", 10), #and to give a base line
+			#(assign, "$g_strength_contribution_of_player", ":freelancer_player_contribution"),
+				(else_try),
+			#Caba freelancer fixes end
+					(gt, "$g_starting_strength_friends", 0), #this new to prevent occasional div by zero error
+					(val_div, "$g_strength_contribution_of_player","$g_starting_strength_friends"),
+				(else_try),
+					(assign, "$g_strength_contribution_of_player", 100), #Or zero, maybe
+				(try_end),
+				
+				(party_clear, "p_routed_enemies"), #new
+				(assign, "$num_routed_us", 0),#newtoday
+				(assign, "$num_routed_allies", 0),#newtoday
+				(assign, "$num_routed_enemies", 0),#newtoday
+				(party_get_num_companion_stacks, ":num_stacks", "p_main_party"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop_id", "p_main_party", ":i_stack"),
+					(try_begin),
+						(troop_set_slot, ":stack_troop_id", slot_troop_player_routed_agents, 0),
+						#(troop_set_slot, ":stack_troop_id", slot_troop_enemy_routed_agents, 0),
+						#(troop_set_slot, ":stack_troop_id", slot_troop_ally_routed_agents, 0),
+					(try_end),
+				(try_end),
+				
+				(party_get_num_companion_stacks, ":num_stacks", "p_collective_friends"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop_id", "p_collective_friends", ":i_stack"),
+					(try_begin),
+						#(troop_set_slot, ":stack_troop_id", slot_troop_player_routed_agents, 0),
+						#(troop_set_slot, ":stack_troop_id", slot_troop_enemy_routed_agents, 0),
+						(troop_set_slot, ":stack_troop_id", slot_troop_ally_routed_agents, 0),
+					(try_end),
+				(try_end),
+				
+				(party_get_num_companion_stacks, ":num_stacks", "p_collective_enemy"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop_id", "p_collective_enemy", ":i_stack"),
+					(try_begin),
+						#(troop_set_slot, ":stack_troop_id", slot_troop_player_routed_agents, 0),
+						(troop_set_slot, ":stack_troop_id", slot_troop_enemy_routed_agents, 0),
+						#(troop_set_slot, ":stack_troop_id", slot_troop_ally_routed_agents, 0),
+					(try_end),
+				(try_end),
+				
+				(try_for_range, ":cur_faction", fac_kingdom_1, fac_kingdoms_end),
+					(faction_set_slot, ":cur_faction", slot_faction_num_routed_agents, 0),
+				(try_end),
+				
+				(assign, "$routed_party_added", 0), #new
+				(party_clear, "p_total_enemy_casualties"), #new
+				
+				#      (try_begin),
+				#        (gt, "$g_ally_party", 0),
+				#        (call_script, "script_party_copy", "p_ally_party_backup", "p_collective_ally"),
+				#        (call_script, "script_party_calculate_strength", "p_collective_ally"),
+				#        (assign, "$g_starting_strength_ally_party", reg0),
+				#        (store_add, ":starting_strength_factor_combined","$g_starting_strength_ally_party","$g_starting_strength_main_party"),
+				#         (store_mul, "$g_strength_contribution_of_player","$g_starting_strength_main_party", 80), #reduce contribution if we are helping someone.
+				#        (val_div, "$g_strength_contribution_of_player",":starting_strength_factor_combined"),
+				#      (try_end),
+		])
+		

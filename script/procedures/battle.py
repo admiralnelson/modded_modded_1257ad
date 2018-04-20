@@ -542,3 +542,253 @@ apply_effect_of_other_people_on_courage_scores = (
 				(try_end), # ozan
 		]) 
 
+		# script_check_friendly_kills
+		# Input: none
+		# Output: none (changes the morale of the player's party)
+check_friendly_kills=(
+	"check_friendly_kills",
+			[(get_player_agent_own_troop_kill_count, ":count"),
+				(try_begin),
+					(neq, "$g_player_current_own_troop_kills", ":count"),
+					(val_sub, ":count", "$g_player_current_own_troop_kills"),
+					(val_add, "$g_player_current_own_troop_kills", ":count"),
+					(val_mul, ":count", -1),
+					(call_script, "script_change_player_party_morale", ":count"),
+				(try_end),
+		])
+
+		# script_simulate_retreat
+		# Input: arg1 = players_side_damage, arg2 = enemy_side_damage, arg3 = continue_battle s5 = title_string
+		# Output: none
+simulate_retreat=(
+	"simulate_retreat",
+			[
+				(call_script, "script_music_set_situation_with_culture", mtf_sit_killed),
+				(set_show_messages, 0),
+				(store_script_param, ":players_side_damage", 1),
+				(store_script_param, ":enemy_side_damage", 2),
+				(store_script_param, ":continue_battle", 3),
+				
+				(assign, ":players_side_strength", 0),
+				(assign, ":enemy_side_strength", 0),
+				
+				(assign, ":do_calculate", 1),
+				(try_begin),
+					(try_for_agents, ":cur_agent"),
+						(agent_is_human, ":cur_agent"),
+						(agent_is_alive, ":cur_agent"),
+						(agent_set_slot, ":cur_agent", slot_agent_is_alive_before_retreat, 1),#needed for simulation
+						
+						(agent_get_troop_id, ":cur_troop", ":cur_agent"),
+						(store_character_level, ":cur_level", ":cur_troop"),
+						(val_add, ":cur_level", 5),
+						(try_begin),
+							(troop_is_hero, ":cur_troop"),
+							(val_add, ":cur_level", 5),
+						(try_end),
+						(try_begin),
+							(agent_is_ally, ":cur_agent"),
+							(val_add, ":players_side_strength", ":cur_level"),
+						(else_try),
+							(val_add, ":enemy_side_strength", ":cur_level"),
+						(try_end),
+					(try_end),
+					(eq, "$pin_player_fallen", 0),
+					(lt, ":enemy_side_strength", ":players_side_strength"),
+					(eq, ":continue_battle", 1),
+					(assign, ":do_calculate", 0),
+				(try_end),
+				
+				(try_begin),
+					(eq, ":do_calculate", 1),
+					
+					(assign, "$g_last_mission_player_damage", 0),
+					(party_clear, "p_temp_party"),
+					(party_clear, "p_temp_party_2"),
+					(call_script, "script_simulate_battle_with_agents_aux", 0, ":players_side_damage"),
+					(call_script, "script_simulate_battle_with_agents_aux", 1, ":enemy_side_damage"),
+					
+					(assign, ":display_casualties", 0),
+					
+					(try_begin),
+						(gt, "$g_last_mission_player_damage", 0),
+						(assign, ":display_casualties", 1),
+						(assign, reg1, "$g_last_mission_player_damage"),
+						(str_store_string, s12, "str_casualty_display_hp"),
+					(else_try),
+						(str_clear, s12),
+					(try_end),
+					
+					(call_script, "script_print_casualties_to_s0", "p_temp_party", 1),
+					(try_begin),
+						(party_get_num_companion_stacks, ":num_stacks", "p_temp_party"),
+						(gt, ":num_stacks", 0),
+						(assign, ":display_casualties", 1),
+					(try_end),
+					(str_store_string_reg, s10, s0),
+					
+					(call_script, "script_print_casualties_to_s0", "p_temp_party_2", 1),
+					(try_begin),
+						(party_get_num_companion_stacks, ":num_stacks", "p_temp_party_2"),
+						(gt, ":num_stacks", 0),
+						(assign, ":display_casualties", 1),
+					(try_end),
+					(str_store_string_reg, s11, s0),
+					(try_begin),
+						(eq, ":display_casualties", 1),
+						(dialog_box,"str_casualty_display", s5),
+					(try_end),
+				(try_end),
+				(set_show_messages, 1),
+				
+				#Calculating morale penalty (can be between 0-30)
+				(assign, ":ally_casualties", 0),
+				(assign, ":enemy_casualties", 0),
+				(assign, ":total_allies", 0),
+				
+				(try_for_agents, ":cur_agent"),
+					(agent_is_human, ":cur_agent"),
+					(try_begin),
+						(agent_is_ally, ":cur_agent"),
+						(val_add, ":total_allies", 1),
+						(try_begin),
+							(neg|agent_is_alive, ":cur_agent"),
+							(val_add, ":ally_casualties", 1),
+						(try_end),
+					(else_try),
+						(neg|agent_is_alive, ":cur_agent"),
+						(val_add, ":enemy_casualties", 1),
+					(try_end),
+				(try_end),
+				(store_add, ":total_casualties", ":ally_casualties", ":enemy_casualties"),
+				(try_begin),
+					(gt, ":total_casualties", 0),
+					(store_mul, ":morale_adder", ":ally_casualties", 100),
+					(val_div, ":morale_adder", ":total_casualties"),
+					(val_mul, ":morale_adder", ":ally_casualties"),
+					(val_div, ":morale_adder", ":total_allies"),
+					(val_mul, ":morale_adder", -30),
+					(val_div, ":morale_adder", 100),
+					(call_script, "script_change_player_party_morale", ":morale_adder"),
+				(try_end),
+		])
+		
+		
+		
+		# script_simulate_battle_with_agents_aux
+		# For internal use only
+		# Input: arg1 = attacker_side (0 = ally, 1 = enemy), arg2 = damage amount
+		# Output: none
+simulate_battle_with_agents_aux=(
+	"simulate_battle_with_agents_aux",
+			[
+				(store_script_param_1, ":attacker_side"),
+				(store_script_param_2, ":damage"),
+				
+				(get_player_agent_no, ":player_agent"),
+				(try_for_agents, ":cur_agent"),
+					(neq, ":player_agent", ":cur_agent"),
+					(agent_is_human, ":cur_agent"),
+					#do not check agent_is_alive, check slot_agent_is_alive_before_retreat instead, so that dead agents can still hit enemies
+					(agent_slot_eq, ":cur_agent", slot_agent_is_alive_before_retreat, 1),
+					(try_begin),
+						(agent_is_ally, ":cur_agent"),
+						(assign, ":cur_agents_side", 0),
+					(else_try),
+						(assign, ":cur_agents_side", 1),
+					(try_end),
+					(eq, ":cur_agents_side", ":attacker_side"),
+					(agent_get_position, pos2, ":cur_agent"),
+					(assign, ":closest_agent", -1),
+					(assign, ":min_distance", 100000),
+					(try_for_agents, ":cur_agent_2"),
+						(agent_is_human, ":cur_agent_2"),
+						(agent_is_alive, ":cur_agent_2"),
+						(try_begin),
+							(agent_is_ally, ":cur_agent_2"),
+							(assign, ":cur_agents_side_2", 0),
+						(else_try),
+							(assign, ":cur_agents_side_2", 1),
+						(try_end),
+						(this_or_next|neq, ":cur_agent_2", ":player_agent"),
+						(eq, "$pin_player_fallen", 0),
+						(neq, ":attacker_side", ":cur_agents_side_2"),
+						(agent_get_position, pos3, ":cur_agent_2"),
+						(get_distance_between_positions, ":cur_distance", pos2, pos3),
+						(lt, ":cur_distance", ":min_distance"),
+						(assign, ":min_distance", ":cur_distance"),
+						(assign, ":closest_agent", ":cur_agent_2"),
+					(try_end),
+					(ge, ":closest_agent", 0),
+					#Fight
+					(agent_get_class, ":agent_class", ":cur_agent"),
+					(assign, ":agents_speed", 1),
+					(assign, ":agents_additional_hit", 0),
+					(try_begin),
+						(eq, ":agent_class", grc_archers),
+						(assign, ":agents_additional_hit", 2),
+					(else_try),
+						(eq, ":agent_class", grc_cavalry),
+						(assign, ":agents_speed", 2),
+					(try_end),
+					(agent_get_class, ":agent_class", ":closest_agent"),
+					(assign, ":agents_speed_2", 1),
+					(try_begin),
+						(eq, ":agent_class", grc_cavalry),
+						(assign, ":agents_speed_2", 2),
+					(try_end),
+					(assign, ":agents_hit", 18000),
+					(val_add, ":min_distance", 3000),
+					(val_div, ":agents_hit", ":min_distance"),
+					(val_mul, ":agents_hit", 2),# max 10, min 2 hits within 150 meters
+					
+					(val_mul, ":agents_hit", ":agents_speed"),
+					(val_div, ":agents_hit", ":agents_speed_2"),
+					(val_add, ":agents_hit", ":agents_additional_hit"),
+					
+					(assign, ":cur_damage", ":damage"),
+					(agent_get_troop_id, ":closest_troop", ":closest_agent"),
+					(agent_get_troop_id, ":cur_troop", ":cur_agent"),
+					(store_character_level, ":closest_level", ":closest_troop"),
+					(store_character_level, ":cur_level", ":cur_troop"),
+					(store_sub, ":level_dif", ":cur_level", ":closest_level"),
+					(val_div, ":level_dif", 5),
+					(val_add, ":cur_damage", ":level_dif"),
+					
+					(try_begin),
+						(eq, ":closest_agent", ":player_agent"),
+						(val_div, ":cur_damage", 2),
+						(store_agent_hit_points, ":init_player_hit_points", ":player_agent", 1),
+					(try_end),
+					
+					(try_for_range, ":unused", 0, ":agents_hit"),
+						(store_random_in_range, ":random_damage", 0, 100),
+						(lt, ":random_damage", ":cur_damage"),
+						(agent_deliver_damage_to_agent, ":cur_agent", ":closest_agent"),
+					(try_end),
+					
+					(try_begin),
+						(eq, ":closest_agent", ":player_agent"),
+						(store_agent_hit_points, ":final_player_hit_points", ":player_agent", 1),
+						(store_sub, ":hit_points_difference", ":init_player_hit_points", ":final_player_hit_points"),
+						(val_add, "$g_last_mission_player_damage", ":hit_points_difference"),
+					(try_end),
+					
+					(neg|agent_is_alive, ":closest_agent"),
+					(try_begin),
+						(eq, ":attacker_side", 1),
+						(party_add_members, "p_temp_party", ":closest_troop", 1),
+						(try_begin),
+							(agent_is_wounded, ":closest_agent"),
+							(party_wound_members, "p_temp_party", ":closest_troop", 1),
+						(try_end),
+					(else_try),
+						(party_add_members, "p_temp_party_2", ":closest_troop", 1),
+						(try_begin),
+							(agent_is_wounded, ":closest_agent"),
+							(party_wound_members, "p_temp_party_2", ":closest_troop", 1),
+						(try_end),
+					(try_end),
+				(try_end),
+		])
+		
