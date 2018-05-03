@@ -6,7 +6,7 @@ from header import *
 	# Input:
 	# param1: troop_id,
 	# Output: reg0 = needed exp for upgrade
-game_get_upgrade_xp =( 
+game_get_upgrade_xp  = ( 
 	"game_get_upgrade_xp",
 		[
 			(store_script_param_1, ":troop_id"),
@@ -162,7 +162,7 @@ game_get_total_wage = (
 	# Input:
 	# param1: troop_id,
 	# Output: reg0: weekly wage
-game_get_join_cost=(
+game_get_join_cost = (
 		"game_get_join_cost",
 		[
 			(store_script_param_1, ":troop_id"),
@@ -873,7 +873,7 @@ get_information_about_troops_position = (
 		# script_search_troop_prisoner_of_party
 		# Input: arg1 = troop_no
 		# Output: reg0 = party_no (-1 if troop is not a prisoner.)
-search_troop_prisoner_of_party=(
+search_troop_prisoner_of_party = (
 	"search_troop_prisoner_of_party",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -893,7 +893,7 @@ search_troop_prisoner_of_party=(
 		# script_troop_get_leaded_center_with_index
 		# Input: arg1 = troop_no, arg2 = center index within range between zero and the number of centers that troop owns
 		# Output: reg0 = center_no
-troop_get_leaded_center_with_index=(
+troop_get_leaded_center_with_index = (
 	"troop_get_leaded_center_with_index",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -913,7 +913,7 @@ troop_get_leaded_center_with_index=(
 		# script_cf_troop_get_random_leaded_walled_center_with_less_strength_priority
 		# Input: arg1 = troop_no, arg2 = preferred_center_no
 		# Output: reg0 = center_no (Can fail)
-cf_troop_get_random_leaded_walled_center_with_less_strength_priority=(
+cf_troop_get_random_leaded_walled_center_with_less_strength_priority = (
 	"cf_troop_get_random_leaded_walled_center_with_less_strength_priority",
 			[
 				(store_script_param, ":troop_no", 1),
@@ -964,7 +964,7 @@ cf_troop_get_random_leaded_walled_center_with_less_strength_priority=(
 		# script_cf_troop_get_random_leaded_town_or_village_except_center
 		# Input: arg1 = troop_no, arg2 = except_center_no
 		# Output: reg0 = center_no (Can fail)
-cf_troop_get_random_leaded_town_or_village_except_center=(
+cf_troop_get_random_leaded_town_or_village_except_center = (
 	"cf_troop_get_random_leaded_town_or_village_except_center",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -996,7 +996,7 @@ cf_troop_get_random_leaded_town_or_village_except_center=(
 				# script_write_family_relation_as_s3s_s2_to_s4
 		# Inputs: arg1 = troop_no, arg2 = family_no (valid slot no after slot_troop_family_begin)
 		# Outputs: s11 = what troop_1 is to troop_2, reg0 = strength of relationship. Normally, "$g_talk_troop" should be troop_2
-troop_get_family_relation_to_troop=(
+troop_get_family_relation_to_troop = (
 	"troop_get_family_relation_to_troop",
 			[
 				(store_script_param_1, ":troop_1"),
@@ -1208,7 +1208,7 @@ troop_get_family_relation_to_troop=(
 		# called during battle
 		# Input: arg1 = troop_no
 		# Output: agent_id
-cf_get_first_agent_with_troop_id=(
+cf_get_first_agent_with_troop_id = (
 	"cf_get_first_agent_with_troop_id",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -1232,7 +1232,7 @@ cf_get_first_agent_with_troop_id=(
 		# script_troop_write_owned_centers_to_s2
 		# Input: arg1 = troop_no
 		# Output: s2
-troop_write_owned_centers_to_s2=(
+troop_write_owned_centers_to_s2 = (
 	"troop_write_owned_centers_to_s2",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -1268,3 +1268,55 @@ troop_write_owned_centers_to_s2=(
 					(str_store_string, s2, "str_s5_is_a_nobleman_of_s6"),
 				(try_end),
 		])
+
+
+		
+		# script_calculate_troop_score_for_center
+		# Input: arg1 = troop_no, arg2 = center_no
+		# Output: reg0 = score
+calculate_troop_score_for_center = (
+	"calculate_troop_score_for_center",
+			[(store_script_param, ":troop_no", 1),
+				(store_script_param, ":center_no", 2),
+				(assign, ":num_center_points", 1),
+				(try_for_range, ":cur_center", centers_begin, centers_end),
+					(assign, ":center_owned", 0),
+					(try_begin),
+						(eq, ":troop_no", "trp_player"),
+						(party_slot_eq, ":cur_center", slot_town_lord, stl_reserved_for_player),
+						(assign, ":center_owned", 1),
+					(try_end),
+					(this_or_next|party_slot_eq, ":cur_center", slot_town_lord, ":troop_no"),
+					(eq, ":center_owned", 1),
+					(try_begin),
+						(party_slot_eq, ":cur_center", slot_party_type, spt_town),
+						(val_add, ":num_center_points", 4),
+					(else_try),
+						(party_slot_eq, ":cur_center", slot_party_type, spt_castle),
+						(val_add, ":num_center_points", 2),
+					(else_try),
+						(val_add, ":num_center_points", 1),
+					(try_end),
+				(try_end),
+				(troop_get_slot, ":troop_renown", ":troop_no", slot_troop_renown),
+				(store_add, ":score", 500, ":troop_renown"),
+				(val_div, ":score", ":num_center_points"),
+				(store_random_in_range, ":random", 50, 100),
+				(val_mul, ":score", ":random"),
+				(try_begin),
+					(party_slot_eq, ":center_no", slot_center_last_taken_by_troop, ":troop_no"),
+					(val_mul, ":score", 3),
+					(val_div, ":score", 2),
+				(try_end),
+				(try_begin),
+					(eq, ":troop_no", "trp_player"),
+					(faction_get_slot, ":faction_leader", "$players_kingdom"),
+					(call_script, "script_troop_get_player_relation", ":faction_leader"),
+					(assign, ":leader_relation", reg0),
+					#(troop_get_slot, ":leader_relation", ":faction_leader", slot_troop_player_relation),
+					(val_mul, ":leader_relation", 2),
+					(val_add, ":score", ":leader_relation"),
+				(try_end),
+				(assign, reg0, ":score"),
+		])
+		

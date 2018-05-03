@@ -483,3 +483,66 @@ do_merchant_town_trade	= (
 				
 		])
 		
+
+		# script_consume_food
+		# Input: arg1: order of the food to be consumed
+		# Output: none
+consume_food=(
+	"consume_food",
+			[(store_script_param, ":selected_food", 1),
+				(troop_get_inventory_capacity, ":capacity", "trp_player"),
+				(try_for_range, ":cur_slot", 0, ":capacity"),
+					(troop_get_inventory_slot, ":cur_item", "trp_player", ":cur_slot"),
+					(is_between, ":cur_item", food_begin, food_end),
+					(troop_get_inventory_slot_modifier, ":item_modifier", "trp_player", ":cur_slot"),
+					(neq, ":item_modifier", imod_rotten),
+					(item_slot_eq, ":cur_item", slot_item_is_checked, 0),
+					(item_set_slot, ":cur_item", slot_item_is_checked, 1),
+					(val_sub, ":selected_food", 1),
+					(lt, ":selected_food", 0),
+					(assign, ":capacity", 0),
+					(troop_inventory_slot_get_item_amount, ":cur_amount", "trp_player", ":cur_slot"),
+					(val_sub, ":cur_amount", 1),
+					(troop_inventory_slot_set_item_amount, "trp_player", ":cur_slot", ":cur_amount"),
+				(try_end),
+		])
+
+		
+		#script_update_village_market_towns
+		# INPUT: none
+		# OUTPUT: none
+update_village_market_towns=(
+	"update_village_market_towns",
+			[(try_for_range, ":cur_village", villages_begin, villages_end),
+					(store_faction_of_party, ":village_faction", ":cur_village"),
+					(assign, ":min_dist", 999999),
+					(assign, ":min_dist_town", -1),
+					(try_for_range, ":cur_town", towns_begin, towns_end),
+						(store_faction_of_party, ":town_faction", ":cur_town"),
+						(eq, ":town_faction", ":village_faction"),
+						(store_distance_to_party_from_party, ":cur_dist", ":cur_village", ":cur_town"),
+						(lt, ":cur_dist", ":min_dist"),
+						(assign, ":min_dist", ":cur_dist"),
+						(assign, ":min_dist_town", ":cur_town"),
+					(try_end),
+					
+					(try_begin),
+						(gt, ":min_dist_town", -1),
+						(party_set_slot, ":cur_village", slot_village_market_town, ":min_dist_town"),
+					(else_try),
+						(assign, ":min_dist", 999999),
+						(assign, ":min_dist_town", -1),
+						(try_for_range, ":cur_town", towns_begin, towns_end),
+							(store_faction_of_party, ":town_faction", ":cur_town"),
+							(store_relation, ":relation", ":town_faction", ":village_faction"),
+							(ge, ":relation", 0),
+							(store_distance_to_party_from_party, ":cur_dist", ":cur_village", ":cur_town"),
+							(lt, ":cur_dist", ":min_dist"),
+							(assign, ":min_dist", ":cur_dist"),
+							(assign, ":min_dist_town", ":cur_town"),
+						(try_end),
+						(gt, ":min_dist_town", -1),
+						(party_set_slot, ":cur_village", slot_village_market_town, ":min_dist_town"),
+					(try_end),
+				(try_end),
+		])    

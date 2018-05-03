@@ -604,3 +604,132 @@ get_enterprise_name	= (
 				(assign, reg0, ":enterprise_name"),
 		])
 		
+
+		#script_do_villager_center_trade - tom mader
+		# NOTE: NOT PRESENT IN NATIVE SCRIPTS 1257AD devs
+		# USage: to simulate economy systems.
+		# INPUT: arg1 = party_no, arg2 = center_no,
+		# OUTPUT: reg0 = total_change
+do_villager_center_trade = (
+	"do_villager_center_trade",
+			[
+				(store_script_param, ":village_no", 1),
+				(store_script_param, ":center_no", 2),
+				#(store_script_param, ":percentage_change", 3), #this should probably always be a constant. Currently it is 25
+				(assign, ":percentage_change", 30),
+
+				(assign, ":total_change", 0),
+				(store_sub, ":item_to_price_slot", slot_town_trade_good_prices_begin, trade_goods_begin),
+				(try_for_range, ":cur_good", trade_goods_begin, trade_goods_end),
+					(store_add, ":cur_good_price_slot", ":cur_good", ":item_to_price_slot"),
+					(party_get_slot, ":cur_merchant_price", ":village_no", ":cur_good_price_slot"),
+					(party_get_slot, ":cur_center_price", ":center_no", ":cur_good_price_slot"),
+					(store_sub, ":price_dif", ":cur_merchant_price", ":cur_center_price"),
+					(assign, ":cur_change", ":price_dif"),
+					(val_abs, ":cur_change"),
+					(val_add, ":total_change", ":cur_change"),
+					(val_mul, ":cur_change", ":percentage_change"),
+					(val_div, ":cur_change", 100),
+					
+					#This is to reconvert from absolute value
+					(try_begin),
+						(lt, ":price_dif", 0),
+						(val_mul, ":cur_change", -1),
+					(try_end),
+						
+					(val_add, ":cur_center_price", ":cur_change"),
+					(party_set_slot, ":center_no", ":cur_good_price_slot", ":cur_center_price"),
+
+			# (try_begin),
+						# (eq, "$cheat_mode", 3),
+						# (str_store_party_name, s3, ":village_no"),
+						# (str_store_party_name, s4, ":center_no"),
+						# (str_store_item_name, s5, ":cur_good"),
+						# (assign, reg4, ":cur_change"),
+						# (assign, reg5, ":cur_center_price"),
+						# (display_message, "@{!}DEBUG -- Trade of {s5} from {s3} to {s4} brings price from {reg4} to  {reg5}"),
+					# (try_end),
+				(try_end),
+				(assign, reg0, ":total_change"),
+		])
+
+		
+		#script_do_party_center_trade
+		# INPUT: arg1 = party_no, arg2 = center_no, arg3 = percentage_change_in_center
+		# OUTPUT: reg0 = total_change
+do_party_center_trade = (
+	"do_party_center_trade",
+			[
+				(store_script_param, ":party_no", 1),
+				(store_script_param, ":center_no", 2),
+				(store_script_param, ":percentage_change", 3), #this should probably always be a constant. Currently it is 25
+				(assign, ":percentage_change", 30),
+				
+				(party_get_slot, ":origin", ":party_no", slot_party_last_traded_center),
+				(party_set_slot, ":party_no", slot_party_last_traded_center, ":center_no"),
+				
+				(assign, ":total_change", 0),
+				(store_sub, ":item_to_price_slot", slot_town_trade_good_prices_begin, trade_goods_begin),
+				(try_for_range, ":cur_good", trade_goods_begin, trade_goods_end),
+					(store_add, ":cur_good_price_slot", ":cur_good", ":item_to_price_slot"),
+					(party_get_slot, ":cur_merchant_price", ":party_no", ":cur_good_price_slot"),
+					(party_get_slot, ":cur_center_price", ":center_no", ":cur_good_price_slot"),
+					(store_sub, ":price_dif", ":cur_merchant_price", ":cur_center_price"),
+					(assign, ":cur_change", ":price_dif"),
+					(val_abs, ":cur_change"),
+					(val_add, ":total_change", ":cur_change"),
+					(val_mul, ":cur_change", ":percentage_change"),
+					(val_div, ":cur_change", 100),
+					
+					#This is to reconvert from absolute value
+					(try_begin),
+						(lt, ":price_dif", 0),
+						(val_mul, ":cur_change", -1),
+					(try_end),
+					
+					#The new price for the caravan or peasant is set before the change, so the prices in the trading town have full effect on the next center
+					(party_set_slot, ":party_no", ":cur_good_price_slot", ":cur_center_price"),
+					
+					(val_add, ":cur_center_price", ":cur_change"),
+					(party_set_slot, ":center_no", ":cur_good_price_slot", ":cur_center_price"),
+					
+					
+					(try_begin),
+						(eq, "$cheat_mode", 3),
+						(str_store_party_name, s3, ":origin"),
+						(str_store_party_name, s4, ":center_no"),
+						(str_store_item_name, s5, ":cur_good"),
+						(assign, reg4, ":cur_change"),
+						(assign, reg5, ":cur_center_price"),
+						(display_message, "@{!}DEBUG -- Trade of {s5} from {s3} to {s4} brings price from {reg4} to  {reg5}"),
+					(try_end),
+					
+				(try_end),
+				(assign, reg0, ":total_change"),
+		])
+
+
+		#script_get_prosperity_text_to_s50
+		# INPUT: center_no
+		# OUTPUT: returns to s50
+get_prosperity_text_to_s50 = (
+	"get_prosperity_text_to_s50",
+			[(store_script_param, ":center_no", 1),
+				(party_get_slot, ":prosperity", ":center_no", slot_town_prosperity),
+				(val_div, ":prosperity", 20),
+				(try_begin),
+					(eq, ":prosperity", 0), #0..19
+					(str_store_string, s50, "@Very Poor"),
+				(else_try),
+					(eq, ":prosperity", 1), #20..39
+					(str_store_string, s50, "@Poor"),
+				(else_try),
+					(eq, ":prosperity", 2), #40..59
+					(str_store_string, s50, "@Average"),
+				(else_try),
+					(eq, ":prosperity", 3), #60..79
+					(str_store_string, s50, "@Rich"),
+				(else_try),
+					(str_store_string, s50, "@Very Rich"), #80..99
+				(try_end),
+		])

@@ -925,7 +925,7 @@ calculate_battle_advantage = (
 		# script_cf_get_random_enemy_center
 		# Input: arg1 = party_no
 		# Output: reg0 = center_no
-cf_get_random_enemy_center	=(
+cf_get_random_enemy_center	 = (
 	"cf_get_random_enemy_center",
 			[
 				(store_script_param_1, ":party_no"),
@@ -961,7 +961,7 @@ cf_get_random_enemy_center	=(
 		# script_get_relation_between_parties
 		# Input: arg1 = party_no_1, arg2 = party_no_2
 		# Output: reg0 = relation between parties
-get_relation_between_parties	=(
+get_relation_between_parties	 = (
 	"get_relation_between_parties",
 			[
 				(store_script_param_1, ":party_no_1"),
@@ -983,7 +983,7 @@ get_relation_between_parties	=(
 		# WARNING: modified by 1257devs
 		# Input: arg1 = party_no
 		# Output: reg0 = weekly wage
-calculate_weekly_party_wage	=(
+calculate_weekly_party_wage	 = (
 	"calculate_weekly_party_wage",
 			[
 				(store_script_param_1, ":party_no"),

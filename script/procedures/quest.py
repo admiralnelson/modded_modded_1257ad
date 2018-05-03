@@ -4,7 +4,7 @@ from header import *
 		# 
 		# INPUT: arg1 = faction_no, arg2= faction_strategy, arg3 = old_faction state
 		# OUTPUT: none
-update_report_to_army_quest_note=(
+update_report_to_army_quest_note = (
 	"update_report_to_army_quest_note",
 			[
 				(store_script_param, ":faction_no", 1),
@@ -93,7 +93,7 @@ update_report_to_army_quest_note=(
 		# script_check_and_finish_active_army_quests_for_faction
 		# Input: faction_no
 		# Output: none
-check_and_finish_active_army_quests_for_faction=(
+check_and_finish_active_army_quests_for_faction = (
 	"check_and_finish_active_army_quests_for_faction",
 			[
 				(store_script_param_1, ":faction_no"),
@@ -133,7 +133,7 @@ check_and_finish_active_army_quests_for_faction=(
 		# script_finish_quest
 		# Input: arg1 = quest_no, arg2 = finish_percentage
 		# Output: none
-finish_quest=(
+finish_quest = (
 	"finish_quest",
 			[
 				(store_script_param_1, ":quest_no"),
@@ -517,3 +517,166 @@ abort_quest = (
 				
 				(call_script, "script_end_quest", ":quest_no"),
 		])
+
+#script_start_quest
+		# INPUT: arg1 = quest_no, arg2 = giver_troop_no, s2 = description_text
+		# OUTPUT: none
+start_quest = (
+	"start_quest",
+			[(store_script_param, ":quest_no", 1),
+				(store_script_param, ":giver_troop_no", 2),
+				
+				(quest_set_slot, ":quest_no", slot_quest_giver_troop, ":giver_troop_no"),
+				
+				(try_begin),
+					(eq, ":giver_troop_no", -1),
+					(str_store_string, s63, "str_political_suggestion"),
+				(else_try),
+					(is_between, ":giver_troop_no", active_npcs_begin, active_npcs_end),
+					(str_store_troop_name_link, s62, ":giver_troop_no"),
+					(str_store_string, s63, "@Given by: {s62}"),
+				(else_try),
+					(str_store_troop_name, s62, ":giver_troop_no"),
+					(str_store_string, s63, "@Given by: {s62}"),
+				(try_end),
+				(store_current_hours, ":cur_hours"),
+				(str_store_date, s60, ":cur_hours"),
+				(str_store_string, s60, "@Given on: {s60}"),
+				(add_quest_note_from_sreg, ":quest_no", 0, s60, 0),
+				(add_quest_note_from_sreg, ":quest_no", 1, s63, 0),
+				(add_quest_note_from_sreg, ":quest_no", 2, s2, 0),
+				
+				(try_begin),
+					(quest_slot_ge, ":quest_no", slot_quest_expiration_days, 1),
+					(quest_get_slot, reg0, ":quest_no", slot_quest_expiration_days),
+					(add_quest_note_from_sreg, ":quest_no", 7, "@You have {reg0} days to finish this quest.", 0),
+				(try_end),
+				
+				#Adding dont_give_again_for_days value
+				(try_begin),
+					(quest_slot_ge, ":quest_no", slot_quest_dont_give_again_period, 1),
+					(quest_get_slot, ":dont_give_again_period", ":quest_no", slot_quest_dont_give_again_period),
+					(quest_set_slot, ":quest_no", slot_quest_dont_give_again_remaining_days, ":dont_give_again_period"),
+				(try_end),
+				(start_quest, ":quest_no", ":giver_troop_no"),
+				
+				(try_begin),
+					(eq, ":quest_no", "qst_report_to_army"),
+					(assign, "$number_of_report_to_army_quest_notes", 8),
+					(faction_get_slot, ":faction_ai_state", "$players_kingdom", slot_faction_ai_state),
+					(call_script, "script_update_report_to_army_quest_note", "$players_kingdom", ":faction_ai_state", -1),
+				(try_end),
+				
+				(display_message, "str_quest_log_updated"),
+		])
+		
+		#script_conclude_quest
+		# INPUT: arg1 = quest_no
+		# OUTPUT: none
+conclude_quest = (
+	"conclude_quest",
+			[
+				(store_script_param, ":quest_no", 1),
+				(conclude_quest, ":quest_no"),
+				(quest_get_slot, ":quest_giver_troop", ":quest_no", slot_quest_giver_troop),
+				(str_store_troop_name, s59, ":quest_giver_troop"),
+				(add_quest_note_from_sreg, ":quest_no", 7, "@This quest has been concluded. Talk to {s59} to finish it.", 0),
+		])
+		
+		#script_succeed_quest
+		# INPUT: arg1 = quest_no
+		# OUTPUT: none
+succeed_quest = (
+	"succeed_quest",
+			[
+				(store_script_param, ":quest_no", 1),
+				(succeed_quest, ":quest_no"),
+				(quest_get_slot, ":quest_giver_troop", ":quest_no", slot_quest_giver_troop),
+				(str_store_troop_name, s59, ":quest_giver_troop"),
+				(add_quest_note_from_sreg, ":quest_no", 7, "@This quest has been successfully completed. Talk to {s59} to claim your reward.", 0),
+		])
+		
+		#script_fail_quest
+		# INPUT: arg1 = quest_no
+		# OUTPUT: none
+fail_quest = (
+	"fail_quest",
+			[
+				(store_script_param, ":quest_no", 1),
+				(fail_quest, ":quest_no"),
+				(quest_get_slot, ":quest_giver_troop", ":quest_no", slot_quest_giver_troop),
+				(str_store_troop_name, s59, ":quest_giver_troop"),
+				(add_quest_note_from_sreg, ":quest_no", 7, "@This quest has failed. Talk to {s59} to explain the situation.", 0),
+		])
+		
+		#script_report_quest_troop_positions
+		# INPUT: arg1 = quest_no, arg2 = troop_no, arg3 = note_index
+		# OUTPUT: none
+report_quest_troop_positions = (
+	"report_quest_troop_positions",
+			[
+				(store_script_param, ":quest_no", 1),
+				(store_script_param, ":troop_no", 2),
+				(store_script_param, ":note_index", 3),
+				(call_script, "script_get_information_about_troops_position", ":troop_no", 1),
+				(str_store_string, s5, "@At the time quest was given:^{s1}"),
+				(add_quest_note_from_sreg, ":quest_no", ":note_index", s5, 1),
+				(call_script, "script_update_troop_location_notes", ":troop_no", 1),
+		])
+		
+		#script_end_quest
+		# INPUT: arg1 = quest_no
+		# OUTPUT: none
+end_quest = (
+	"end_quest",
+			[
+				(store_script_param, ":quest_no", 1),
+				(str_clear, s1),
+				(add_quest_note_from_sreg, ":quest_no", 0, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 1, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 2, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 3, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 4, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 5, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 6, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 7, s1, 0),
+				(try_begin),
+					(neg|check_quest_failed, ":quest_no"),
+					(val_add, "$g_total_quests_completed", 1),
+				(try_end),
+				(try_begin),
+					(eq, ":quest_no", "qst_consult_with_minister"),
+					(assign, "$g_minister_notification_quest", 0),
+				(try_end),
+				(complete_quest, ":quest_no"),
+				(try_begin),
+					(is_between, ":quest_no", mayor_quests_begin, mayor_quests_end),
+					(assign, "$merchant_quest_last_offerer", -1),
+					(assign, "$merchant_offered_quest", -1),
+				(try_end),
+		])
+		
+		#script_cancel_quest
+		# INPUT: arg1 = quest_no
+		# OUTPUT: none
+cancel_quest = (
+	"cancel_quest",
+			[(store_script_param, ":quest_no", 1),
+				(str_clear, s1),
+				(add_quest_note_from_sreg, ":quest_no", 0, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 1, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 2, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 3, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 4, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 5, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 6, s1, 0),
+				(add_quest_note_from_sreg, ":quest_no", 7, s1, 0),
+				(cancel_quest, ":quest_no"),
+				(try_begin),
+					(is_between, ":quest_no", mayor_quests_begin, mayor_quests_end),
+					(assign, "$merchant_quest_last_offerer", -1),
+					(assign, "$merchant_offered_quest", -1),
+				(try_end),
+		])
+		
+		

@@ -1371,7 +1371,7 @@ multiplayer_move_moveable_objects_initial_positions =	("multiplayer_move_moveabl
 #script_team_set_score
 # INPUT: arg1 = team_no, arg2 = score
 # OUTPUT: none
-team_set_score =(
+team_set_score  = (
 	"team_set_score",
 		[
 			(store_script_param, ":team_no", 1),
@@ -1633,7 +1633,7 @@ get_headquarters_scores =	("get_headquarters_scores",
 	
 #script_draw_this_round
 # INPUT: arg1 = value
-draw_this_round =("draw_this_round",
+draw_this_round  = ("draw_this_round",
    [
     (store_script_param, ":value", 1),
     (try_begin),

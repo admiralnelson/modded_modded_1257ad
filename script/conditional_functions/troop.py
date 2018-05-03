@@ -3,7 +3,7 @@ from header import *
 # script_cf_is_quest_troop
 		# Input: arg1 = troop_no
 		# Output: none (can fail)
-cf_is_quest_troop=(
+cf_is_quest_troop = (
 	"cf_is_quest_troop",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -24,7 +24,7 @@ cf_is_quest_troop=(
 		# script_cf_troop_check_troop_is_enemy
 		# Input: arg1 = troop_no, arg2 = checked_troop_no
 		# Output: none (Can fail)
-cf_troop_check_troop_is_enemy=(
+cf_troop_check_troop_is_enemy = (
 	"cf_troop_check_troop_is_enemy",
 			[
 				(store_script_param_1, ":troop_no"),

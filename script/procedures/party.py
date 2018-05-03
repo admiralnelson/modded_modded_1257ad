@@ -1661,7 +1661,7 @@ party_set_ai_state = (
 		# script_change_player_relation_with_center
 		# Input: arg1 = party_no, arg2 = relation difference
 		# Output: none
-change_player_relation_with_center=(
+change_player_relation_with_center = (
 	"change_player_relation_with_center",
 			[
 				(store_script_param_1, ":center_no"),
@@ -1707,7 +1707,7 @@ change_player_relation_with_center=(
 		# WARNING: modified by 1257AD faction
 		# Input: party_no
 		# Output: none
-party_calculate_and_set_nearby_friend_enemy_follower_strengths=(
+party_calculate_and_set_nearby_friend_enemy_follower_strengths = (
 	"party_calculate_and_set_nearby_friend_enemy_follower_strengths",
 			[
 				(store_script_param, ":party_no", 1),

@@ -440,3 +440,129 @@ process_alarms = (
 					
 				(try_end),
 		])
+
+	#script_spawn_bandits - tom made
+	# NOTE: NOT PRESENT IN NATIVE SCRIPT! AD1257 devs
+	# INPUT: none
+	# OUTPUT: none
+spawn_bandits2 = (
+			"spawn_bandits2",
+			[
+			(set_spawn_radius, 3),
+			(assign, ":num_parties", 0),
+		(try_for_range, ":party_template", 0, 7),
+			(store_add, ":lair_template", ":party_template", "pt_steppe_bandit_lair"),
+			(store_add, ":bandit_template", ":party_template", "pt_steppe_bandits"),
+			(store_num_parties_of_template, ":num_lairs", ":lair_template"),
+			(store_num_parties_of_template, ":num_parties", ":bandit_template"),
+			(store_mul, ":spawn_cap", ":num_lairs", 2),
+			(lt, ":num_parties", ":spawn_cap"),
+			(val_sub, ":spawn_cap", ":num_parties"),
+			(try_for_range, reg2, 0, ":spawn_cap"),
+				(store_random_party_of_template, ":random_lair", ":lair_template"),
+				(spawn_around_party, ":random_lair", ":bandit_template"),
+			(party_set_slot, reg0, slot_party_ai_object, ":random_lair"),
+				#####(spawn_around_party, ":random_lair", ":bandit_template"),
+			(try_end),
+		(try_end),
+		
+		(assign, ":looter_amount", 40),
+		(store_num_parties_of_template, ":num_parties", "pt_looters"),
+		#looters
+		(try_begin),
+			(lt, ":num_parties", ":looter_amount"),
+			(val_sub, ":looter_amount", ":num_parties"),
+			(try_for_range, reg2, 0, ":looter_amount"),
+				(store_random_in_range, ":random_village", villages_begin, villages_end),
+			(spawn_around_party, ":random_village", "pt_looters"),
+			(try_begin),
+							(check_quest_active, "qst_deal_with_looters"),
+							(party_set_flags, reg0, pf_quest_party, 1),
+						(else_try),
+							(party_set_flags, reg0, pf_quest_party, 0),
+						(try_end),
+			(try_end),
+		(try_end),
+		])
+	
+		#script_spawn_bandit_lairs - tom made
+	# NOTE: NOT PRESENT IN NATIVE SCRIPT! AD1257 devs
+	#INPUT: NONE
+	#OUTPUT: NONE
+	#DESCRIPTION: spawns a bunch of bandit lairs. Bandits lairs latter spawn bandits, excluding the looters.
+spawn_bandit_lairs = (
+		"spawn_bandit_lairs",
+	[
+		#standart
+		(party_template_set_slot, "pt_steppe_bandits", slot_party_template_lair_type, "pt_steppe_bandit_lair"), #ukraine and ilkhanae
+				(party_template_set_slot, "pt_taiga_bandits", slot_party_template_lair_type, "pt_taiga_bandit_lair"), #rus
+				(party_template_set_slot, "pt_mountain_bandits", slot_party_template_lair_type, "pt_mountain_bandit_lair"), #scandinavia, italy, greece, iberia
+				(party_template_set_slot, "pt_forest_bandits", slot_party_template_lair_type, "pt_forest_bandit_lair"),  #baltic - lithuania, to, poland, halych
+				(party_template_set_slot, "pt_sea_raiders", slot_party_template_lair_type, "pt_sea_raider_lair"), #spawn around boats
+				(party_template_set_slot, "pt_desert_bandits", slot_party_template_lair_type, "pt_desert_bandit_lair"), #africa - egpyt, libija, maroco, crus states
+				(party_template_set_slot, "pt_robber_knights", slot_party_template_lair_type, "pt_robber_knight_lair"), #europe
+		
+		#lets get amount of bandit camps
+		(set_spawn_radius, 4),
+		(assign, ":num_parties", 0),
+		(try_for_range, ":party_template", "pt_steppe_bandit_lair", "pt_looter_lair"),
+			(store_num_parties_of_template, ":num", ":party_template"),
+			(val_add, ":num_parties", ":num"),
+		(try_end),
+		# (store_num_parties_of_template, ":num", "pt_robber_knights"),
+		# (val_add, ":num_parties", ":num"),
+		
+		# (assign, reg0, ":num_parties"),
+		# (display_message, "@num_of_parties: {reg0}"),
+		(assign, ":lair_cap", 32),
+		(try_begin),
+			(lt, ":num_parties", ":lair_cap"),
+			(val_sub, ":lair_cap", ":num_parties"),
+			(gt, ":lair_cap", 0),
+			(try_for_range, reg1, 0, ":lair_cap"),
+				(store_random_in_range, ":random", 0, 101),
+				(try_begin), #bandit knights
+					(le, ":random", 5),
+					(store_random_in_range, ":random_center", walled_centers_begin, walled_centers_end),
+				(spawn_around_party, ":random_center", "pt_robber_knight_lair"),
+				#(display_message, "@spwaning knighrts"),
+				(else_try), #other bandits, excluding the looters
+					(le, ":random", 75),
+				(store_random_in_range, ":random_center", walled_centers_begin, walled_centers_end),
+				(assign, ":terrain", 0),
+				(party_get_current_terrain, ":terrain", ":random_center"),
+				(try_begin),
+					(this_or_next|eq, ":terrain", rt_steppe),
+					(eq, ":terrain", rt_steppe_forest),
+					(assign, ":party_to_spawn", "pt_steppe_bandit_lair"),
+					#(display_message, "@spwaning steppe"),
+				(else_try),
+					(this_or_next|eq, ":terrain", rt_snow),
+					(eq, ":terrain", rt_snow_forest),
+					(assign, ":party_to_spawn", "pt_taiga_bandit_lair"),
+					#(display_message, "@spwaning taiga"),
+				(else_try),
+					(this_or_next|eq, ":terrain", rt_desert),
+					(eq, ":terrain", rt_desert_forest),
+					(assign, ":party_to_spawn", "pt_desert_bandit_lair"),
+				 # (display_message, "@spwaning desert"),
+				(else_try), #plain
+					(store_random_in_range, ":random", 0, 101), #this is reused!
+					(try_begin),
+						(lt, ":random", 50),
+					(assign, ":party_to_spawn", "pt_forest_bandit_lair"),
+					#(display_message, "@spwaning forest"),
+					(else_try),
+						(assign, ":party_to_spawn", "pt_mountain_bandit_lair"),
+					#(display_message, "@spwaning mountain"),
+					(try_end),
+				(try_end),
+				(spawn_around_party,":random_center", ":party_to_spawn"),
+				(else_try), #pirates
+					(store_random_in_range, ":random_center", "p_ship_1", "p_looter_spawn_point"),
+					(spawn_around_party, ":random_center", "pt_sea_raider_lair"),
+					#(display_message, "@spwaning sea"),
+				(try_end),
+			(try_end), #cycle end
+		(try_end),
+	])

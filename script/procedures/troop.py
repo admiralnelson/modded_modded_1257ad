@@ -700,7 +700,7 @@ calculate_hero_weekly_net_income_and_add_to_wealth	= (
 		# script_change_player_relation_with_troop
 		# Input: arg1 = troop_no, arg2 = relation difference
 		# Output: none
-change_player_relation_with_troop=(
+change_player_relation_with_troop = (
 	"change_player_relation_with_troop",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -751,7 +751,7 @@ change_player_relation_with_troop=(
 		# script_recruit_troop_as_companion
 		# Input: arg1 = troop_no,
 		# Output: none
-recruit_troop_as_companion=(
+recruit_troop_as_companion = (
 	"recruit_troop_as_companion",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -834,7 +834,7 @@ change_troop_renown = (
 		# script_change_debt_to_troop
 		# Input: arg1 = troop_no, arg2 = new debt amount
 		# Output: none
-change_debt_to_troop=(
+change_debt_to_troop = (
 	"change_debt_to_troop",
 			[
 				(store_script_param_1, ":troop_no"),
@@ -855,7 +855,7 @@ change_debt_to_troop=(
 		#complete family relations removed
 		# script_collect_friendly_parties
 		# Fills the party p_collective_friends with the members of parties attached to main_party and ally_party_no
-collect_friendly_parties=(
+collect_friendly_parties = (
 	"collect_friendly_parties",
 			[
 				(party_collect_attachments_to_party, "p_main_party", "p_collective_friends"),
@@ -867,7 +867,7 @@ collect_friendly_parties=(
 				(try_end),
 		])
 		
-troop_write_family_relations_to_s1=(
+troop_write_family_relations_to_s1 = (
 	"troop_write_family_relations_to_s1",
 			[
 				(str_clear, s1),
@@ -879,7 +879,7 @@ troop_write_family_relations_to_s1=(
 		# WARNING: slightly modified by 1257AD devs
 		# Input: arg1 = troop_no
 		# Output: fills $battle_renown_value
-calculate_renown_value=(
+calculate_renown_value = (
 	"calculate_renown_value",
 			[
 				(call_script, "script_party_calculate_strength", "p_main_party", 0),
@@ -909,4 +909,5 @@ calculate_renown_value=(
 				(assign, reg8, "$battle_renown_value"),
 				(display_message, "@Renown value for this battle is {reg8}.",0xFFFFFFFF),
 		])
+		
 		

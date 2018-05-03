@@ -1,9 +1,9 @@
 from header import *
 
 
-		# script_find_travel_location
-		# Input: arg1 = center_no
-		# Output: reg0 = new_center_no (to travel within the same faction)
+# script_find_travel_location
+# Input: arg1 = center_no
+# Output: reg0 = new_center_no (to travel within the same faction)
 find_travel_location = (
 	"find_travel_location",
 			[
@@ -50,9 +50,9 @@ find_travel_location = (
 				(try_end),
 		])
 
-		# script_create_cattle_herd
-		# Input: arg1 = center_no, arg2 = amount (0 = default)
-		# Output: reg0 = party_no
+# script_create_cattle_herd
+# Input: arg1 = center_no, arg2 = amount (0 = default)
+# Output: reg0 = party_no
 create_cattle_herd = (
 	"create_cattle_herd",
 			[
@@ -84,9 +84,9 @@ create_cattle_herd = (
 		])
 
 		
-		#script_buy_cattle_from_village
-		# Input: arg1 = village_no, arg2 = amount, arg3 = single_cost
-		# Output: reg0 = party_no
+#script_buy_cattle_from_village
+# Input: arg1 = village_no, arg2 = amount, arg3 = single_cost
+# Output: reg0 = party_no
 buy_cattle_from_village = (
 	"buy_cattle_from_village",
 			[
@@ -129,9 +129,9 @@ buy_cattle_from_village = (
 				(try_end),
 		])
 
-		# script_center_get_food_consumption
-		# Input: arg1 = center_no
-		# Output: reg0: food consumption (1 food item counts as 100 units)
+# script_center_get_food_consumption
+# Input: arg1 = center_no
+# Output: reg0: food consumption (1 food item counts as 100 units)
 center_get_food_consumption = (
 	"center_get_food_consumption",
 			[
@@ -147,10 +147,10 @@ center_get_food_consumption = (
 				(assign, reg0, ":food_consumption"),
 		])
 
-		# script_center_get_food_store_limit
-		# WARNING: modified by 1257AD devs
-		# Input: arg1 = center_no
-		# Output: reg0: food consumption (1 food item counts as 100 units)
+# script_center_get_food_store_limit
+# WARNING: modified by 1257AD devs
+# Input: arg1 = center_no
+# Output: reg0: food consumption (1 food item counts as 100 units)
 center_get_food_store_limit = (
 	"center_get_food_store_limit",
 			[
@@ -169,12 +169,12 @@ center_get_food_store_limit = (
 				(assign, reg0, ":food_store_limit"),
 		])
 
-		# script_village_set_state
-		# no longer resemble script in native version
-		# 1257AD prosperity system resides here
-		# WARNING: heavily modified by 1257AD
-		# Input: arg1 = center_no arg2:new_state
-		# Output: reg0: food consumption (1 food item counts as 100 units)
+# script_village_set_state
+# no longer resemble script in native version
+# 1257AD prosperity system resides here
+# WARNING: heavily modified by 1257AD
+# Input: arg1 = center_no arg2:new_state
+# Output: reg0: food consumption (1 food item counts as 100 units)
 village_set_state = (
 	"village_set_state",
 			[
@@ -259,3 +259,83 @@ get_center_faction_relation_including_player =	(
 				(try_end),
 				(assign, reg0, ":relation"),
 		])
+
+#script_get_available_mercenary_troop_and_amount_of_center
+# INPUT: arg1 = center_no
+# OUTPUT: reg0 = mercenary_troop_type, reg1 = amount
+get_available_mercenary_troop_and_amount_of_center = (
+	"get_available_mercenary_troop_and_amount_of_center",
+			[(store_script_param, ":center_no", 1),
+				(party_get_slot, ":mercenary_troop", ":center_no", slot_center_mercenary_troop_type),
+				(party_get_slot, ":mercenary_amount", ":center_no", slot_center_mercenary_troop_amount),
+				(party_get_free_companions_capacity, ":free_capacity", "p_main_party"),
+				(val_min, ":mercenary_amount", ":free_capacity"),
+				(store_troop_gold, ":cur_gold", "trp_player"),
+				(call_script, "script_game_get_join_cost", ":mercenary_troop"),
+				(assign, ":join_cost", reg0),
+				(try_begin),
+					(gt, ":join_cost", 0),
+					(val_div, ":cur_gold", ":join_cost"),
+					(val_min, ":mercenary_amount", ":cur_gold"),
+				(try_end),
+				(assign, reg0, ":mercenary_troop"),
+				(assign, reg1, ":mercenary_amount"),
+		])
+		
+# script_create_village_farmer_party
+# spawns villager party
+# WARNING : modified by 1257AD devs
+# WARNING : IT'S ALSO DISABLED BY TOM!! look simple_triggers at : 2300
+# Input: arg1 = village_no
+# Output: reg0 = party_no
+create_village_farmer_party = (
+	"create_village_farmer_party",
+			[(store_script_param, ":village_no", 1),
+
+				(party_get_slot, ":town_no", ":village_no", slot_village_market_town),
+				(store_faction_of_party, ":party_faction", ":town_no"),
+				
+				#    (store_faction_of_party, ":town_faction", ":town_no"),
+				#    (try_begin),
+				#		(neq, ":town_faction", ":party_faction"),
+				#		(assign, ":town_no", -1),
+				#		(assign, ":score_to_beat", 9999),
+				#		(try_for_range, ":other_town", towns_begin, towns_end),
+				#			(store_faction_of_party, ":other_town_faction", ":town_no"),
+				#			(store_relation, ":relation", ":other_town_faction", ":party_faction"),
+				#			(ge, ":relation", 0),
+				
+				#			(store_distance_to_party_from_party, ":distance", ":village_no", ":other_town"),
+				#			(lt, ":distance", ":score_to_beat"),
+				#			(assign, ":town_no", ":other_town"),
+				#			(assign, ":score_to_beat", ":distance"),
+				#		(try_end),
+				#	(try_end),
+				
+				(try_begin),
+			(is_between, ":party_faction", kingdoms_begin, kingdoms_end), #tom
+					(is_between, ":town_no", towns_begin, towns_end),
+					(set_spawn_radius, 0),
+					(spawn_around_party, ":village_no", "pt_village_farmers"),
+					(assign, ":new_party", reg0),
+					
+					(party_set_faction, ":new_party", ":party_faction"),
+					(party_set_slot, ":new_party", slot_party_home_center, ":village_no"),
+					(party_set_slot, ":new_party", slot_party_last_traded_center, ":village_no"),
+					
+					(party_set_slot, ":new_party", slot_party_type, spt_village_farmer),
+					(party_set_slot, ":new_party", slot_party_ai_state, spai_trading_with_town),
+					(party_set_slot, ":new_party", slot_party_ai_object, ":town_no"),
+					(party_set_ai_behavior, ":new_party", ai_bhvr_travel_to_party),
+					(party_set_ai_object, ":new_party", ":town_no"),
+					(party_set_flags, ":new_party", pf_default_behavior, 0),
+					(store_sub, ":item_to_price_slot", slot_town_trade_good_prices_begin, trade_goods_begin),
+					(try_for_range, ":cur_goods", trade_goods_begin, trade_goods_end),
+						(store_add, ":cur_good_price_slot", ":cur_goods", ":item_to_price_slot"),
+						(party_get_slot, ":cur_village_price", ":village_no", ":cur_good_price_slot"),
+						(party_set_slot, ":new_party", ":cur_good_price_slot", ":cur_village_price"),
+					(try_end),
+					(assign, reg0, ":new_party"),
+				(try_end),
+		])
+	 

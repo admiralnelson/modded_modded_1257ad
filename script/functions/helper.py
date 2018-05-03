@@ -29,7 +29,7 @@ get_percentage_with_randomized_round =	(
 		# really? the power of talesworlds's ""scripting engine""
 		# Input: arg1 = value
 		# Output: reg0 = rounded_value
-round_value=(
+round_value = (
 	"round_value",
 			[
 				(store_script_param_1, ":value"),
@@ -59,7 +59,7 @@ round_value=(
 		# script_describe_relation_to_s63
 		# Input: arg1 = relation (-100 .. 100)
 		# Output: s63
-describe_relation_to_s63=(
+describe_relation_to_s63 = (
 	"describe_relation_to_s63",
 			[(store_script_param_1, ":relation"),
 				(store_add, ":normalized_relation", ":relation", 100),
@@ -73,7 +73,7 @@ describe_relation_to_s63=(
 		# script_describe_center_relation_to_s3
 		# Input: arg1 = relation (-100 .. 100)
 		# Output: s3
-describe_center_relation_to_s3=(
+describe_center_relation_to_s3 = (
 	"describe_center_relation_to_s3",
 			[(store_script_param_1, ":relation"),
 				(store_add, ":normalized_relation", ":relation", 100),

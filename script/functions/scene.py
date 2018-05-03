@@ -79,7 +79,7 @@ get_meeting_scene =	(
 		# script_cf_center_get_free_walker
 		# Input: arg1 = center_no
 		# Output: reg0 = walker no (can fail)
-cf_center_get_free_walker=(
+cf_center_get_free_walker = (
 	"cf_center_get_free_walker",
 			[
 				(store_script_param, ":center_no", 1),
@@ -104,7 +104,7 @@ cf_center_get_free_walker=(
 		# script_center_remove_walker_type_from_walkers
 		# Input: arg1 = center_no, arg2 = walker_type,
 		# Output: reg0 = 1 if comment found, 0 otherwise; s61 will contain comment string if found
-center_remove_walker_type_from_walkers=(
+center_remove_walker_type_from_walkers = (
 	"center_remove_walker_type_from_walkers",
 			[
 				(store_script_param, ":center_no", 1),
@@ -121,7 +121,7 @@ center_remove_walker_type_from_walkers=(
 		# This script assumes this is one of town walkers.
 		# Input: agent_id
 		# Output: reg0: town_walker_type, reg1: town_walker_dna
-agent_get_town_walker_details=(
+agent_get_town_walker_details = (
 	"agent_get_town_walker_details",
 			[(store_script_param, ":agent_no", 1),
 				(agent_get_entry_no, ":entry_no", ":agent_no"),
@@ -140,7 +140,7 @@ agent_get_town_walker_details=(
 		# WARNING: this is totally new procedure (not present in native). 1257AD devs
 		# INPUT : agent_no
 		# OUTPUT : s14
-town_walker_occupation_string_to_s14=(
+town_walker_occupation_string_to_s14 = (
 	"town_walker_occupation_string_to_s14",
 			[
 				(store_script_param, ":agent_no", 1),

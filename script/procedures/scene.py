@@ -4,7 +4,7 @@ from header import *
 		# WARNING : HEAVILY modified by 1257AD devs
 		# Input: arg1 = center_no, arg2 = mission_template_no
 		# Output: none
-setup_random_scene=(
+setup_random_scene = (
 	"setup_random_scene",
 			[
 				(party_get_current_terrain, ":terrain_type", "p_main_party"),
@@ -389,7 +389,7 @@ setup_random_scene=(
 		# script_enter_dungeon
 		# Input: arg1 = center_no, arg2 = mission_template_no
 		# Output: none
-enter_dungeon=(
+enter_dungeon = (
 	"enter_dungeon",
 			[
 				(store_script_param_1, ":center_no"),
@@ -455,7 +455,7 @@ enter_dungeon=(
 		# WARNING: heavily modified by 1257AD
 		# Input: arg1 = center_no
 		# Output: none
-enter_court=(
+enter_court = (
 	"enter_court",
 			[
 				(store_script_param_1, ":center_no"),
@@ -674,7 +674,7 @@ enter_court=(
 		# sets up a scene to meet player with lady
 		# INPUT: lady_no, center_no
 		# OUTPUT: none
-setup_meet_lady=(
+setup_meet_lady = (
 	"setup_meet_lady",
 			[
 				(store_script_param_1, ":lady_no"),
@@ -705,7 +705,7 @@ setup_meet_lady=(
 		# script_cf_turn_windmill_fans
 		# Input: arg1 = instance_no (none = 0)
 		# Output: none
-cf_turn_windmill_fans=(
+cf_turn_windmill_fans = (
 	"cf_turn_windmill_fans",
 			[(store_script_param_1, ":instance_no"),
 				(scene_prop_get_instance, ":windmill_fan_object", "spr_windmill_fan_turning", ":instance_no"),
@@ -721,7 +721,7 @@ cf_turn_windmill_fans=(
 		# WARNING: modified by 1257AD devs
 		# Input: none
 		# Output: none
-remove_siege_objects=(
+remove_siege_objects = (
 	"remove_siege_objects",
 			[
 				(replace_scene_props, "spr_eastroman_wall_destroyed", "spr_eastroman_wall"),
@@ -761,7 +761,7 @@ remove_siege_objects=(
 		# Input: none
 		# Output: none
 		# to be called every two seconds
-center_ambiance_sounds=(
+center_ambiance_sounds = (
 	"center_ambiance_sounds",
 			[
 				(assign, ":sound_1", -1),
@@ -819,7 +819,7 @@ center_ambiance_sounds=(
 		# script_center_set_walker_to_type
 		# Input: arg1 = center_no, arg2 = walker_no, arg3 = walker_type,
 		# Output: none
-center_set_walker_to_type=(
+center_set_walker_to_type = (
 	"center_set_walker_to_type",
 			[
 				(store_script_param, ":center_no", 1),
@@ -891,7 +891,7 @@ center_set_walker_to_type=(
 		# script_init_town_walkers
 		# Input: none
 		# Output: none
-init_town_walkers=(
+init_town_walkers = (
 	"init_town_walkers",
 			[
 				(try_begin),
@@ -914,7 +914,7 @@ init_town_walkers=(
 		# script_init_town_agent
 		# Input: none
 		# Output: none
-init_town_agent=(
+init_town_agent = (
 	"init_town_agent",
 			[
 				(store_script_param, ":agent_no", 1),
@@ -953,7 +953,7 @@ init_town_agent=(
 		# script_init_town_walker_agents
 		# Input: none
 		# Output: none
-init_town_walker_agents=(
+init_town_walker_agents = (
 	"init_town_walker_agents",
 			[(assign, ":num_walkers", 0),
 				(try_for_agents, ":cur_agent"),
@@ -974,7 +974,7 @@ init_town_walker_agents=(
 		# script_tick_town_walkers
 		# Input: none
 		# Output: none
-tick_town_walkers=(
+tick_town_walkers = (
 	"tick_town_walkers",
 			[(try_for_agents, ":cur_agent"),
 					(agent_get_troop_id, ":cur_troop", ":cur_agent"),
@@ -1004,7 +1004,7 @@ tick_town_walkers=(
 		# WARNING: modified by 1257AD devs
 		# Input: arg1 = agent_no
 		# Output: none
-set_town_walker_destination=(
+set_town_walker_destination = (
 	"set_town_walker_destination",
 			[
 				#TOM
@@ -1040,7 +1040,7 @@ set_town_walker_destination=(
 		# script_town_init_doors
 		# Input: door_state (-1 = closed, 1 = open, 0 = use $town_nighttime)
 		# Output: none (required for siege mission templates)
-town_init_doors=(
+town_init_doors = (
 	"town_init_doors",
 			[(store_script_param, ":door_state", 1),
 				(try_begin),
@@ -1097,7 +1097,7 @@ town_init_doors=(
 		# script_change_banners_and_chest
 		# Input: none
 		# Output: none
-change_banners_and_chest=(
+change_banners_and_chest = (
 	"change_banners_and_chest",
 			[(party_get_slot, ":cur_leader", "$g_encountered_party", slot_town_lord),
 				(try_begin),

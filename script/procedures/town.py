@@ -314,9 +314,9 @@ give_center_to_faction_aux	= (
 				# (try_end), #tom
 		])
 
-		# script_refresh_village_merchant_inventory
-		# Input: arg1 = village_no
-		# Output: none
+# script_refresh_village_merchant_inventory
+# Input: arg1 = village_no
+# Output: none
 refresh_village_merchant_inventory = (
 	"refresh_village_merchant_inventory",
 		[
@@ -370,9 +370,9 @@ refresh_village_merchant_inventory = (
 	])
 		
 
-		# script_refresh_village_defenders
-		# Input: arg1 = village_no
-		# Output: none
+# script_refresh_village_defenders
+# Input: arg1 = village_no
+# Output: none
 refresh_village_defenders = (
 		"refresh_village_defenders",
 			[
@@ -385,4 +385,357 @@ refresh_village_defenders = (
 					(party_add_template, ":village_no", "pt_village_defenders"),
 				(try_end),
 		])
+
+
+
+#script_update_mercenary_units_of_towns
+# WARNING: heavily modified by 1257AD devs
+# INPUT: none
+# OUTPUT: none
+update_mercenary_units_of_towns = (
+	"update_mercenary_units_of_towns",
+			[
+		 (try_for_range, ":town_no", towns_begin, towns_end),
+			 #(party_get_slot, ":regional_mercs", ":town_no", slot_regional_mercs),
+			 (party_get_slot, ":special1", ":town_no", slot_spec_mercs1),
+			 (party_get_slot, ":special2", ":town_no", slot_spec_mercs2),
+		 
+		 (assign, ":merc_slot", slot_regional_mercs),
+		 (try_begin),
+			 (gt, ":special1", 0),
+			 (gt, ":special2", 0),
+			 (store_random_in_range, ":random", 0, 3),
+			 (try_begin),
+				 (eq, ":random", 1),
+			 (assign, ":merc_slot", slot_spec_mercs1),
+			 (else_try),
+			 (eq, ":random", 2),
+			 (assign, ":merc_slot", slot_spec_mercs2),
+			 (try_end),
+		 (else_try),
+			 (gt, ":special1", 0),
+			 (store_random_in_range, ":random", 0, 2),
+			 (try_begin),
+				 (eq, ":random", 1),
+			 (assign, ":merc_slot", slot_spec_mercs1),
+			 (try_end),	 
+		 (else_try),
+			 (gt, ":special2", 0),
+			 (store_random_in_range, ":random", 0, 2),
+			 (try_begin),
+				 (eq, ":random", 1),
+			 (assign, ":merc_slot", slot_spec_mercs2),
+			 (try_end),  
+		 (try_end),
+
+		 (assign, ":troop_no", "trp_merc_euro_spearman"),
+		 (try_begin),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_euro),
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_balt),
+			(store_random_in_range, ":troop_no", "trp_merc_balt_spearman", "trp_merc_mamluke_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_maghreb),
+			(store_random_in_range, ":troop_no", "trp_merc_maghreb_spearman", "trp_merc_rus_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_rus),
+			(store_random_in_range, ":troop_no", "trp_merc_rus_spearman", "trp_merc_latin_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_latin),
+			(store_random_in_range, ":troop_no", "trp_merc_latin_spearman", "trp_merc_balkan_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_balkan),
+			(store_random_in_range, ":troop_no", "trp_merc_balkan_spearman", "trp_merc_scan_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_scandinavian),
+			(store_random_in_range, ":troop_no", "trp_merc_scan_spearman", "trp_merc_gaelic_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_gaelic),
+			(store_random_in_range, ":troop_no", "trp_merc_gaelic_spearman", "trp_genoese_crossbowman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", generic_mamluk),
+			(store_random_in_range, ":troop_no", "trp_merc_mamluke_spearman", "trp_merc_maghreb_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_barbantine),
+			(store_random_in_range, ":troop_no", "trp_merc_brabantine_spearman", "trp_merc_welsh_bowman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_georgians),
+			(store_random_in_range, ":troop_no", "trp_georgian_lancer", "trp_mercenaries_end"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_sicily_muslims),
+			(store_random_in_range, ":troop_no", "trp_merc_sicily_foot_archer_1", "trp_cuman_tribesman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_turkopoles),
+			(assign, ":troop_no", "trp_crusader_turkopole"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_cumans),
+			(store_random_in_range, ":troop_no", "trp_cuman_skirmisher", "trp_farmer"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_kwarezmians),
+			(store_random_in_range, ":troop_no", "trp_kwarezmian_range", "trp_mordovian_foot"),	
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_mordovians),
+			(store_random_in_range, ":troop_no", "trp_mordovian_foot", "trp_kipchak_range"),	
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_kipchaks),	
+			(store_random_in_range, ":troop_no", "trp_kipchak_range", "trp_finn_village_recruit"),	
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_geonese),
+			(store_random_in_range, ":troop_no", "trp_genoese_crossbowman", "trp_merc_brabantine_spearman"),	
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_teutons),
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_hospitaliers),	
+		 (store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_templars),	
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_lazarus),
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_santiago),
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_calatrava),	
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_saint_thomas),	
+			(store_random_in_range, ":troop_no", "trp_merc_euro_spearman", "trp_merc_balt_spearman"),
+		(else_try),
+			(party_slot_eq, ":town_no", ":merc_slot", merc_varangians),	
+			(assign, ":troop_no", "trp_varangian_guard"),
+		(try_end),
+			(party_set_slot, ":town_no", slot_center_mercenary_troop_type, ":troop_no"),
+		(store_random_in_range, ":amount", 3, 10), #tom was 3, 8
+		(party_set_slot, ":town_no", slot_center_mercenary_troop_amount, ":amount"),
+		(try_end),
+		])
+
+
+		#script_update_volunteer_troops_in_village
+		# WARNING: modified by 1257AD devs
+		# INPUT: arg1 = center_no
+		# OUTPUT: none
+update_volunteer_troops_in_village = (
+	"update_volunteer_troops_in_village",
+			[
+				(store_script_param, ":center_no", 1),
+				(party_get_slot, ":player_relation", ":center_no", slot_center_player_relation),
+				(party_get_slot, ":center_culture", ":center_no", slot_center_culture),
+				
+		##tom
+				#(call_script, "script_raf_get_aor_culture", ":center_no"),
+		(party_get_slot, ":orig_faction", ":center_no", slot_center_original_faction),
+		(store_faction_of_party, ":cur_faction", ":center_no"),
+		
+				(call_script, "script_get_orig_culture", ":orig_faction", ":cur_faction", ":center_culture"),
+				(assign, ":center_culture", reg0),
+				
+		#if not a teutonic knight - set it to native culture
+		(try_begin),
+			(neq, "$players_kingdom", fac_kingdom_1),
+			(eq, ":center_culture", fac_culture_teutonic),
+			(party_get_slot, ":center_culture", ":center_no", slot_center_culture),
+		(try_end),
+		##tom
+		
+				(try_begin),
+					(party_slot_eq, ":center_no", slot_party_type, spt_town),
+					#(faction_get_slot, ":center_culture", "$players_kingdom", slot_faction_culture),
+					(faction_get_slot, ":volunteer_troop", ":center_culture", slot_faction_tier_1_town_troop),
+				(else_try),
+					(party_slot_eq, ":center_no", slot_party_type, spt_castle),
+					#(faction_get_slot, ":center_culture", "$players_kingdom", slot_faction_culture),
+					(faction_get_slot, ":volunteer_troop", ":center_culture", slot_faction_tier_1_castle_troop),
+				(else_try),
+					#(faction_get_slot, ":center_culture", "$players_kingdom", slot_faction_culture),
+					(faction_get_slot, ":volunteer_troop", ":center_culture", slot_faction_tier_1_troop),
+				(try_end),
+				
+				#(try_end),
+				# end
+				
+				#(faction_get_slot, ":volunteer_troop", ":center_culture", slot_faction_tier_1_troop),
+				
+				# rafi hospitallers/templars
+				# (store_faction_of_party, ":faction", ":center_no"),
+				# (try_begin),
+				# (eq, ":faction", "fac_kingdom_23"),
+				# (try_begin),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_village),
+				# (party_get_slot, ":town", ":center_no", slot_village_bound_center),
+				# (else_try),
+				# (assign, ":town", ":center_no"),
+				# (try_end),
+				
+				# (party_get_slot, ":leader", ":town", slot_town_lord),
+				# (try_begin),
+				# (eq, ":leader", "trp_knight_23_1"),
+				# (try_begin),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_village),
+				# (assign, ":volunteer_troop", "trp_hospitaller_village_recruit"),
+				# (else_try),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_castle),
+				# (assign, ":volunteer_troop", "trp_hospitaller_postulant"),
+				# (else_try),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_town),
+				# (assign, ":volunteer_troop", "trp_hospitaller_town_recruit"),
+				# (try_end),
+				# (else_try),
+				# (eq, ":leader", "trp_knight_23_2"),
+				# (try_begin),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_village),
+				# (assign, ":volunteer_troop", "trp_iberian_village_recruit"),
+				# (else_try),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_castle),
+				# (assign, ":volunteer_troop", "trp_crusader_turkopole"),
+				# (else_try),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_town),
+				# (assign, ":volunteer_troop", "trp_templar_town_recruit"),
+				# (try_end),
+				# (else_try),
+				# (eq, ":leader", "trp_knight_23_6"),
+				# (try_begin),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_village),
+				# (assign, ":volunteer_troop", "trp_teutonic_village_recruit"),
+				# (else_try),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_castle),
+				# (assign, ":volunteer_troop", "trp_teutonic_postulant"),
+				# (else_try),
+				# (party_slot_eq, ":center_no", slot_party_type, spt_town),
+				# (assign, ":volunteer_troop", "trp_teutonic_town_recruit"),
+				# (try_end),
+				# (try_end),
+				# (try_end),
+				# end rafi
+				
+				(assign, ":volunteer_troop_tier", 1),
+				(store_div, ":tier_upgrades", ":player_relation", 10),
+				(try_for_range, ":unused", 0, ":tier_upgrades"),
+					(store_random_in_range, ":random_no", 0, 100),
+					(lt, ":random_no", 10),
+					(store_random_in_range, ":random_no", 0, 2),
+					(troop_get_upgrade_troop, ":upgrade_troop_no", ":volunteer_troop", ":random_no"),
+					(try_begin),
+						(le, ":upgrade_troop_no", 0),
+						(troop_get_upgrade_troop, ":upgrade_troop_no", ":volunteer_troop", 0),
+					(try_end),
+					(gt, ":upgrade_troop_no", 0),
+					(val_add, ":volunteer_troop_tier", 1),
+					(assign, ":volunteer_troop", ":upgrade_troop_no"),
+				(try_end),
+				
+				(assign, ":upper_limit", 14), # rafi double this shit
+				(try_begin),
+					(ge, ":player_relation", 5),
+					(assign, ":upper_limit", ":player_relation"),
+					(val_div, ":upper_limit", 2),
+					(val_add, ":upper_limit", 10),
+				(else_try),
+					(lt, ":player_relation", 0),
+					(assign, ":upper_limit", 0),
+				(try_end),
+				
+				(val_mul, ":upper_limit", 3),
+				(store_add, ":amount_random_divider", 2, ":volunteer_troop_tier"),
+				(val_div, ":upper_limit", ":amount_random_divider"),
+				
+				(store_random_in_range, ":amount", 0, ":upper_limit"),
+				(party_set_slot, ":center_no", slot_center_volunteer_troop_type, ":volunteer_troop"),
+				(party_set_slot, ":center_no", slot_center_volunteer_troop_amount, ":amount"),
+		])
+		
+	
+		#script_update_npc_volunteer_troops_in_village - tom rewriten
+		# no longer behaves like in native!
+		# WARNING: heavily modified by 1257AD devs
+		# INPUT: arg1 = center_no
+		# OUTPUT: none
+update_npc_volunteer_troops_in_village = (
+	"update_npc_volunteer_troops_in_village",
+			[
+				(store_script_param, ":center_no", 1),
+			 
+		(call_script, "script_select_mercenary_troop", ":center_no"),
+		(assign,  ":volunteer_troop", reg0),
+
+				(assign, ":upper_limit", 12),
+		
+				(store_random_in_range, ":amount", 0, ":upper_limit"),
+				(party_set_slot, ":center_no", slot_center_npc_volunteer_troop_type, ":volunteer_troop"),
+				(party_set_slot, ":center_no", slot_center_npc_volunteer_troop_amount, ":amount"),
+		])
+		
+
+		#script_update_villages_infested_by_bandits
+		# INPUT: none
+		# OUTPUT: none
+update_villages_infested_by_bandits = (
+	"update_villages_infested_by_bandits",
+			[(try_for_range, ":village_no", villages_begin, villages_end),
+					(try_begin),
+						(check_quest_active, "qst_eliminate_bandits_infesting_village"),
+						(quest_slot_eq, "qst_eliminate_bandits_infesting_village", slot_quest_target_center, ":village_no"),
+						(quest_get_slot, ":cur_state", "qst_eliminate_bandits_infesting_village", slot_quest_current_state),
+						(val_add, ":cur_state", 1),
+						(try_begin),
+							(lt, ":cur_state", 3),
+							(quest_set_slot, "qst_eliminate_bandits_infesting_village", slot_quest_current_state, ":cur_state"),
+						(else_try),
+							(party_set_slot, ":village_no", slot_village_infested_by_bandits, 0),
+							(call_script, "script_abort_quest", "qst_eliminate_bandits_infesting_village", 2),
+						(try_end),
+					(else_try),
+						(check_quest_active, "qst_deal_with_bandits_at_lords_village"),
+						(quest_slot_eq, "qst_deal_with_bandits_at_lords_village", slot_quest_target_center, ":village_no"),
+						(quest_get_slot, ":cur_state", "qst_deal_with_bandits_at_lords_village", slot_quest_current_state),
+						(val_add, ":cur_state", 1),
+						(try_begin),
+							(lt, ":cur_state", 3),
+							(quest_set_slot, "qst_deal_with_bandits_at_lords_village", slot_quest_current_state, ":cur_state"),
+						(else_try),
+							(party_set_slot, ":village_no", slot_village_infested_by_bandits, 0),
+							(call_script, "script_abort_quest", "qst_deal_with_bandits_at_lords_village", 2),
+						(try_end),
+					(else_try),
+						(party_set_slot, ":village_no", slot_village_infested_by_bandits, 0),
+						(store_random_in_range, ":random_no", 0, 100),
+						(assign, ":continue", 1),
+						(try_begin),
+							(check_quest_active, "qst_collect_taxes"),
+							(quest_slot_eq, "qst_collect_taxes", slot_quest_target_center, ":village_no"),
+							(assign, ":continue", 0),
+						(else_try),
+							(check_quest_active, "qst_train_peasants_against_bandits"),
+							(quest_slot_eq, "qst_train_peasants_against_bandits", slot_quest_target_center, ":village_no"),
+							(assign, ":continue", 0),
+						(try_end),
+						(eq, ":continue", 1),
+						(lt, ":random_no", 3),
+						(store_random_in_range, ":random_no", 0, 3),
+						(try_begin),
+							(eq, ":random_no", 0),
+							(assign, ":bandit_troop", "trp_bandit"),
+						(else_try),
+							(eq, ":random_no", 1),
+							(assign, ":bandit_troop", "trp_mountain_bandit"),
+						(else_try),
+							(assign, ":bandit_troop", "trp_forest_bandit"),
+						(try_end),
+						(party_set_slot, ":village_no", slot_village_infested_by_bandits, ":bandit_troop"),
+						#Reduce prosperity of the village by 3: reduce to -1
+						(call_script, "script_change_center_prosperity", ":village_no", -1),
+						(val_add, "$newglob_total_prosperity_from_bandits", -1),
+						(try_begin),
+							(eq, "$cheat_mode", 2),
+							(str_store_party_name, s1, ":village_no"),
+							(display_message, "@{!}DEBUG --{s1} is infested by bandits."),
+						(try_end),
+					(try_end),
+				(try_end),
+		])
+
 

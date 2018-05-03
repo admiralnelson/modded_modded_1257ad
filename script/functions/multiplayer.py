@@ -560,7 +560,7 @@ find_number_of_agents_constant = (
 		# script_game_multiplayer_get_game_type_mission_template
 		# Input: arg1 = game_type
 		# Output: mission_template
-game_multiplayer_get_game_type_mission_template	=(
+game_multiplayer_get_game_type_mission_template	 = (
 	"game_multiplayer_get_game_type_mission_template",
 			[
 				(assign, ":selected_mt", -1),

@@ -545,7 +545,7 @@ apply_effect_of_other_people_on_courage_scores = (
 		# script_check_friendly_kills
 		# Input: none
 		# Output: none (changes the morale of the player's party)
-check_friendly_kills=(
+check_friendly_kills = (
 	"check_friendly_kills",
 			[(get_player_agent_own_troop_kill_count, ":count"),
 				(try_begin),
@@ -560,7 +560,7 @@ check_friendly_kills=(
 		# script_simulate_retreat
 		# Input: arg1 = players_side_damage, arg2 = enemy_side_damage, arg3 = continue_battle s5 = title_string
 		# Output: none
-simulate_retreat=(
+simulate_retreat = (
 	"simulate_retreat",
 			[
 				(call_script, "script_music_set_situation_with_culture", mtf_sit_killed),
@@ -679,7 +679,7 @@ simulate_retreat=(
 		# For internal use only
 		# Input: arg1 = attacker_side (0 = ally, 1 = enemy), arg2 = damage amount
 		# Output: none
-simulate_battle_with_agents_aux=(
+simulate_battle_with_agents_aux = (
 	"simulate_battle_with_agents_aux",
 			[
 				(store_script_param_1, ":attacker_side"),
@@ -792,3 +792,40 @@ simulate_battle_with_agents_aux=(
 				(try_end),
 		])
 		
+
+		#script_agent_reassign_team
+		# there are freelancer scripts resides here
+		# WARNING: modified by 1257AD devs
+		# INPUT: arg1 = agent_no
+		# OUTPUT: none
+agent_reassign_team = (
+	"agent_reassign_team",
+			[
+				(store_script_param, ":agent_no", 1),
+				(get_player_agent_no, ":player_agent"),
+				(try_begin),
+					(ge, ":player_agent", 0),
+					(agent_is_human, ":agent_no"),
+					(agent_is_ally, ":agent_no"),
+					(agent_get_party_id, ":party_no", ":agent_no"),
+					#(neq, ":party_no", "p_main_party"), #tom
+			(gt, ":party_no", "p_main_party"), #tom
+					(assign, ":continue", 1),
+					(store_faction_of_party, ":party_faction", ":party_no"),
+					(try_begin),
+						(eq, ":party_faction", "$players_kingdom"),
+						(is_between, "$players_kingdom", kingdoms_begin, kingdoms_end),
+						(faction_slot_eq, "$players_kingdom", slot_faction_marshall, "trp_player"),
+						(assign, ":continue", 0),
+					(else_try),
+				(neq, "$freelancer_state", 1),	#Caba freelancer fixes chief
+						(party_stack_get_troop_id, ":leader_troop_id", ":party_no", 0),
+						(neg|is_between, ":leader_troop_id", active_npcs_begin, active_npcs_end),
+						(assign, ":continue", 0),
+					(try_end),
+					(eq, ":continue", 1),
+					(agent_get_team, ":player_team", ":player_agent"),
+					(val_add, ":player_team", 2),
+					(agent_set_team, ":agent_no", ":player_team"),
+				(try_end),
+		])

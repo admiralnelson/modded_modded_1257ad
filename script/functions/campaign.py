@@ -2,7 +2,7 @@ from header import *
 		# script_map_get_random_position_around_position_within_range
 		# Input: arg1 = minimum_distance in km, arg2 = maximum_distance in km, pos1 = origin position
 		# Output: pos2 = result position
-map_get_random_position_around_position_within_range=(
+map_get_random_position_around_position_within_range = (
 	"map_get_random_position_around_position_within_range",
 			[
 				(store_script_param_1, ":min_distance"),
@@ -21,7 +21,7 @@ map_get_random_position_around_position_within_range=(
 		# script_get_number_of_unclaimed_centers_by_player
 		# Input: none
 		# Output: reg0 = number of unclaimed centers, reg1 = last unclaimed center_no
-get_number_of_unclaimed_centers_by_player=(
+get_number_of_unclaimed_centers_by_player = (
 	"get_number_of_unclaimed_centers_by_player",
 			[
 				(assign, ":unclaimed_centers", 0),

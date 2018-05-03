@@ -288,7 +288,7 @@ orig_battle_tactic_apply_aux = (
 # script_battle_tactic_apply_aux
 		# Input: team_no, battle_tactic
 		# Output: battle_tactic
-orig_battle_tactic_apply_aux=(
+orig_battle_tactic_apply_aux = (
 	"orig_battle_tactic_apply_aux",
 			[
 				(store_script_param, ":team_no", 1),
@@ -360,7 +360,7 @@ orig_battle_tactic_apply_aux=(
 		# script_team_get_class_percentages
 		# Input: arg1: team_no, arg2: try for team's enemies
 		# Output: reg0: percentage infantry, reg1: percentage archers, reg2: percentage cavalry
-team_get_class_percentages=(
+team_get_class_percentages = (
 	"team_get_class_percentages",
 			[
 				(assign, ":num_infantry", 0),
@@ -414,7 +414,7 @@ team_get_class_percentages=(
 		# script_get_closest3_distance_of_enemies_at_pos1
 		# Input: arg1: team_no, pos1
 		# Output: reg0: distance in cms. tom: reg4 - the closest agent id
-get_closest3_distance_of_enemies_at_pos1=(
+get_closest3_distance_of_enemies_at_pos1 = (
 	"get_closest3_distance_of_enemies_at_pos1",
 			[
 				(assign, ":min_distance_1", 100000),
@@ -479,7 +479,7 @@ get_closest3_distance_of_enemies_at_pos1=(
 		# script_team_get_average_position_of_enemies
 		# Input: arg1: team_no,
 		# Output: pos0: average position.
-team_get_average_position_of_enemies=(
+team_get_average_position_of_enemies = (
 	"team_get_average_position_of_enemies",
 			[
 				(store_script_param_1, ":team_no"),
@@ -525,7 +525,7 @@ team_get_average_position_of_enemies=(
 		# script_cf_team_get_average_position_of_agents_with_type_to_pos1
 		# Input: arg1 = team_no, arg2 = class_no (grc_everyone, grc_infantry, grc_cavalry, grc_archers, grc_heroes)
 		# Output: none, pos1 = average_position (0,0,0 if there are no matching agents)
-cf_team_get_average_position_of_agents_with_type_to_pos1=(
+cf_team_get_average_position_of_agents_with_type_to_pos1 = (
 	"cf_team_get_average_position_of_agents_with_type_to_pos1",
 			[
 				(store_script_param_1, ":team_no"),
@@ -561,3 +561,4 @@ cf_team_get_average_position_of_agents_with_type_to_pos1=(
 				(position_move_y, pos1, ":total_pos_y"),
 				(position_move_z, pos1, ":total_pos_z"),
 		])
+

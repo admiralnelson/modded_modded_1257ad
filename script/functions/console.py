@@ -4,7 +4,7 @@ from header import *
 # This script is called from the game engine when a console command is entered from the dedicated server.
 # INPUT: anything
 # OUTPUT: s0 = result text
-game_get_console_command =(
+game_get_console_command  = (
 	"game_get_console_command",
 		[
 			(store_script_param, ":input", 1),
