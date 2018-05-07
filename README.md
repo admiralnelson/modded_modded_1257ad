@@ -1,6 +1,9 @@
 # modded_modded_1257ad
 A new version of modded modded 1257AD
 
+note: 
+1. compile the files using build_module.bat
+2. change output directory in module info.
 
 TODO:
 - [ ] code refactoring and documentation (57%-ish, 340 out of 596 procedures/functions/cfunctions)   
