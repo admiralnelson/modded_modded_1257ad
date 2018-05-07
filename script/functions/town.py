@@ -339,3 +339,442 @@ create_village_farmer_party = (
 				(try_end),
 		])
 	 
+#script_get_center_ideal_prosperity
+		# INPUT: arg1 = center_no
+		# OUTPUT: reg0 = ideal_prosperity
+get_center_ideal_prosperity = (
+	"get_center_ideal_prosperity",
+			[(store_script_param, ":center_no", 1),
+				(assign, ":ideal", 100),
+				
+				(call_script, "script_center_get_goods_availability", ":center_no"),
+				(store_mul, ":hardship_index", reg0, 2), #currently x2
+				#	 (val_div, ":hardship_index", 2), #Currently x2.5
+				
+				(val_sub, ":ideal", ":hardship_index"),
+				(val_max, ":ideal", 0),
+				
+				(try_begin),
+					(is_between, ":center_no", villages_begin, villages_end),
+					(party_slot_eq, ":center_no", slot_center_has_fish_pond, 1),
+					(val_add, ":ideal", 5),
+				(try_end),
+				
+				(assign, reg0, ":ideal"),
+		])
+
+
+		# script_calculate_amount_of_cattle_can_be_stolen
+		# Input: arg1 = village_no
+		# Output: reg0 = max_amount
+calculate_amount_of_cattle_can_be_stolen = (
+		"calculate_amount_of_cattle_can_be_stolen",
+			[
+				(store_script_param, ":village_no", 1),
+				(call_script, "script_get_max_skill_of_player_party", "skl_looting"),
+				(assign, ":max_skill", reg0),
+				(store_mul, ":can_steal", ":max_skill", 2),
+				(call_script, "script_party_count_fit_for_battle", "p_main_party"),
+				(store_add, ":num_men_effect", reg0, 10),
+				(val_div, ":num_men_effect", 10),
+				(val_add, ":can_steal", ":num_men_effect"),
+				(party_get_slot, ":num_cattle", ":village_no", slot_village_number_of_cattle),
+				(val_min, ":can_steal", ":num_cattle"),
+				(assign, reg0, ":can_steal"),
+		])
+		
+		#script_merchant_road_info_to_s42
+	# WARNING: heavily modified by 1257AD devs
+	#INPUT: town
+	#OUTPUT: reg0, ":last_bandit_party_found"
+	#		 reg1, ":last_bandit_party_origin"
+	#	     reg2, ":last_bandit_party_destination"
+	#	     reg3, ":last_bandit_party_hours_ago"
+merchant_road_info_to_s42 = (
+	"merchant_road_info_to_s42", #also does itemss to s32
+		[
+		(store_script_param, ":center", 1),
+		
+		(assign, ":last_bandit_party_found", -1),
+		(assign, ":last_bandit_party_origin", -1),
+		(assign, ":last_bandit_party_destination", -1),
+		(assign, ":last_bandit_party_hours_ago", -1),
+		
+		(str_clear, s32),
+		
+		(str_clear, s42),
+		(str_clear, s47), #safe roads
+		
+		(try_for_range, ":center_to_reset", centers_begin, centers_end),
+			(party_set_slot, ":center_to_reset", slot_party_temp_slot_1, 0),
+		(try_end),
+		
+		(assign, ":road_attacks", 0),
+		(assign, ":trades", 0),
+		
+		#first mention all attacks
+		(try_for_range, ":log_entry_iterator", 0, "$num_log_entries"),
+			(store_sub, ":log_entry_no", "$num_log_entries", ":log_entry_iterator"),
+			#how long ago?
+			(this_or_next|troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_traveller_attacked),
+			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_party_traded),
+			
+			#       reference - (call_script, "script_add_log_entry", logent_traveller_attacked, ":winner_party" (actor),  ":origin" (center object), ":destination" (troop_object), ":winner_faction"),
+			
+			(troop_get_slot, ":origin",         "trp_log_array_center_object",         ":log_entry_no"),
+			(troop_get_slot, ":destination",    "trp_log_array_troop_object",          ":log_entry_no"),
+			
+			(this_or_next|eq, ":origin", ":center"),
+			(eq, ":destination", ":center"),
+			
+			
+			(troop_get_slot, ":event_time",            "trp_log_array_entry_time",              ":log_entry_no"),
+			(store_current_hours, ":cur_hour"),
+			(store_sub, ":hours_ago", ":cur_hour", ":event_time"),
+			(assign, reg3, ":hours_ago"),
+			
+			(lt, ":hours_ago", 672), #four weeks
+			
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_traveller_attacked),
+			(display_message, "str_attack_on_travellers_found_reg3_hours_ago"),
+			(else_try),
+			(eq, "$cheat_mode", 1),
+			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_party_traded),
+			(display_message, "str_trade_event_found_reg3_hours_ago"),
+			(try_end),
+			
+			(try_begin), #possibly make script -- get_colloquial_for_time
+			(lt, ":hours_ago", 24),
+			(str_store_string, s46, "str_a_short_while_ago"),
+			(else_try),
+			(lt, ":hours_ago", 48),
+			(str_store_string, s46, "str_one_day_ago"),
+			(else_try),
+			(lt, ":hours_ago", 72),
+			(str_store_string, s46, "@two days ago"),
+			(else_try),
+			(lt, ":hours_ago", 154),
+			(str_store_string, s46, "str_earlier_this_week"),
+			(else_try),
+			(lt, ":hours_ago", 240),
+			(str_store_string, s46, "str_about_a_week_ago"),
+			(else_try),
+			(lt, ":hours_ago", 480),
+			(str_store_string, s46, "str_about_two_weeks_ago"),
+			(else_try),
+			(str_store_string, s46, "str_several_weeks_ago"),
+			(try_end),
+			
+			
+			
+			(troop_get_slot, ":actor", "trp_log_array_actor", ":log_entry_no"),
+			(troop_get_slot, ":faction_object", "trp_log_array_faction_object", ":log_entry_no"),
+			
+			(str_store_string, s39, "str_unknown_assailants"),
+			(assign, ":assailants_known", -1),
+			(try_begin),
+			(party_is_active, ":actor"),
+			(store_faction_of_party, ":actor_faction", ":actor"),
+			(eq, ":faction_object", ":actor_faction"),
+			(assign, ":assailants_known", ":actor"),
+			(str_store_party_name, s39, ":assailants_known"),
+			(assign, "$g_bandit_party_for_bounty", -1),
+			(try_begin), #possibly make script -- get_colloquial_for_faction
+				(eq, ":faction_object", "fac_kingdom_1"),
+				(str_store_string, s39, "str_teutons"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_2"),
+				(str_store_string, s39, "str_lithuanians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_3"),
+				(str_store_string, s39, "str_mongols"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_4"),
+				(str_store_string, s39, "str_danes"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_5"),
+				(str_store_string, s39, "str_polish"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_6"),
+				(str_store_string, s39, "str_hre"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_7"),
+				(str_store_string, s39, "str_hungarians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_8"),
+				(str_store_string, s39, "str_novgorodians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_9"),
+				(str_store_string, s39, "str_english"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_10"),
+				(str_store_string, s39, "str_french"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_11"),
+				(str_store_string, s39, "str_norwegians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_12"),
+				(str_store_string, s39, "str_scots"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_13"),
+				(str_store_string, s39, "str_irish"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_14"),
+				(str_store_string, s39, "str_swedes"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_15"),
+				(str_store_string, s39, "str_galicians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_16"),
+				(str_store_string, s39, "str_portugese"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_17"),
+				(str_store_string, s39, "str_aragonese"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_18"),
+				(str_store_string, s39, "str_castilans"),
+				# (else_try),
+				(eq, ":faction_object", "fac_kingdom_19"),
+				(str_store_string, s39, "str_navarrians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_20"),
+				(str_store_string, s39, "str_granadians"),
+			(else_try),
+				(eq, ":faction_object", "fac_papacy"),
+				(str_store_string, s39, "str_papal"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_22"),
+				(str_store_string, s39, "str_byzantinians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_23"),
+				(str_store_string, s39, "str_jerusalem"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_24"),
+				(str_store_string, s39, "str_sicilians"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_25"),
+				(str_store_string, s39, "str_mamluks"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_26"),
+				(str_store_string, s39, "str_latin"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_27"),
+				(str_store_string, s39, "str_ilkhanate"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_28"),
+				(str_store_string, s39, "str_hafsid"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_29"),
+				(str_store_string, s39, "str_serbian"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_30"),
+				(str_store_string, s39, "str_bulgarian"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_31"),
+				(str_store_string, s39, "str_marinid"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_32"),
+				(str_store_string, s39, "str_venice"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_33"),
+				(str_store_string, s39, "str_balt"),
+				# (else_try),
+				# (eq, ":faction_object", "fac_kingdom_34"),
+				# (str_store_string, s39, "str_tuscan"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_37"),
+				(str_store_string, s39, "str_wales"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_38"),
+				(str_store_string, s39, "str_genoa"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_39"),
+				(str_store_string, s39, "str_pisa"),
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_40"),
+				(str_store_string, s39, "str_guelph"),  
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_41"),
+				(str_store_string, s39, "str_ghibeline"),   
+			(else_try),
+				(eq, ":faction_object", "fac_kingdom_42"),
+				(str_store_string, s39, "str_bohemian"),    
+			(else_try),
+				(eq, ":faction_object", "fac_player_supporters_faction"),
+				(str_store_string, s39, "str_your_followers"),
+			(else_try), #bandits
+				(assign, ":last_bandit_party_found", ":assailants_known"),
+				(assign, ":last_bandit_party_origin", ":origin"),
+				(assign, ":last_bandit_party_destination", ":destination"),
+				(assign, ":last_bandit_party_hours_ago", ":hours_ago"),
+			(try_end),
+			(try_end),
+			
+			(try_begin),
+			(eq, ":origin", ":center"),
+			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_traveller_attacked),
+			(party_slot_eq, ":destination", slot_party_temp_slot_1, 0),
+			
+			(party_set_slot, ":destination", slot_party_temp_slot_1, 1),
+			(str_store_party_name, s40, ":destination"),
+			(str_store_string, s44, "str_we_have_heard_that_travellers_heading_to_s40_were_attacked_on_the_road_s46_by_s39"),
+			(str_store_string, s43, "str_s42"),
+			(str_store_string, s42, "str_s43_s44"),
+			
+			(val_add, ":road_attacks", 1),
+			#travellers were attacked on the road to...
+			(else_try),
+			(eq, ":destination", ":center"),
+			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_traveller_attacked),
+			(party_slot_eq, ":origin", slot_party_temp_slot_1, 0),
+			
+			(party_set_slot, ":origin", slot_party_temp_slot_1, 1),
+			(str_store_party_name, s40, ":origin"),
+			(str_store_string, s44, "str_we_have_heard_that_travellers_coming_from_s40_were_attacked_on_the_road_s46_by_s39"),
+			
+			(str_store_string, s43, "str_s42"),
+			(str_store_string, s42, "str_s43_s44"),
+			
+			(val_add, ":road_attacks", 1),
+			
+			#travellers from here traded at...
+			#		(else_try),
+			#			(eq, ":origin", ":center"),
+			#			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_party_traded),
+			#			(party_slot_eq, ":destination", slot_party_temp_slot_1, 0),
+			
+			#			(party_set_slot, ":destination", slot_party_temp_slot_1, 1),
+			#			(str_store_party_name, s40, ":destination"),
+			#			(str_store_string, s44, "@Travellers headed to {s40} traded there {s46}"),
+			#			(str_store_string, s43, "@{s42"),
+			#			(str_store_string, s42, "str_s43_s44"),
+			
+			#caravan from traded at...
+			(else_try),
+			(eq, ":destination", ":center"),
+			(troop_slot_eq, "trp_log_array_entry_type", ":log_entry_no", logent_party_traded),
+			(party_slot_eq, ":origin", slot_party_temp_slot_1, 0),
+			
+			(party_set_slot, ":origin", slot_party_temp_slot_1, 1),
+			(str_store_party_name, s40, ":origin"),
+			(str_store_string, s44, "str_travellers_coming_from_s40_traded_here_s46"),
+			(str_store_string, s43, "str_s42"),
+			(str_store_string, s42, "str_s43_s44"),
+			
+			(val_add, ":trades", 1),
+			
+			#caravan from traded at...
+			(try_end),
+			
+		(try_end),
+		
+		
+		(try_begin),
+			(le, ":trades", 2),
+			(eq, ":road_attacks", 0),
+			(store_current_hours, ":hours"),
+			(lt, ":hours", 168),
+			(str_store_string, s42, "str_it_is_still_early_in_the_caravan_season_so_we_have_seen_little_tradings42"),
+		(else_try),
+			(eq, ":trades", 0),
+			(eq, ":road_attacks", 0),
+			(str_store_string, s42, "str_there_has_been_very_little_trading_activity_here_recentlys42"),
+		(else_try),
+			(le, ":trades", 2),
+			(eq, ":road_attacks", 0),
+			(str_store_string, s42, "str_there_has_some_trading_activity_here_recently_but_not_enoughs42"),
+		(else_try),
+			(le, ":trades", 2),
+			(le, ":road_attacks", 2),
+			(str_store_string, s42, "str_there_has_some_trading_activity_here_recently_but_the_roads_are_dangerouss42"),
+		(else_try),
+			(ge, ":road_attacks", 3),
+			(str_store_string, s42, "str_the_roads_around_here_are_very_dangerouss42"),
+		(else_try),
+			(ge, ":road_attacks", 1),
+			(str_store_string, s42, "str_we_have_received_many_traders_in_town_here_although_there_is_some_danger_on_the_roadss42"),
+		(else_try),
+			(str_store_string, s42, "str_we_have_received_many_traders_in_town_heres42"),
+		(try_end),
+		
+		#do safe roads
+		(assign, ":unused_trade_route_found", 0),
+		(try_for_range, ":trade_route_slot", slot_town_trade_routes_begin, slot_town_trade_routes_end),
+			(party_get_slot, ":trade_center", ":center", ":trade_route_slot"),
+			(is_between, ":trade_center", centers_begin, centers_end),
+			
+			(party_slot_eq, ":trade_center", slot_party_temp_slot_1, 0),
+			
+			#		(party_get_slot, ":town_lord", ":trade_center", slot_town_lord),
+			
+			(str_store_party_name, s41, ":trade_center"),
+			(try_begin),
+			(eq, ":unused_trade_route_found", 1),
+			(str_store_string, s44, "str_s44_s41"),
+			(else_try),
+			(str_store_string, s44, "str_s41"),
+			(try_end),
+			(assign, ":unused_trade_route_found", 1),
+		(try_end),
+		(try_begin),
+			(eq, ":unused_trade_route_found", 1),
+			(str_store_string, s47, "str_there_is_little_news_about_the_caravan_routes_to_the_towns_of_s44_and_nearby_parts_but_no_news_is_good_news_and_those_are_therefore_considered_safe"),
+		(try_end),
+		
+		(assign, ":safe_village_road_found", 0),
+		(try_for_range, ":village", villages_begin, villages_end),
+			(party_slot_eq, ":village", slot_village_market_town, ":center"),
+			(party_slot_eq, ":village", slot_party_temp_slot_1, 0),
+			
+			#		(party_get_slot, ":town_lord", ":village", slot_town_lord),
+			(str_store_party_name, s41, ":village"),
+			(try_begin),
+			(eq, ":safe_village_road_found", 1),
+			(str_store_string, s44, "str_s44_s41"),
+			(else_try),
+			(str_store_string, s44, "str_s41"),
+			(try_end),
+			(assign, ":safe_village_road_found", 1),
+		(try_end),
+		
+		(try_begin),
+			(eq, ":safe_village_road_found", 1),
+			(eq, ":unused_trade_route_found", 1),
+			(str_store_string, s47, "str_s47_also_the_roads_to_the_villages_of_s44_and_other_outlying_hamlets_are_considered_safe"),
+		(else_try),
+			(eq, ":safe_village_road_found", 1),
+			(str_store_string, s47, "str_however_the_roads_to_the_villages_of_s44_and_other_outlying_hamlets_are_considered_safe"),
+		(try_end),
+		
+		(str_store_string, s33, "str_we_have_shortages_of"),
+		(assign, ":some_shortages_found", 0),
+		(try_for_range, ":cur_good", trade_goods_begin, trade_goods_end),
+			(store_sub, ":cur_good_price_slot", ":cur_good", trade_goods_begin),
+			(val_add, ":cur_good_price_slot", slot_town_trade_good_prices_begin),
+			(party_get_slot, ":price", ":center", ":cur_good_price_slot"),
+			(gt, ":price", 1100),
+			
+			(str_store_item_name, s34, ":cur_good"),
+			(assign, reg1, ":price"),
+			(str_store_string, s33, "str_s33_s34_reg1"),
+			
+			(assign, ":some_shortages_found", 1),
+		(try_end),
+		
+		(try_begin),
+			(eq, ":some_shortages_found", 0),
+			(str_store_string, s32, "str_we_have_adequate_stores_of_all_commodities"),
+		(else_try),
+			(str_store_string, s32, "str_s33_and_some_other_commodities"),
+		(try_end),
+		
+		(assign, reg0, ":last_bandit_party_found"),
+		(assign, reg1, ":last_bandit_party_origin"),
+		(assign, reg2, ":last_bandit_party_destination"),
+		(assign, reg3, ":last_bandit_party_hours_ago"),
+		
+		
+		])
+		

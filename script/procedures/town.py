@@ -739,3 +739,136 @@ update_villages_infested_by_bandits = (
 		])
 
 
+
+		#script_village_recruit_volunteers_recruit
+		# INPUT: none
+		# OUTPUT: none
+village_recruit_volunteers_recruit = (
+	"village_recruit_volunteers_recruit",
+			[
+				(store_script_param, ":recruit_amount", 1),
+				
+				(party_get_slot, ":volunteer_troop", "$current_town", slot_center_volunteer_troop_type),
+				(party_get_slot, ":volunteer_amount", "$current_town", slot_center_volunteer_troop_amount),
+				
+				(try_begin),
+					(gt, ":recruit_amount", 0),
+					(lt, ":recruit_amount", ":volunteer_amount"),
+					(assign, ":volunteer_amount", ":recruit_amount"),
+				(try_end),
+				
+				(party_get_free_companions_capacity, ":free_capacity", "p_main_party"),
+				(val_min, ":volunteer_amount", ":free_capacity"),
+				(store_troop_gold, ":gold", "trp_player"),
+				
+				(assign, ":divisor", recruitment_cost_village),
+				
+				(try_begin),
+					(party_slot_eq, "$current_town", slot_party_type, spt_castle),
+					(assign, ":divisor", recruitment_cost_castle),
+				(else_try),
+					(party_slot_eq, "$current_town", slot_party_type, spt_town),
+					(assign, ":divisor", recruitment_cost_town),
+				(try_end),
+				
+				(store_div, ":gold_capacity", ":gold", ":divisor"),#10 denars per man
+				
+				(val_min, ":volunteer_amount", ":gold_capacity"),
+				(party_add_members, "p_main_party", ":volunteer_troop", ":volunteer_amount"),
+				
+				(try_begin),
+					(gt, ":recruit_amount", 0),
+					(party_get_slot, ":volunteers", "$current_town", slot_center_volunteer_troop_amount),
+					(val_sub, ":volunteers", ":recruit_amount"),
+					(try_begin),
+						(le, ":volunteers", 0),
+						(party_set_slot, "$current_town", slot_center_volunteer_troop_amount, -1),
+					(else_try),
+						(party_set_slot, "$current_town", slot_center_volunteer_troop_amount, ":volunteers"),
+					(try_end),
+				(else_try),
+					(party_set_slot, "$current_town", slot_center_volunteer_troop_amount, -1),
+				(try_end),
+				
+				(store_mul, ":cost", ":volunteer_amount", ":divisor"),#10 denars per man
+				
+				(troop_remove_gold, "trp_player", ":cost"),
+		])		
+
+#script_center_get_item_consumption
+	#STUB SCRIPT
+	#it might be easier to monitor whether prices are following an intuitive pattern if we separate production from consumption
+	#the current system still works very well, however
+center_get_item_consumption =  (
+	"center_get_item_consumption",
+		[
+	])
+
+#script_change_center_prosperity
+		# INPUT: arg1 = center_no, arg2 = difference
+		# OUTPUT: none
+change_center_prosperity = (
+	"change_center_prosperity",
+			[(store_script_param, ":center_no", 1),
+				(store_script_param, ":difference", 2),
+				(party_get_slot, ":old_prosperity", ":center_no", slot_town_prosperity),
+				(store_add, ":new_prosperity", ":old_prosperity", ":difference"),
+				(val_clamp, ":new_prosperity", 0, 100),
+				(store_div, ":old_state", ":old_prosperity", 20),
+				(store_div, ":new_state", ":new_prosperity", 20),
+				
+				(try_begin),
+					(neq, ":old_state", ":new_state"),
+					(neg|is_between, ":center_no", castles_begin, castles_end),
+					
+					(str_store_party_name_link, s2, ":center_no"),
+					(call_script, "script_get_prosperity_text_to_s50", ":center_no"),
+					(str_store_string, s3, s50),
+					(party_set_slot, ":center_no", slot_town_prosperity, ":new_prosperity"),
+					(call_script, "script_get_prosperity_text_to_s50", ":center_no"),
+					(str_store_string, s4, s50),
+					(try_begin),
+						(party_slot_eq, ":center_no", slot_town_lord, "trp_player"),
+						(display_message, "@Prosperity of {s2} has changed from {s3} to {s4}."),
+					(try_end),
+					(call_script, "script_update_center_notes", ":center_no"),
+				(else_try),
+					(party_set_slot, ":center_no", slot_town_prosperity, ":new_prosperity"),
+				(try_end),
+				
+				(try_begin),
+					(store_current_hours, ":hours"),
+					(gt, ":hours", 1),
+					(store_sub, ":actual_difference", ":new_prosperity", ":old_prosperity"),
+					(try_begin),
+						(lt, ":actual_difference", 0),
+						(val_add, "$newglob_total_prosperity_losses", ":actual_difference"),
+					(else_try),
+						(gt, ":actual_difference", 0),
+						(val_add, "$newglob_total_prosperity_gains", ":actual_difference"),
+					(try_end),
+				(try_end),
+				
+				#This will add up all non-trade prosperity
+				(try_begin),
+					(eq, "$cheat_mode", 3),
+					(assign, reg4, "$newglob_total_prosperity_from_bandits"),
+					(assign, reg5, "$newglob_total_prosperity_from_caravan_trade"),
+					(assign, reg7, "$newglob_total_prosperity_from_villageloot"),
+					(assign, reg8, "$newglob_total_prosperity_from_townloot"),
+					(assign, reg9, "$newglob_total_prosperity_from_village_trade"),
+					(assign, reg10, "$newglob_total_prosperity_from_convergence"),
+					(assign, reg11, "$newglob_total_prosperity_losses"),
+					(assign, reg12, "$newglob_total_prosperity_gains"),
+					(display_message, "@{!}DEBUG: Total prosperity actual losses: {reg11}"),
+					(display_message, "@{!}DEBUG: Total prosperity actual gains: {reg12}"),
+					
+					(display_message, "@{!}DEBUG: Prosperity changes from random bandits: {reg4}"),
+					(display_message, "@{!}DEBUG: Prosperity changes from caravan trades: {reg5}"),
+					(display_message, "@{!}DEBUG: Prosperity changes from farmer trades: {reg9}"),
+					(display_message, "@{!}DEBUG: Prosperity changes from looted villages: {reg7}"),
+					(display_message, "@{!}DEBUG: Prosperity changes from sieges: {reg8}"),
+					(display_message, "@{!}DEBUG: Theoretical prosperity changes from convergence: {reg10}"),
+				(try_end),
+				
+		])

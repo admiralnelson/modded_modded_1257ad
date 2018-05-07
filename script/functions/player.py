@@ -93,3 +93,114 @@ get_player_party_morale_values	= (
 				(assign, reg0, ":new_morale"),
 		])
 		
+#script_get_max_skill_of_player_party
+# INPUT: arg1 = skill_no
+# OUTPUT: reg0 = max_skill, reg1 = skill_owner_troop_no
+get_max_skill_of_player_party = (
+	"get_max_skill_of_player_party",
+			[(store_script_param, ":skill_no", 1),
+				(party_get_num_companion_stacks, ":num_stacks","p_main_party"),
+				(store_skill_level, ":max_skill", ":skill_no", "trp_player"),
+				(assign, ":skill_owner", "trp_player"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop","p_main_party",":i_stack"),
+					(troop_is_hero, ":stack_troop"),
+					(neg|troop_is_wounded, ":stack_troop"),
+					(store_skill_level, ":cur_skill", ":skill_no", ":stack_troop"),
+					(gt, ":cur_skill", ":max_skill"),
+					(assign, ":max_skill", ":cur_skill"),
+					(assign, ":skill_owner", ":stack_troop"),
+				(try_end),
+				(party_get_skill_level, reg0, "p_main_party", ":skill_no"),
+				##     (assign, reg0, ":max_skill"),
+				(assign, reg1, ":skill_owner"),
+		])
+		
+
+		#script_offer_ransom_amount_to_player_for_prisoners_in_party
+		# INPUT: arg1 = party_no
+		# OUTPUT: reg0 = result (1 = offered, 0 = not offered)
+offer_ransom_amount_to_player_for_prisoners_in_party = (
+	"offer_ransom_amount_to_player_for_prisoners_in_party",
+			[(store_script_param, ":party_no", 1),
+				(assign, ":result", 0),
+				(party_get_num_prisoner_stacks, ":num_stacks", ":party_no"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(eq, ":result", 0),
+					(party_prisoner_stack_get_troop_id, ":stack_troop", ":party_no", ":i_stack"),
+					(troop_is_hero, ":stack_troop"),
+					(this_or_next|troop_slot_eq, ":stack_troop", slot_troop_occupation, slto_kingdom_hero),
+					(troop_slot_eq, ":stack_troop", slot_troop_occupation, slto_kingdom_lady),
+					(store_troop_faction, ":stack_troop_faction", ":stack_troop"),
+					(store_random_in_range, ":random_no", 0, 100),
+					(try_begin),
+						(faction_slot_eq, ":stack_troop_faction", slot_faction_state, sfs_active),
+						(le, ":random_no", 5),
+						(neq, "$g_ransom_offer_rejected", 1),
+						(assign, ":num_stacks", 0), #break
+						(assign, ":result", 1),
+						(assign, "$g_ransom_offer_troop", ":stack_troop"),
+						(assign, "$g_ransom_offer_party", ":party_no"),
+						(jump_to_menu, "mnu_enemy_offer_ransom_for_prisoner"),
+					(try_end),
+				(try_end),
+				(assign, reg0, ":result"),
+		])
+		
+		
+		# script_remove_cattles_if_herd_is_close_to_party
+		# Input: arg1 = party_no, arg2 = maximum_number_of_cattles_required
+		# Output: reg0 = number_of_cattles_removed
+remove_cattles_if_herd_is_close_to_party = (
+	"remove_cattles_if_herd_is_close_to_party",
+			[
+				(store_script_param, ":party_no", 1),
+				(store_script_param, ":max_req", 2),
+				(assign, ":cur_req", ":max_req"),
+				(try_for_parties, ":cur_party"),
+					(gt, ":cur_req", 0),
+					(party_slot_eq, ":cur_party", slot_party_type, spt_cattle_herd),
+					(store_distance_to_party_from_party, ":dist", ":cur_party", ":party_no"),
+					(lt, ":dist", 3),
+					
+					#Do not use the quest herd for "move cattle herd"
+					(assign, ":subcontinue", 1),
+					(try_begin),
+						(check_quest_active, "qst_move_cattle_herd"),
+						(quest_slot_eq, "qst_move_cattle_herd", slot_quest_target_party, ":cur_party"),
+						(assign, ":subcontinue", 0),
+					(try_end),
+					(eq, ":subcontinue", 1),
+					#Do not use the quest herd for "move cattle herd" ends
+					
+					(party_count_companions_of_type, ":num_cattle", ":cur_party", "trp_cattle"),
+					(try_begin),
+						(le, ":num_cattle", ":cur_req"),
+						(assign, ":num_added", ":num_cattle"),
+						(remove_party, ":cur_party"),
+					(else_try),
+						(assign, ":num_added", ":cur_req"),
+						(party_remove_members, ":cur_party", "trp_cattle", ":cur_req"),
+					(try_end),
+					(val_sub, ":cur_req", ":num_added"),
+					
+					
+					(try_begin),
+						(party_slot_eq, ":party_no", slot_party_type, spt_village),
+						(party_get_slot, ":village_cattle_amount", ":party_no", slot_village_number_of_cattle),
+						(val_add, ":village_cattle_amount", ":num_added"),
+						(party_set_slot, ":party_no", slot_village_number_of_cattle, ":village_cattle_amount"),
+					(try_end),
+					
+					(assign, reg3, ":num_added"),
+					(str_store_party_name_link, s1, ":party_no"),
+					(display_message, "@You brought {reg3} heads of cattle to {s1}."),
+					(try_begin),
+						(gt, "$cheat_mode", 0),
+						(assign, reg4, ":village_cattle_amount"),
+						(display_message, "@{!}Village now has {reg4}"),
+					(try_end),
+				(try_end),
+				(store_sub, reg0, ":max_req", ":cur_req"),
+		])
+		

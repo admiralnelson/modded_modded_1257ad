@@ -4,7 +4,7 @@ from header import *
 	# This script is called from the game engine when player buys an item.
 	# INPUT:
 	# param1: item_kind_id
-game_event_buy_item =(
+game_event_buy_item  = (
 	"game_event_buy_item",
 		[
 			(store_script_param_1, ":item_kind_id"),
@@ -487,7 +487,7 @@ do_merchant_town_trade	= (
 		# script_consume_food
 		# Input: arg1: order of the food to be consumed
 		# Output: none
-consume_food=(
+consume_food = (
 	"consume_food",
 			[(store_script_param, ":selected_food", 1),
 				(troop_get_inventory_capacity, ":capacity", "trp_player"),
@@ -511,7 +511,7 @@ consume_food=(
 		#script_update_village_market_towns
 		# INPUT: none
 		# OUTPUT: none
-update_village_market_towns=(
+update_village_market_towns = (
 	"update_village_market_towns",
 			[(try_for_range, ":cur_village", villages_begin, villages_end),
 					(store_faction_of_party, ":village_faction", ":cur_village"),
@@ -546,3 +546,4 @@ update_village_market_towns=(
 					(try_end),
 				(try_end),
 		])    
+

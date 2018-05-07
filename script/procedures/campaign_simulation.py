@@ -606,3 +606,505 @@ game_event_battle_end = (
 				(try_end),
 			(try_end),
 	])
+
+
+	#script_cf_random_political_event
+	# random politics triggers between lords, probably called from triggers
+	#INPUT: NONE
+	#OUTPUT: NONE
+cf_random_political_event = (
+	"cf_random_political_event", #right now, just enmities
+		[
+		
+		(store_random_in_range, ":lord_1", active_npcs_begin, active_npcs_end),
+		(store_random_in_range, ":lord_2", active_npcs_begin, active_npcs_end),
+		
+		(troop_slot_eq, ":lord_1", slot_troop_occupation, slto_kingdom_hero),
+		(troop_slot_eq, ":lord_2", slot_troop_occupation, slto_kingdom_hero),
+		
+		(neq, ":lord_1", ":lord_2"),
+		
+		(val_add, "$total_political_events", 1),
+		
+		(store_troop_faction, ":lord_1_faction", ":lord_1"),
+		(store_troop_faction, ":lord_2_faction", ":lord_2"),
+		
+		(assign, reg8, "$total_political_events"),
+		
+		
+		(faction_get_slot, ":faction_1_leader", ":lord_1_faction", slot_faction_leader),
+		(faction_get_slot, ":faction_2_leader", ":lord_2_faction", slot_faction_leader),
+		
+		(this_or_next|eq, ":lord_1_faction", ":lord_2_faction"),
+		(this_or_next|eq, ":lord_1", ":faction_1_leader"),
+		(eq, ":lord_2", ":faction_2_leader"),
+		
+		
+		(call_script, "script_troop_get_relation_with_troop", ":lord_1", ":lord_2"),
+		(assign, ":relation", reg0),
+		
+		
+		(store_random_in_range, ":random", 0, 100),
+		
+		(try_begin),
+			#reconciliation
+			#The chance of a liege reconciling two quarreling vassals is equal to (relationship with lord 1 x relationship with lord 2) / 4
+			
+			(eq, ":lord_1_faction", ":lord_2_faction"),
+			(neq, ":faction_1_leader", "trp_player"),
+			
+			(le, ":relation", -10),
+			
+			#		(ge, "$total_political_events", 5000),
+			
+			(call_script, "script_troop_get_relation_with_troop", ":lord_1", ":faction_1_leader"),
+			(gt, reg0, 0),
+			(assign, ":lord_1_leader_rel", reg0),
+			
+			(call_script, "script_troop_get_relation_with_troop", ":lord_2", ":faction_1_leader"),
+			(gt, reg0, 0),
+			(store_mul, ":reconciliation_chance", ":lord_1_leader_rel", reg0),
+			(val_div, ":reconciliation_chance", 4),	#was 2 before
+			
+			(le, ":random", ":reconciliation_chance"),
+			
+			(str_store_troop_name, s4, ":faction_1_leader"),
+			(str_store_troop_name, s5, ":lord_1"),
+			(str_store_troop_name, s6, ":lord_2"),
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(display_message, "str_check_reg8_s4_reconciles_s5_and_s6_"),
+			(try_end),
+			
+			(call_script, "script_troop_change_relation_with_troop", ":lord_1", ":lord_2", 20),
+			(val_add, "$total_random_quarrel_changes", 20),
+		(else_try),	#lord intervenes in quarrel
+			(eq, ":lord_1_faction", ":lord_2_faction"),
+			
+			(le, ":relation", -10),
+			#		(ge, ":random", 50),
+			(try_begin),
+			(eq, ":faction_1_leader", "trp_player"),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_diagnostic__player_should_receive_consultation_quest_here_if_not_already_active"),
+			(try_end),
+			(neg|check_quest_active, "qst_consult_with_minister"),
+			(neg|check_quest_active, "qst_resolve_dispute"),
+			(eq, "$g_minister_notification_quest", 0),
+			(assign, "$g_minister_notification_quest", "qst_resolve_dispute"),
+			(quest_set_slot, "qst_resolve_dispute", slot_quest_target_troop, ":lord_1"),
+			(quest_set_slot, "qst_resolve_dispute", slot_quest_object_troop, ":lord_2"),
+			
+			(call_script, "script_add_notification_menu", "mnu_notification_player_should_consult", 0, 0),
+			
+			
+			(else_try),
+			(call_script, "script_troop_get_relation_with_troop", ":lord_1", ":faction_1_leader"),
+			(assign, ":lord_1_rel_w_leader", reg0),
+			
+			(call_script, "script_troop_get_relation_with_troop", ":lord_2", ":faction_1_leader"),
+			(assign, ":lord_2_rel_w_leader", reg0),
+			
+			(store_random_in_range, ":another_random", -5, 5),
+			
+			(val_add, ":lord_1_rel_w_leader", ":another_random"),
+			
+			(try_begin),
+				(ge, ":lord_1_rel_w_leader", ":lord_2_rel_w_leader"),
+				(assign, ":winner_lord", ":lord_1"),
+				(assign, ":loser_lord", ":lord_2"),
+			(else_try),
+				(assign, ":loser_lord", ":lord_1"),
+				(assign, ":winner_lord", ":lord_2"),
+			(try_end),
+			
+			(str_store_troop_name, s4, ":faction_1_leader"),
+			(str_store_troop_name, s5, ":winner_lord"),
+			(str_store_troop_name, s6, ":loser_lord"),
+			
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_check_reg8_s4_rules_in_s5s_favor_in_quarrel_with_s6_"),
+			(try_end),
+			
+			(call_script, "script_add_log_entry", logent_ruler_intervenes_in_quarrel, ":faction_1_leader",  ":loser_lord", ":winner_lord", ":lord_1_faction"), #faction leader is actor, loser lord is center object, winner lord is troop_object
+			
+			(call_script, "script_troop_change_relation_with_troop", ":winner_lord", ":faction_1_leader", 10),
+			(call_script, "script_troop_change_relation_with_troop", ":loser_lord", ":faction_1_leader", -20),
+			(val_add, "$total_random_quarrel_changes", -10),
+			
+			(try_end),
+			
+			
+		(else_try), #new quarrel - companions
+			(is_between, ":lord_1", companions_begin, companions_end),
+			(is_between, ":lord_2", companions_begin, companions_end),
+			
+			(ge, ":relation", -10),
+			(this_or_next|troop_slot_eq, ":lord_1", slot_troop_personalityclash_object, ":lord_2"),
+			(troop_slot_eq, ":lord_1", slot_troop_personalityclash2_object, ":lord_2"),
+			
+			(str_store_troop_name, s5, ":lord_1"),
+			(str_store_troop_name, s6, ":lord_2"),
+			
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(display_message, "str_check_reg8_new_rivalry_generated_between_s5_and_s6"),
+			(try_end),
+			
+			(call_script, "script_troop_change_relation_with_troop", ":lord_1", ":lord_2", -30),
+			(val_add, "$total_random_quarrel_changes", -30),
+			
+			
+		(else_try), #new quarrel - others
+			(eq, ":lord_1_faction", ":lord_2_faction"),
+			
+			(ge, ":relation", -10), #can have two quarrels
+			
+			(call_script, "script_cf_test_lord_incompatibility_to_s17", ":lord_1", ":lord_2"),
+			(assign, ":chance_of_enmity", reg0),
+			(gt, ":chance_of_enmity", 0),
+			
+			(lt, ":random", ":chance_of_enmity"), #50 or 100 percent, usually
+			
+			
+			(str_store_troop_name, s5, ":lord_1"),
+			(str_store_troop_name, s6, ":lord_2"),
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(display_message, "str_check_reg8_new_rivalry_generated_between_s5_and_s6"),
+			(try_end),
+			
+			(call_script, "script_troop_change_relation_with_troop", ":lord_1", ":lord_2", -30),
+			(val_add, "$total_random_quarrel_changes", -30),
+			
+			#		(call_script, "script_update_troop_notes", ":lord_1"),
+			#		(call_script, "script_update_troop_notes", ":lord_2"),
+		(else_try), #a lord attempts to suborn a character
+			(store_current_hours, ":hours"),
+			(ge, ":hours", 24),
+			
+			(neq, ":lord_1_faction", ":lord_2_faction"),
+			#		(eq, ":lord_1", ":faction_1_leader"),
+			(is_between, ":lord_1_faction", kingdoms_begin, kingdoms_end),
+			
+			(call_script, "script_cf_troop_can_intrigue", ":lord_2", 0),
+			(neq, ":lord_2", ":faction_2_leader"),
+			(neq, ":lord_2", ":faction_1_leader"),
+			
+			(str_store_troop_name, s5, ":faction_1_leader"),
+			(str_store_troop_name, s6, ":lord_2"),
+			
+			(try_begin),
+			(ge, "$cheat_mode", 1),
+			(display_message, "str_check_reg8_s5_attempts_to_win_over_s6"),
+			(try_end),
+			
+			(call_script, "script_calculate_troop_political_factors_for_liege", ":lord_2", ":faction_1_leader"),
+			(assign, ":lord_1_score", reg0),
+			
+			(call_script, "script_calculate_troop_political_factors_for_liege", ":lord_2", ":faction_2_leader"),
+			(assign, ":faction_2_leader_score", reg0),
+			
+			(try_begin),
+			(gt, ":lord_1_score", ":faction_2_leader_score"),
+			(call_script, "script_change_troop_faction", ":lord_2", ":lord_1_faction"),
+			(try_end),
+		(try_end),
+		
+		
+		
+	])
+	#script_battle_political_consequences
+	#lord recruitment scripts end
+	#called from game_event_simulate_battle
+	#Includes a number of consequences that follow on battles, mostly affecting relations between different NPCs
+	#This only fires from complete victories
+	#INPUT: defeated_party, winner_party
+	#OUTPUT: none
+	
+battle_political_consequences = (
+	"battle_political_consequences",
+		[
+		(store_script_param, ":defeated_party", 1),
+		(store_script_param, ":winner_party", 2),
+		
+		(try_begin),
+			(eq, "$cheat_mode", 1),
+			(str_store_party_name, s4, ":winner_party"),
+			(str_store_party_name, s5, ":defeated_party"),
+			(display_message, "str_do_political_consequences_for_s4_victory_over_s5"),
+		(try_end),
+		
+		(store_faction_of_party, ":winner_faction", ":winner_party"),
+		(try_begin),
+			(eq, ":winner_party", "p_main_party"),
+			(assign, ":winner_faction", "$players_kingdom"),
+		(try_end),
+		
+		(party_get_template_id, ":defeated_party_template", ":defeated_party"),
+		
+		#did the battle involve travellers?
+		(try_begin),
+			(this_or_next|eq, ":defeated_party_template", "pt_village_farmers"),
+			(eq, ":defeated_party_template", "pt_kingdom_caravan_party"),
+			
+			
+			(party_get_slot, ":destination", ":defeated_party", slot_party_ai_object),
+			(party_get_slot, ":origin", ":defeated_party", slot_party_last_traded_center),
+			
+			(call_script, "script_add_log_entry", logent_traveller_attacked, ":winner_party",  ":origin", ":destination", ":winner_faction"),
+			
+			(try_begin),
+			(eq, "$cheat_mode", 2),
+			(neg|is_between, ":winner_faction", kingdoms_begin, kingdoms_end),
+			(str_store_string, s65, "str_bandits_attacked_a_party_on_the_roads_so_a_bounty_is_probably_available"),
+			(call_script, "script_add_notification_menu", "mnu_debug_alert_from_s65", 0, 0),
+			
+			(str_store_party_name, s15, ":origin"),
+			(str_store_party_name, s16, ":destination"),
+			(display_message, "str_travellers_attacked_on_road_from_s15_to_s16"),
+			(try_end),
+			
+			
+			#by logging the faction and the party, we can verify that the party number is unlikely to have been reassigned - or at any rate, that the factions have not changed
+		(try_end),
+		
+		#winner consequences:
+		#1)   leader improves relations with other leaders
+		#2)  Player given credit for victory if the victorious party is following the player's advice
+		(try_begin),
+			(party_get_template_id, ":winner_party_template", ":winner_party"),
+			(eq, ":winner_party_template", "pt_kingdom_hero_party"),
+			(neq, ":winner_party", "p_main_party"),
+			#Do not do for player party, as is included in post-battle dialogs
+			
+			(party_stack_get_troop_id, ":winner_leader", ":winner_party", 0),
+			(is_between, ":winner_leader", active_npcs_begin, active_npcs_end),
+			
+			(store_faction_of_party, ":winner_faction", ":winner_party"),
+			
+			(party_collect_attachments_to_party, ":winner_party", "p_temp_party_2"),
+			(party_get_num_companion_stacks, ":num_stacks", "p_temp_party_2"),
+			(try_for_range, ":troop_iterator", 0, ":num_stacks"),
+			(party_stack_get_troop_id, ":cur_troop_id", "p_temp_party_2", ":troop_iterator"),
+			(is_between, ":cur_troop_id", active_npcs_begin, active_npcs_end),
+			
+			(try_begin),
+				(troop_get_slot, ":winner_lord_party", ":cur_troop_id", slot_troop_leaded_party),
+				(party_is_active, ":winner_lord_party"),
+				(call_script, "script_cf_party_under_player_suggestion", ":winner_lord_party"),
+				(call_script, "script_add_log_entry", logent_player_suggestion_succeeded, "trp_player", -1, ":cur_troop_id", -1),
+			(try_end),
+			
+			
+			(store_faction_of_troop, ":troop_faction", ":cur_troop_id"),
+			(eq, ":troop_faction", ":winner_faction"),
+			(neq, ":cur_troop_id", ":winner_leader"),
+			
+			(try_begin),
+				(eq, "$cheat_mode", 4),
+				(str_store_troop_name, s15, ":cur_troop_id"),
+				(str_store_troop_name, s16, ":winner_leader"),
+				(display_message, "str_s15_shares_joy_of_victory_with_s16"),
+			(try_end),
+			
+			(call_script, "script_troop_change_relation_with_troop", ":cur_troop_id", ":winner_leader", 3),
+			(val_add, "$total_battle_ally_changes", 3),
+			
+			(try_end),
+			(party_clear, "p_temp_party_2"),
+		(try_end),
+		
+		#consequences of defeat,
+		#1) -1 relation with lord per lord, plus -15 if there is an incompatible marshal
+		#2)  losers under player suggestion blame the player
+		#3) Some losers resent the victor lord
+		#4) Possible quarrels over defeat
+		(try_begin),
+			(party_collect_attachments_to_party, ":defeated_party", "p_temp_party_2"),
+			(party_get_num_companion_stacks, ":num_stacks", "p_temp_party_2"),
+			
+			(try_begin),
+			(gt, "$marshall_defeated_in_battle", 0),
+			(str_store_troop_name, s15, "$marshall_defeated_in_battle"),
+			(store_faction_of_troop, ":defeated_marshall_faction", "$marshall_defeated_in_battle"),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_faction_marshall_s15_involved_in_defeat"),
+			(try_end),
+			(else_try),
+			(eq, "$marshall_defeated_in_battle", "trp_player"),
+			(eq, ":defeated_party", "p_main_party"),
+			(faction_slot_eq, "fac_player_supporters_faction", slot_faction_state, sfs_active),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_player_faction_marshall_involved_in_defeat"),
+			(try_end),
+			(else_try),
+			(assign, "$marshall_defeated_in_battle", -1),
+			(try_end),
+			
+			(try_for_range, ":troop_iterator", 0, ":num_stacks"),
+			(party_stack_get_troop_id, ":cur_troop_id", "p_temp_party_2", ":troop_iterator"),
+			(troop_slot_eq, ":cur_troop_id", slot_troop_occupation, slto_kingdom_hero),
+			
+			(try_begin), #is party under suggestion?
+				(troop_get_slot, ":defeated_lord_party", ":cur_troop_id", slot_troop_leaded_party),
+				(party_is_active, ":defeated_lord_party"),
+				
+				#is party under suggestion?
+				(call_script, "script_cf_party_under_player_suggestion", ":defeated_lord_party"),
+				(call_script, "script_add_log_entry", logent_player_suggestion_failed, "trp_player", -1, ":cur_troop_id", -1),
+			(try_end),
+			
+			
+			(store_faction_of_troop, ":troop_faction", ":cur_troop_id"),
+			
+			(faction_get_slot, ":faction_leader", ":troop_faction", slot_faction_leader),
+			(neq, ":cur_troop_id", ":faction_leader"),
+			
+			#Lose one point relation with liege
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(str_store_troop_name, s14, ":cur_troop_id"),
+				(str_store_faction_name, s15, ":troop_faction"),
+				
+				(display_message, "str_s14_of_s15_defeated_in_battle_loses_one_point_relation_with_liege"),
+			(try_end),
+			
+			(try_begin),
+				(this_or_next|neq, ":faction_leader", "trp_player"), #if leader is zero at beginning of game. I'm not entirely sure how this could happen...
+				(eq, "$players_kingdom", ":troop_faction"),
+				
+				(call_script, "script_troop_change_relation_with_troop", ":cur_troop_id", ":faction_leader", -1),
+				(val_add, "$total_battle_ally_changes", -1),
+			(try_end),
+			
+			
+			(call_script, "script_faction_inflict_war_damage_on_faction", ":winner_faction", ":troop_faction", 10),
+			
+			
+			(try_begin),
+				(this_or_next|is_between, ":winner_leader", active_npcs_begin, active_npcs_end),
+				(eq, ":winner_leader", "trp_player"),
+				
+				(this_or_next|neq, ":winner_leader", "trp_player"), #prevents winner leader being zero, for whatever reason
+				(eq, ":winner_party", "p_main_party"),
+				
+				(this_or_next|troop_slot_eq, ":cur_troop_id", slot_lord_reputation_type, lrep_quarrelsome),
+				(this_or_next|troop_slot_eq, ":cur_troop_id", slot_lord_reputation_type, lrep_selfrighteous),
+				(troop_slot_eq, ":cur_troop_id", slot_lord_reputation_type, lrep_debauched),
+				
+				(call_script, "script_troop_change_relation_with_troop", ":cur_troop_id", ":winner_leader", -1),
+				(val_add, "$total_battle_enemy_changes", -1),
+				
+				(try_begin),
+				(eq, "$cheat_mode", 1),
+				(str_store_troop_name, s14, ":cur_troop_id"),
+				(str_store_troop_name, s15, ":winner_leader"),
+				
+				(display_message, "str_s14_defeated_in_battle_by_s15_loses_one_point_relation"),
+				(try_end),
+				
+				
+			(try_end),
+			
+			(gt, "$marshall_defeated_in_battle", -1),
+			(eq, ":troop_faction", ":defeated_marshall_faction"),
+			(str_store_troop_name, s14, ":cur_troop_id"),
+			
+			(call_script, "script_cf_test_lord_incompatibility_to_s17", ":cur_troop_id", "$marshall_defeated_in_battle"),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_s14_blames_s15_for_defeat"),
+			(try_end),
+			
+			(call_script, "script_add_log_entry", logent_lord_blames_defeat, ":cur_troop_id", "$marshall_defeated_in_battle", ":faction_leader", ":winner_faction"),
+			
+			(call_script, "script_troop_change_relation_with_troop", ":cur_troop_id", ":faction_leader", -15),
+			(val_add, "$total_battle_ally_changes", -15),
+			
+			(neq, "$marshall_defeated_in_battle", ":faction_leader"),
+			(call_script, "script_troop_change_relation_with_troop", ":cur_troop_id", "$marshall_defeated_in_battle", -15),
+			(val_add, "$total_battle_ally_changes", -15),
+			
+			(try_end),
+			
+			(party_clear, "p_temp_party_2"),
+		(try_end),
+	])
+	
+	#script_faction_inflict_war_damage_on_faction
+	#INPUT: actor faction, target faction, amount
+	#OUTPUT: none
+faction_inflict_war_damage_on_faction = (
+	"faction_inflict_war_damage_on_faction",
+		[
+		(store_script_param, ":actor_faction", 1),
+		(store_script_param, ":target_faction", 2),
+		(store_script_param, ":amount", 3),
+		
+		
+		(store_add, ":slot_war_damage", ":target_faction", slot_faction_war_damage_inflicted_on_factions_begin),
+		(val_sub, ":slot_war_damage", kingdoms_begin),
+		(faction_get_slot, ":cur_war_damage", ":actor_faction", ":slot_war_damage"),
+		
+		(val_add, ":cur_war_damage", ":amount"),
+		(faction_set_slot, ":actor_faction", ":slot_war_damage", ":cur_war_damage"),
+		
+		
+		(try_begin),
+			(ge, "$cheat_mode", 1),
+			(str_store_faction_name, s4, ":actor_faction"),
+			(str_store_faction_name, s5, ":target_faction"),
+			(assign, reg3, ":cur_war_damage"),
+			(assign, reg4, ":amount"),
+			(display_message, "@{!}{s4} inflicts {reg4} damage on {s5}, raising total inflicted to {reg3}"),
+		(try_end),
+		
+		
+		(faction_get_slot, ":faction_marshal", ":target_faction", slot_faction_marshall),
+		(try_begin),
+			(ge, ":faction_marshal", 0),
+			(gt, ":amount", 0),
+			
+			(troop_get_slot, ":controversy", ":faction_marshal", slot_troop_controversy),
+			(val_add, ":controversy", ":amount"),
+			(val_min, ":controversy", 100),
+			(troop_set_slot, ":faction_marshal", slot_troop_controversy, ":controversy"),
+			
+			(try_begin),
+			(ge, "$cheat_mode", 1),
+			(str_store_troop_name, s4, ":faction_marshal"),
+			(assign, reg4, ":amount"),
+			(assign, reg5, ":controversy"),
+			(display_message, "@{!}War damage raises {s4}'s controversy by {reg4} to {reg5}"),
+			(try_end),
+		(try_end),
+		
+		(faction_get_slot, ":faction_marshal", ":actor_faction", slot_faction_marshall),
+		(try_begin),
+			(ge, ":faction_marshal", 0),
+			(val_div, ":amount", 3),
+			(gt, ":amount", 0),
+			
+			
+			(troop_get_slot, ":controversy", ":faction_marshal", slot_troop_controversy),
+			(val_sub, ":controversy", ":amount"),
+			(val_max, ":controversy", 0),
+			(troop_set_slot, ":faction_marshal", slot_troop_controversy, ":controversy"),
+			
+			(try_begin),
+			(ge, "$cheat_mode", 1),
+			(str_store_troop_name, s4, ":faction_marshal"),
+			(assign, reg4, ":amount"),
+			(assign, reg5, ":controversy"),
+			(display_message, "@{!}War damage lowers {s4}'s controversy by {reg4} to {reg5}"),
+			(try_end),
+		(try_end),
+		
+		
+		
+	])

@@ -7852,3 +7852,569 @@ initialize_item_banners = (
 		
 		
 		])
+
+
+		#NPC companion changes begin
+		# WARNING: heavily modified by 1257AD
+		# INPUT: NONE
+		# OUTPUT: NONE
+initialize_npcs = (
+	"initialize_npcs",
+			[
+				
+				# set strings
+				(troop_set_slot, "trp_npc1", slot_troop_home, "p_town_1_1"),
+				(troop_set_slot, "trp_npc1", slot_troop_town_with_contacts, "p_town_1_2"),
+				(troop_set_slot, "trp_npc1", slot_troop_original_faction, "fac_kingdom_1"),
+				
+				(troop_set_slot, "trp_npc2", slot_troop_home, "p_town_2_2"),
+				(troop_set_slot, "trp_npc2", slot_troop_town_with_contacts, "p_town_2_1"),
+				(troop_set_slot, "trp_npc2", slot_troop_original_faction, "fac_kingdom_2"),
+				
+				(troop_set_slot, "trp_npc3", slot_troop_home, "p_town_3_2"),
+				(troop_set_slot, "trp_npc3", slot_troop_town_with_contacts, "p_town_3_1"),
+				(troop_set_slot, "trp_npc3", slot_troop_original_faction, "fac_kingdom_3"),
+				
+				(troop_set_slot, "trp_npc4", slot_troop_home, "p_town_4_2"),
+				(troop_set_slot, "trp_npc4", slot_troop_town_with_contacts, "p_town_4_1"),
+				(troop_set_slot, "trp_npc4", slot_troop_original_faction, "fac_kingdom_4"),
+				
+				(troop_set_slot, "trp_npc5", slot_troop_home, "p_town_5_2"),
+				(troop_set_slot, "trp_npc5", slot_troop_town_with_contacts, "p_town_5_1"),
+				(troop_set_slot, "trp_npc5", slot_troop_original_faction, "fac_kingdom_5"),
+				
+				(troop_set_slot, "trp_npc6", slot_troop_home, "p_town_6_2"),
+				(troop_set_slot, "trp_npc6", slot_troop_town_with_contacts, "p_town_6_1"),
+				(troop_set_slot, "trp_npc6", slot_troop_original_faction, "fac_kingdom_6"),
+				
+				(troop_set_slot, "trp_npc7", slot_troop_home, "p_town_7_2"),
+				(troop_set_slot, "trp_npc7", slot_troop_town_with_contacts, "p_town_7_1"),
+				(troop_set_slot, "trp_npc7", slot_troop_original_faction, "fac_kingdom_7"),
+				
+				(troop_set_slot, "trp_npc8", slot_troop_home, "p_town_8_2"),
+				(troop_set_slot, "trp_npc8", slot_troop_town_with_contacts, "p_town_8_1"),
+				(troop_set_slot, "trp_npc8", slot_troop_original_faction, "fac_kingdom_8"),
+				
+				(troop_set_slot, "trp_npc9", slot_troop_home, "p_town_9_2"),
+				(troop_set_slot, "trp_npc9", slot_troop_town_with_contacts, "p_town_9_1"),
+				(troop_set_slot, "trp_npc9", slot_troop_original_faction, "fac_kingdom_9"),
+				
+				(troop_set_slot, "trp_npc10", slot_troop_home, "p_town_10_2"),
+				(troop_set_slot, "trp_npc10", slot_troop_town_with_contacts, "p_town_10_1"),
+				(troop_set_slot, "trp_npc10", slot_troop_original_faction, "fac_kingdom_10"),
+				
+				(troop_set_slot, "trp_npc11", slot_troop_home, "p_town_11_2"),
+				(troop_set_slot, "trp_npc11", slot_troop_town_with_contacts, "p_town_11_1"),
+				(troop_set_slot, "trp_npc11", slot_troop_original_faction, "fac_kingdom_11"),
+				
+				(troop_set_slot, "trp_npc12", slot_troop_home, "p_town_12_2"),
+				(troop_set_slot, "trp_npc12", slot_troop_town_with_contacts, "p_town_12_1"),
+				(troop_set_slot, "trp_npc12", slot_troop_original_faction, "fac_kingdom_12"),
+				
+				(troop_set_slot, "trp_npc13", slot_troop_home, "p_town_13_2"),
+				(troop_set_slot, "trp_npc13", slot_troop_town_with_contacts, "p_town_13_1"),
+				(troop_set_slot, "trp_npc13", slot_troop_original_faction, "fac_kingdom_13"),
+				
+				(troop_set_slot, "trp_npc14", slot_troop_home, "p_town_14_2"),
+				(troop_set_slot, "trp_npc14", slot_troop_town_with_contacts, "p_town_14_1"),
+				(troop_set_slot, "trp_npc14", slot_troop_original_faction, "fac_kingdom_14"),
+				
+				(troop_set_slot, "trp_npc15", slot_troop_home, "p_town_15_2"),
+				(troop_set_slot, "trp_npc15", slot_troop_town_with_contacts, "p_town_15_1"),
+				(troop_set_slot, "trp_npc15", slot_troop_original_faction, "fac_kingdom_15"),
+				
+				(troop_set_slot, "trp_npc16", slot_troop_home, "p_town_16_2"),
+				(troop_set_slot, "trp_npc16", slot_troop_town_with_contacts, "p_town_16_1"),
+				(troop_set_slot, "trp_npc16", slot_troop_original_faction, "fac_kingdom_16"),
+				
+				(troop_set_slot, "trp_npc17", slot_troop_home, "p_town_17_2"),
+				(troop_set_slot, "trp_npc17", slot_troop_town_with_contacts, "p_town_17_1"),
+				(troop_set_slot, "trp_npc17", slot_troop_original_faction, "fac_kingdom_17"),
+				
+				(troop_set_slot, "trp_npc18", slot_troop_home, "p_town_18_2"),
+				(troop_set_slot, "trp_npc18", slot_troop_town_with_contacts, "p_town_18_1"),
+				(troop_set_slot, "trp_npc18", slot_troop_original_faction, "fac_kingdom_18"),
+				
+				(troop_set_slot, "trp_npc20", slot_troop_home, "p_town_20_2"),
+				(troop_set_slot, "trp_npc20", slot_troop_town_with_contacts, "p_town_20_1"),
+				(troop_set_slot, "trp_npc20", slot_troop_original_faction, "fac_kingdom_20"),
+				
+				(troop_set_slot, "trp_npc22", slot_troop_home, "p_town_22_2"),
+				(troop_set_slot, "trp_npc22", slot_troop_town_with_contacts, "p_town_22_1"),
+				(troop_set_slot, "trp_npc22", slot_troop_original_faction, "fac_kingdom_22"),
+				
+				(troop_set_slot, "trp_npc23", slot_troop_home, "p_town_23_2"),
+				(troop_set_slot, "trp_npc23", slot_troop_town_with_contacts, "p_town_23_1"),
+				(troop_set_slot, "trp_npc23", slot_troop_original_faction, "fac_kingdom_23"),
+				
+				(troop_set_slot, "trp_npc24", slot_troop_home, "p_town_24_2"),
+				(troop_set_slot, "trp_npc24", slot_troop_town_with_contacts, "p_town_24_1"),
+				(troop_set_slot, "trp_npc24", slot_troop_original_faction, "fac_kingdom_24"),
+				
+				(troop_set_slot, "trp_npc25", slot_troop_home, "p_town_25_2"),
+				(troop_set_slot, "trp_npc25", slot_troop_town_with_contacts, "p_town_25_1"),
+				(troop_set_slot, "trp_npc25", slot_troop_original_faction, "fac_kingdom_25"),
+				
+				(troop_set_slot, "trp_npc26", slot_troop_home, "p_town_26_2"),
+				(troop_set_slot, "trp_npc26", slot_troop_town_with_contacts, "p_town_26_1"),
+				(troop_set_slot, "trp_npc26", slot_troop_original_faction, "fac_kingdom_26"),
+				
+				# (troop_set_slot, "trp_npc27", slot_troop_home, "p_town_27_2"),
+				# (troop_set_slot, "trp_npc27", slot_troop_town_with_contacts, "p_town_27_1"),
+				# (troop_set_slot, "trp_npc27", slot_troop_original_faction, "fac_kingdom_27"),
+				
+				# (troop_set_slot, "trp_npc28", slot_troop_home, "p_town_28_2"),
+				# (troop_set_slot, "trp_npc28", slot_troop_town_with_contacts, "p_town_28_1"),
+				# (troop_set_slot, "trp_npc28", slot_troop_original_faction, "fac_kingdom_28"),
+				
+				# (troop_set_slot, "trp_npc29", slot_troop_home, "p_town_29_2"),
+				# (troop_set_slot, "trp_npc29", slot_troop_town_with_contacts, "p_town_29_1"),
+				# (troop_set_slot, "trp_npc29", slot_troop_original_faction, "fac_kingdom_29"),
+				
+				# (troop_set_slot, "trp_npc30", slot_troop_home, "p_town_30_2"),
+				# (troop_set_slot, "trp_npc30", slot_troop_town_with_contacts, "p_town_30_1"),
+				# (troop_set_slot, "trp_npc30", slot_troop_original_faction, "fac_kingdom_30"),
+				
+				# (troop_set_slot, "trp_npc31", slot_troop_home, "p_town_31_2"),
+				# (troop_set_slot, "trp_npc31", slot_troop_town_with_contacts, "p_town_31_1"),
+				# (troop_set_slot, "trp_npc31", slot_troop_original_faction, "fac_kingdom_31"),
+				
+				# (troop_set_slot, "trp_npc32", slot_troop_home, "p_town_31_2"),
+				# (troop_set_slot, "trp_npc32", slot_troop_town_with_contacts, "p_town_31_1"),
+				# (troop_set_slot, "trp_npc32", slot_troop_original_faction, "fac_kingdom_31"),
+				
+				(try_for_range, ":companion", companions_begin, companions_end),
+					(store_random_in_range, ":rep", lrep_martial, 26),
+					(troop_set_slot, ":companion", slot_lord_reputation_type, ":rep"),
+					
+					# (troop_get_slot, ":home", ":companion", slot_troop_home),
+					# (store_faction_of_party, ":fac", ":home"),
+					
+					# (troop_set_slot, ":companion", slot_troop_original_faction, ":fac"),
+					
+					(troop_set_slot, ":companion", slot_troop_payment_request, 300),
+					
+					#(store_random_in_range, ":tmt", tmt_aristocratic, tmt_honest), #tom
+			#tom
+			(try_begin),
+				(is_between, ":companion", "trp_npc1", "trp_npc16"),
+				(assign, ":tmt", tmt_aristocratic), #hopefuly thi will make all the companions nobles?
+			(else_try),
+				(store_random_in_range, ":tmt", tmt_aristocratic, tmt_honest),
+			(try_end),	
+			#tom
+					(troop_set_slot, ":companion", slot_troop_morality_type, ":tmt"),
+					(store_random_in_range, ":tmt", 2, 5),
+					(troop_set_slot, ":companion", slot_troop_morality_value, ":tmt"),
+					
+					(store_random_in_range, ":tmt", tmt_aristocratic, tmt_honest),
+					(troop_set_slot, ":companion", slot_troop_2ary_morality_type, ":tmt"),
+					(troop_set_slot, ":companion", slot_troop_2ary_morality_value, -1),
+					
+					(store_random_in_range, ":tmt", argument_claim, argument_rivalries),
+					(troop_set_slot, ":companion", slot_troop_kingsupport_argument, ":tmt"),
+					
+					
+					(assign, ":end", 99999),
+					(try_for_range, ":unused", 0, ":end"),
+						(store_random_in_range, ":companion2", companions_begin, companions_end),
+						(neq, ":companion2", ":companion"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalitymatch_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalitymatch_object, ":companion2"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalityclash2_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalityclash2_object, ":companion2"),
+						(troop_set_slot, ":companion", slot_troop_personalityclash_object, ":companion2"),
+						(assign, ":end", 0),
+					(try_end),
+					
+					(assign, ":end", 99999),
+					(try_for_range, ":unused", 0, ":end"),
+						(store_random_in_range, ":companion2", companions_begin, companions_end),
+						(neq, ":companion2", ":companion"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalitymatch_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalitymatch_object, ":companion2"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalityclash_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalityclash_object, ":companion2"),
+						(troop_set_slot, ":companion", slot_troop_personalityclash2_object, ":companion2"),
+						(assign, ":end", 0),
+					(try_end),
+					
+					(assign, ":end", 99999),
+					(try_for_range, ":unused", 0, ":end"),
+						(store_random_in_range, ":companion2", companions_begin, companions_end),
+						(neq, ":companion2", ":companion"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalityclash_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalityclash_object, ":companion2"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalityclash2_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalityclash2_object, ":companion2"),
+						(troop_set_slot, ":companion", slot_troop_personalitymatch_object, ":companion2"),
+						(assign, ":end", 0),
+					(try_end),
+					
+					(assign, ":end", 99999),
+					(try_for_range, ":unused", 0, ":end"),
+						(store_random_in_range, ":companion2", companions_begin, companions_end),
+						(neq, ":companion2", ":companion"),
+						(neg | troop_slot_eq, ":companion2", slot_troop_personalitymatch_object, ":companion"),
+						(neg | troop_slot_eq, ":companion", slot_troop_personalitymatch_object, ":companion2"),
+						(troop_set_slot, ":companion", slot_troop_kingsupport_opponent, ":companion2"),
+						(assign, ":end", 0),
+					(try_end),
+				(try_end),
+				
+				# (troop_set_slot, "trp_npc1", slot_troop_morality_type, tmt_egalitarian),  #borcha
+				# (troop_set_slot, "trp_npc1", slot_troop_morality_value, 4),  #borcha
+				# (troop_set_slot, "trp_npc1", slot_troop_2ary_morality_type, tmt_aristocratic),  #borcha
+				# (troop_set_slot, "trp_npc1", slot_troop_2ary_morality_value, -1),
+				# (troop_set_slot, "trp_npc1", slot_troop_personalityclash_object, "trp_npc7"),  #borcha - deshavi
+				# (troop_set_slot, "trp_npc1", slot_troop_personalityclash2_object, "trp_npc16"),  #borcha - klethi
+				# (troop_set_slot, "trp_npc1", slot_troop_personalitymatch_object, "trp_npc2"),  #borcha - marnid
+				# (troop_set_slot, "trp_npc1", slot_troop_home, "p_village_1_10"), #Dashbiga
+				# (troop_set_slot, "trp_npc1", slot_troop_payment_request, 300),
+				# (troop_set_slot, "trp_npc1", slot_troop_kingsupport_argument, argument_ruler),
+				# (troop_set_slot, "trp_npc1", slot_troop_kingsupport_opponent, "trp_npc14"), #lezalit
+				# (troop_set_slot, "trp_npc1", slot_troop_town_with_contacts, "p_town_8_1"), #ichamur
+				# (troop_set_slot, "trp_npc1", slot_troop_original_faction, 0), #ichamur
+				# (troop_set_slot, "trp_npc1", slot_lord_reputation_type, lrep_roguish), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc2", slot_troop_morality_type, tmt_humanitarian), #marnid
+				# (troop_set_slot, "trp_npc2", slot_troop_morality_value, 2),
+				# (troop_set_slot, "trp_npc2", slot_troop_2ary_morality_type, tmt_honest),
+				# (troop_set_slot, "trp_npc2", slot_troop_2ary_morality_value, 1),
+				# (troop_set_slot, "trp_npc2", slot_troop_personalityclash_object, "trp_npc5"), #marnid - beheshtur
+				# (troop_set_slot, "trp_npc2", slot_troop_personalityclash2_object, "trp_npc9"), #marnid - alayen
+				# (troop_set_slot, "trp_npc2", slot_troop_personalitymatch_object, "trp_npc1"),  #marnid - borcha
+				# (troop_set_slot, "trp_npc2", slot_troop_home, "p_town_9_1"), #Sargoth
+				# (troop_set_slot, "trp_npc2", slot_troop_payment_request, 0),
+				# (troop_set_slot, "trp_npc2", slot_troop_kingsupport_argument, argument_victory),
+				# (troop_set_slot, "trp_npc2", slot_troop_kingsupport_opponent, "trp_npc16"), #klethi
+				# (troop_set_slot, "trp_npc2", slot_troop_town_with_contacts, "p_town_9_1"), #Sargoth
+				# (troop_set_slot, "trp_npc2", slot_troop_original_faction, 0), #ichamur
+				# (troop_set_slot, "trp_npc2", slot_lord_reputation_type, lrep_custodian), #
+				
+				# #
+				# (troop_set_slot, "trp_npc3", slot_troop_morality_type, tmt_humanitarian), #Ymira
+				# (troop_set_slot, "trp_npc3", slot_troop_morality_value, 4),
+				# (troop_set_slot, "trp_npc3", slot_troop_2ary_morality_type, tmt_aristocratic),
+				# (troop_set_slot, "trp_npc3", slot_troop_2ary_morality_value, -1),
+				# (troop_set_slot, "trp_npc3", slot_troop_personalityclash_object, "trp_npc14"), #Ymira - artimenner
+				# (troop_set_slot, "trp_npc3", slot_troop_personalityclash2_object, "trp_npc8"), #Ymira - matheld
+				# (troop_set_slot, "trp_npc3", slot_troop_personalitymatch_object, "trp_npc9"), #Ymira - alayen
+				# (troop_set_slot, "trp_npc3", slot_troop_home, "p_town_3"), #Veluca
+				# (troop_set_slot, "trp_npc3", slot_troop_payment_request, 0),
+				# (troop_set_slot, "trp_npc3", slot_troop_kingsupport_argument, argument_lords),
+				# (troop_set_slot, "trp_npc3", slot_troop_kingsupport_opponent, "trp_npc5"), #klethi
+				# (troop_set_slot, "trp_npc3", slot_troop_town_with_contacts, "p_town_3_3"), #yalen
+				# (troop_set_slot, "trp_npc3", slot_troop_original_faction, 0), #ichamur
+				# (troop_set_slot, "trp_npc3", slot_lord_reputation_type, lrep_benefactor), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc4", slot_troop_morality_type, tmt_aristocratic), #Rolf
+				# (troop_set_slot, "trp_npc4", slot_troop_morality_value, 4),
+				# (troop_set_slot, "trp_npc4", slot_troop_2ary_morality_type, tmt_honest),
+				# (troop_set_slot, "trp_npc4", slot_troop_2ary_morality_value, -1),
+				# (troop_set_slot, "trp_npc4", slot_troop_personalityclash_object, "trp_npc10"), #Rolf - bunduk
+				# (troop_set_slot, "trp_npc4", slot_troop_personalityclash2_object, "trp_npc7"), #Rolf - deshavi
+				# (troop_set_slot, "trp_npc4", slot_troop_personalitymatch_object, "trp_npc5"), #Rolf - beheshtur
+				# (troop_set_slot, "trp_npc4", slot_troop_home, "p_town_10_1"), #Ehlerdah
+				# (troop_set_slot, "trp_npc4", slot_troop_payment_request, 300),
+				# (troop_set_slot, "trp_npc4", slot_troop_kingsupport_argument, argument_claim),
+				# (troop_set_slot, "trp_npc4", slot_troop_kingsupport_opponent, "trp_npc6"), #firentis
+				# (troop_set_slot, "trp_npc4", slot_troop_town_with_contacts, "p_town_10_1"), #veluca
+				# (troop_set_slot, "trp_npc4", slot_troop_original_faction, 0), #ichamur
+				# (troop_set_slot, "trp_npc4", slot_lord_reputation_type, lrep_cunning), #
+				
+				
+				# (troop_set_slot, "trp_npc5", slot_troop_morality_type, tmt_egalitarian),  #beheshtur
+				# (troop_set_slot, "trp_npc5", slot_troop_morality_value, 3),  #beheshtur
+				# (troop_set_slot, "trp_npc5", slot_troop_2ary_morality_type, -1),
+				# (troop_set_slot, "trp_npc5", slot_troop_2ary_morality_value, 0),
+				# (troop_set_slot, "trp_npc5", slot_troop_personalityclash_object, "trp_npc2"),  #beheshtur - marnid
+				# (troop_set_slot, "trp_npc5", slot_troop_personalityclash2_object, "trp_npc11"),  #beheshtur- katrin
+				# (troop_set_slot, "trp_npc5", slot_troop_personalitymatch_object, "trp_npc4"),  #beheshtur - rolf
+				# (troop_set_slot, "trp_npc5", slot_troop_home, "p_town_3_2"), #Halmar
+				# (troop_set_slot, "trp_npc5", slot_troop_payment_request, 400),
+				# (troop_set_slot, "trp_npc5", slot_troop_kingsupport_argument, argument_ruler),
+				# (troop_set_slot, "trp_npc5", slot_troop_kingsupport_opponent, "trp_npc9"), #firentis
+				# (troop_set_slot, "trp_npc5", slot_troop_town_with_contacts, "p_town_3_1"), #tulga
+				# (troop_set_slot, "trp_npc5", slot_troop_original_faction, "fac_kingdom_3"), #khergit
+				# (troop_set_slot, "trp_npc5", slot_lord_reputation_type, lrep_cunning), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc6", slot_troop_morality_type, tmt_humanitarian), #firenz
+				# (troop_set_slot, "trp_npc6", slot_troop_morality_value, 2),  #beheshtur
+				# (troop_set_slot, "trp_npc6", slot_troop_2ary_morality_type, tmt_honest),
+				# (troop_set_slot, "trp_npc6", slot_troop_2ary_morality_value, 1),
+				# (troop_set_slot, "trp_npc6", slot_troop_personalityclash_object, "trp_npc11"), #firenz
+				# (troop_set_slot, "trp_npc6", slot_troop_personalityclash2_object, "trp_npc13"), #firenz - nizar
+				# (troop_set_slot, "trp_npc6", slot_troop_personalitymatch_object, "trp_npc12"),  #firenz - jeremus
+				# (troop_set_slot, "trp_npc6", slot_troop_home, "p_town_4"), #Suno
+				# (troop_set_slot, "trp_npc6", slot_troop_payment_request, 0),
+				# (troop_set_slot, "trp_npc6", slot_troop_kingsupport_argument, argument_victory),
+				# (troop_set_slot, "trp_npc6", slot_troop_kingsupport_opponent, "trp_npc8"), #firentis
+				# (troop_set_slot, "trp_npc6", slot_troop_town_with_contacts, "p_town_1_3"), #uxkhal
+				# (troop_set_slot, "trp_npc6", slot_troop_original_faction, "fac_kingdom_1"), #swadia
+				# (troop_set_slot, "trp_npc6", slot_lord_reputation_type, lrep_upstanding), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc7", slot_troop_morality_type, tmt_egalitarian),  #deshavi
+				# (troop_set_slot, "trp_npc7", slot_troop_morality_value, 3),  #beheshtur
+				# (troop_set_slot, "trp_npc7", slot_troop_2ary_morality_type, -1),
+				# (troop_set_slot, "trp_npc7", slot_troop_2ary_morality_value, 0),
+				# (troop_set_slot, "trp_npc7", slot_troop_personalityclash_object, "trp_npc1"),  #deshavi
+				# (troop_set_slot, "trp_npc7", slot_troop_personalityclash2_object, "trp_npc4"),  #deshavi - rolf
+				# (troop_set_slot, "trp_npc7", slot_troop_personalitymatch_object, "trp_npc16"),  #deshavi - klethi
+				# (troop_set_slot, "trp_npc7", slot_troop_home, "p_village_5"), #Kulum
+				# #        (troop_set_slot, "trp_npc7", slot_troop_payment_request, 300),
+				# (troop_set_slot, "trp_npc7", slot_troop_kingsupport_argument, argument_victory),
+				# (troop_set_slot, "trp_npc7", slot_troop_kingsupport_opponent, "trp_npc3"), #ymira
+				# (troop_set_slot, "trp_npc7", slot_troop_town_with_contacts, "p_town_2"), #tihr
+				# (troop_set_slot, "trp_npc7", slot_troop_original_faction, 0), #swadia
+				# (troop_set_slot, "trp_npc7", slot_lord_reputation_type, lrep_custodian), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc8", slot_troop_morality_type, tmt_aristocratic), #matheld
+				# (troop_set_slot, "trp_npc8", slot_troop_morality_value, 3),  #beheshtur
+				# (troop_set_slot, "trp_npc8", slot_troop_2ary_morality_type, -1),
+				# (troop_set_slot, "trp_npc8", slot_troop_2ary_morality_value, 0),
+				# (troop_set_slot, "trp_npc8", slot_troop_personalityclash_object, "trp_npc12"), #matheld
+				# (troop_set_slot, "trp_npc8", slot_troop_personalityclash2_object, "trp_npc3"), #matheld - ymira
+				# (troop_set_slot, "trp_npc8", slot_troop_personalitymatch_object, "trp_npc13"),  #matheld - nizar
+				# (troop_set_slot, "trp_npc8", slot_troop_home, "p_sea_raider_spawn_point_2"), #Gundig's Point
+				# (troop_set_slot, "trp_npc8", slot_troop_payment_request, 500),
+				# (troop_set_slot, "trp_npc8", slot_troop_kingsupport_argument, argument_lords),
+				# (troop_set_slot, "trp_npc8", slot_troop_kingsupport_opponent, "trp_npc2"), #marnid
+				# (troop_set_slot, "trp_npc8", slot_troop_town_with_contacts, "p_town_2_4"), #wercheg
+				# (troop_set_slot, "trp_npc8", slot_troop_original_faction, "fac_kingdom_4"), #nords
+				# (troop_set_slot, "trp_npc8", slot_lord_reputation_type, lrep_martial), #
+				
+				
+				# (troop_set_slot, "trp_npc9", slot_troop_morality_type, tmt_aristocratic), #alayen
+				# (troop_set_slot, "trp_npc9", slot_troop_morality_value, 2),  #beheshtur
+				# (troop_set_slot, "trp_npc9", slot_troop_2ary_morality_type, tmt_honest),
+				# (troop_set_slot, "trp_npc9", slot_troop_2ary_morality_value, 1),
+				# (troop_set_slot, "trp_npc9", slot_troop_personalityclash_object, "trp_npc13"), #alayen vs nizar
+				# (troop_set_slot, "trp_npc9", slot_troop_personalityclash2_object, "trp_npc2"), #alayen vs marnid
+				# (troop_set_slot, "trp_npc9", slot_troop_personalitymatch_object, "trp_npc3"),  #alayen - ymira
+				# (troop_set_slot, "trp_npc9", slot_troop_home, "p_town_8_1"), #Rivacheg
+				# (troop_set_slot, "trp_npc9", slot_troop_payment_request, 300),
+				# (troop_set_slot, "trp_npc9", slot_troop_kingsupport_argument, argument_lords),
+				# (troop_set_slot, "trp_npc9", slot_troop_kingsupport_opponent, "trp_npc1"), #borcha
+				# (troop_set_slot, "trp_npc9", slot_troop_town_with_contacts, "p_town_1_4"), #reyvadin
+				# (troop_set_slot, "trp_npc9", slot_troop_original_faction, "fac_kingdom_2"), #vaegirs
+				# (troop_set_slot, "trp_npc9", slot_lord_reputation_type, lrep_martial), #
+				
+				
+				# (troop_set_slot, "trp_npc10", slot_troop_morality_type, tmt_humanitarian), #bunduk
+				# (troop_set_slot, "trp_npc10", slot_troop_morality_value, 2),
+				# (troop_set_slot, "trp_npc10", slot_troop_2ary_morality_type, tmt_egalitarian),
+				# (troop_set_slot, "trp_npc10", slot_troop_2ary_morality_value, 1),
+				# (troop_set_slot, "trp_npc10", slot_troop_personalityclash_object, "trp_npc4"), #bunduk vs rolf
+				# (troop_set_slot, "trp_npc10", slot_troop_personalityclash2_object, "trp_npc14"), #bunduk vs lazalet
+				# (troop_set_slot, "trp_npc10", slot_troop_personalitymatch_object, "trp_npc11"),  #bunduk likes katrin
+				# (troop_set_slot, "trp_npc10", slot_troop_home, "p_castle_6_3"), #Grunwalder Castle
+				# (troop_set_slot, "trp_npc10", slot_troop_payment_request, 200),
+				# (troop_set_slot, "trp_npc10", slot_troop_kingsupport_argument, argument_ruler),
+				# (troop_set_slot, "trp_npc10", slot_troop_kingsupport_opponent, "trp_npc7"), #nizar
+				# (troop_set_slot, "trp_npc10", slot_troop_town_with_contacts, "p_town_6_1"), #jelkala
+				# (troop_set_slot, "trp_npc10", slot_troop_original_faction, "fac_kingdom_6"), #rhodoks
+				# (troop_set_slot, "trp_npc10", slot_lord_reputation_type, lrep_benefactor), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc11", slot_troop_morality_type, tmt_egalitarian),  #katrin
+				# (troop_set_slot, "trp_npc11", slot_troop_morality_value, 3),
+				# (troop_set_slot, "trp_npc11", slot_troop_2ary_morality_type, -1),
+				# (troop_set_slot, "trp_npc11", slot_troop_2ary_morality_value, 0),
+				# (troop_set_slot, "trp_npc11", slot_troop_personalityclash_object, "trp_npc6"),  #katrin vs firenz
+				# (troop_set_slot, "trp_npc11", slot_troop_personalityclash2_object, "trp_npc5"),  #katrin - beheshtur
+				# (troop_set_slot, "trp_npc11", slot_troop_personalitymatch_object, "trp_npc10"),  #katrin likes bunduk
+				# (troop_set_slot, "trp_npc11", slot_troop_home, "p_town_1_2"), #Praven
+				# (troop_set_slot, "trp_npc11", slot_troop_payment_request, 100),
+				# (troop_set_slot, "trp_npc11", slot_troop_kingsupport_argument, argument_claim),
+				# (troop_set_slot, "trp_npc11", slot_troop_kingsupport_opponent, "trp_npc15"), #borcha
+				# (troop_set_slot, "trp_npc11", slot_troop_town_with_contacts, "p_town_1_2"), #praven
+				# (troop_set_slot, "trp_npc11", slot_troop_original_faction, 0), #
+				# (troop_set_slot, "trp_npc11", slot_lord_reputation_type, lrep_custodian), #
+				
+				
+				# (troop_set_slot, "trp_npc12", slot_troop_morality_type, tmt_humanitarian), #jeremus
+				# (troop_set_slot, "trp_npc12", slot_troop_morality_value, 3),
+				# (troop_set_slot, "trp_npc12", slot_troop_2ary_morality_type, -1),
+				# (troop_set_slot, "trp_npc12", slot_troop_2ary_morality_value, 0),
+				# (troop_set_slot, "trp_npc12", slot_troop_personalityclash_object, "trp_npc8"), #jerem
+				# (troop_set_slot, "trp_npc12", slot_troop_personalityclash2_object, "trp_npc15"), #jeremus - artimenner
+				# (troop_set_slot, "trp_npc12", slot_troop_personalitymatch_object, "trp_npc6"),  #jeremus - firenz
+				# (troop_set_slot, "trp_npc12", slot_troop_home, "p_village_9_7"), #undetermined #University
+				# (troop_set_slot, "trp_npc12", slot_troop_payment_request, 0),
+				# (troop_set_slot, "trp_npc12", slot_troop_kingsupport_argument, argument_claim),
+				# (troop_set_slot, "trp_npc12", slot_troop_kingsupport_opponent, "trp_npc13"), #nizar
+				# (troop_set_slot, "trp_npc12", slot_troop_town_with_contacts, "p_town_13_1"), #halmar
+				# (troop_set_slot, "trp_npc12", slot_troop_original_faction, 0), #
+				# (troop_set_slot, "trp_npc12", slot_lord_reputation_type, lrep_benefactor), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc13", slot_troop_morality_type, tmt_aristocratic), #nizar
+				# (troop_set_slot, "trp_npc13", slot_troop_morality_value, 3),
+				# (troop_set_slot, "trp_npc13", slot_troop_2ary_morality_type, -1),
+				# (troop_set_slot, "trp_npc13", slot_troop_2ary_morality_value, 0),
+				# (troop_set_slot, "trp_npc13", slot_troop_personalityclash_object, "trp_npc9"), #nizar
+				# (troop_set_slot, "trp_npc13", slot_troop_personalityclash2_object, "trp_npc6"), #nizar - firenz
+				# (troop_set_slot, "trp_npc13", slot_troop_personalitymatch_object, "trp_npc8"), #nizar - matheld
+				# (troop_set_slot, "trp_npc13", slot_troop_home, "p_castle_20_1"), #Ergellon Castle
+				# (troop_set_slot, "trp_npc13", slot_troop_payment_request, 300),
+				# (troop_set_slot, "trp_npc13", slot_troop_kingsupport_argument, argument_claim),
+				# (troop_set_slot, "trp_npc13", slot_troop_kingsupport_opponent, "trp_npc10"), #nizar
+				# (troop_set_slot, "trp_npc13", slot_troop_town_with_contacts, "p_town_20_1"), #suno
+				# (troop_set_slot, "trp_npc13", slot_troop_original_faction, "fac_kingdom_20"), #
+				# (troop_set_slot, "trp_npc13", slot_lord_reputation_type, lrep_roguish), #
+				
+				
+				
+				# (troop_set_slot, "trp_npc14", slot_troop_morality_type, tmt_aristocratic), #lezalit
+				# (troop_set_slot, "trp_npc14", slot_troop_morality_value, 4),
+				# (troop_set_slot, "trp_npc14", slot_troop_2ary_morality_type, tmt_egalitarian),
+				# (troop_set_slot, "trp_npc14", slot_troop_2ary_morality_value, -1),
+				# (troop_set_slot, "trp_npc14", slot_troop_personalityclash_object, "trp_npc3"), #lezalit
+				# (troop_set_slot, "trp_npc14", slot_troop_personalityclash2_object, "trp_npc10"), #lezalit - bunduk
+				# (troop_set_slot, "trp_npc14", slot_troop_personalitymatch_object, "trp_npc15"), #lezalit - artimenner
+				# (troop_set_slot, "trp_npc14", slot_troop_home, "p_castle_2_2"), #Ismirala Castle
+				# (troop_set_slot, "trp_npc14", slot_troop_payment_request, 400),
+				# (troop_set_slot, "trp_npc14", slot_troop_kingsupport_argument, argument_victory),
+				# (troop_set_slot, "trp_npc14", slot_troop_kingsupport_opponent, "trp_npc11"), #nizar
+				# (troop_set_slot, "trp_npc14", slot_troop_town_with_contacts, "p_town_3_4"), #dhirim
+				# (troop_set_slot, "trp_npc14", slot_troop_original_faction, 0), #
+				# (troop_set_slot, "trp_npc14", slot_lord_reputation_type, lrep_selfrighteous), #
+				
+				
+				# (troop_set_slot, "trp_npc15", slot_troop_morality_type, tmt_egalitarian),  #artimenner
+				# (troop_set_slot, "trp_npc15", slot_troop_morality_value, 2),
+				# (troop_set_slot, "trp_npc15", slot_troop_2ary_morality_type, tmt_honest),
+				# (troop_set_slot, "trp_npc15", slot_troop_2ary_morality_value, 1),
+				# (troop_set_slot, "trp_npc15", slot_troop_personalityclash_object, "trp_npc16"), #artimenner - klethi
+				# (troop_set_slot, "trp_npc15", slot_troop_personalityclash2_object, "trp_npc12"), #artimenner - jeremus
+				# (troop_set_slot, "trp_npc15", slot_troop_personalitymatch_object, "trp_npc14"), #lazalit - artimenner
+				# (troop_set_slot, "trp_npc15", slot_troop_home, "p_castle_1"), #Culmarr Castle
+				# (troop_set_slot, "trp_npc15", slot_troop_payment_request, 300),
+				# (troop_set_slot, "trp_npc15", slot_troop_kingsupport_argument, argument_ruler),
+				# (troop_set_slot, "trp_npc15", slot_troop_kingsupport_opponent, "trp_npc4"), #nizar
+				# (troop_set_slot, "trp_npc15", slot_troop_town_with_contacts, "p_town_14_1"), #narra
+				# (troop_set_slot, "trp_npc15", slot_lord_reputation_type, lrep_custodian), #
+				
+				
+				# (troop_set_slot, "trp_npc16", slot_troop_morality_type, tmt_aristocratic), #klethi
+				# (troop_set_slot, "trp_npc16", slot_troop_morality_value, 4),
+				# (troop_set_slot, "trp_npc16", slot_troop_2ary_morality_type, tmt_humanitarian),
+				# (troop_set_slot, "trp_npc16", slot_troop_2ary_morality_value, -1),
+				# (troop_set_slot, "trp_npc16", slot_troop_personalityclash_object, "trp_npc15"), #klethi
+				# (troop_set_slot, "trp_npc16", slot_troop_personalityclash2_object, "trp_npc1"), #klethi - borcha
+				# (troop_set_slot, "trp_npc16", slot_troop_personalitymatch_object, "trp_npc7"),  #deshavi - klethi
+				# (troop_set_slot, "trp_npc16", slot_troop_home, "p_village_1_4"), #Uslum
+				# (troop_set_slot, "trp_npc16", slot_troop_payment_request, 200),
+				# (troop_set_slot, "trp_npc16", slot_troop_kingsupport_argument, argument_lords),
+				# (troop_set_slot, "trp_npc16", slot_troop_kingsupport_opponent, "trp_npc12"), #nizar
+				# (troop_set_slot, "trp_npc16", slot_troop_town_with_contacts, "p_town_2_1"), #khudan
+				# (troop_set_slot, "trp_npc16", slot_lord_reputation_type, lrep_roguish), #
+				
+				
+				
+				(store_sub, "$number_of_npc_slots", slot_troop_strings_end, slot_troop_intro),
+				
+				(try_for_range, ":npc", companions_begin, companions_end),
+					
+					
+					(try_for_range, ":slot_addition", 0, "$number_of_npc_slots"),
+						(store_add, ":slot", ":slot_addition", slot_troop_intro),
+						
+						#(store_mul, ":string_addition", ":slot_addition", 16),
+						(store_mul, ":string_addition", ":slot_addition", 29), # rafi
+						(store_add, ":string", "str_npc1_intro", ":string_addition"),
+						(val_add, ":string", ":npc"),
+						(val_sub, ":string", companions_begin),
+						
+						(troop_set_slot, ":npc", ":slot", ":string"),
+					(try_end),
+				(try_end),
+				
+				
+				(try_for_range, ":npc", companions_begin, companions_end),
+					(str_store_troop_name, s10, ":npc"),
+					(troop_get_slot, ":npc2", ":npc", slot_troop_personalityclash_object),
+					(str_store_troop_name, s11, ":npc2"),
+					(troop_get_slot, ":npc2", ":npc", slot_troop_personalityclash2_object),
+					(str_store_troop_name, s12, ":npc2"),
+					(troop_get_slot, ":npc2", ":npc", slot_troop_kingsupport_opponent),
+					(str_store_troop_name, s13, ":npc2"),
+					
+					(troop_get_slot, reg10, ":npc", slot_troop_morality_type),
+					(troop_get_slot, reg11, ":npc", slot_troop_morality_value),
+					(troop_get_slot, reg12, ":npc", slot_troop_2ary_morality_type),
+					(troop_get_slot, reg13, ":npc", slot_troop_2ary_morality_value),
+					(troop_get_slot, reg14, ":npc", slot_lord_reputation_type),
+					
+					(troop_get_slot, ":home", ":npc", slot_troop_home),
+					(str_store_party_name, s14, ":home"),
+					(troop_get_slot, ":home", ":npc", slot_troop_town_with_contacts),
+					(str_store_party_name, s15, ":home"),
+					(troop_get_slot, ":fac", ":npc", slot_troop_original_faction),
+					(str_store_faction_name, s16, ":fac"),
+					
+					# (display_message, "@{s10} - home {s14} contacts {s15} faction {s16}"),
+					# (display_message, "@clash with: {s11} and {s12} kingdom opponent: {s13}"),
+					# (display_message, "@morality type: {reg10}/{reg11} morality2 type: {reg12}/{reg13}"),
+					# (display_message, "@reputation: {reg14}"),
+			#TOM
+			(troop_set_slot, ":npc", slot_troop_intro, "str_npc_intro"),
+			(troop_set_slot, ":npc", slot_troop_intro_response_1, "str_npc_intro_recruit"),
+			(troop_set_slot, ":npc", slot_troop_intro_response_2, "str_npc_intro_disband"),
+			(troop_set_slot, ":npc", slot_troop_signup_response_1, "str_npc_intro_recruit"),
+			(troop_set_slot, ":npc", slot_troop_signup_response_2, "str_npc_intro_disband"),
+
+			# (troop_set_slot, ":npc", slot_troop_intro, "str_slot_troop_intro"),
+			# (troop_set_slot, ":npc", slot_troop_intro_response_1, "str_slot_troop_intro_response_1"),
+			# (troop_set_slot, ":npc", slot_troop_intro_response_2, "str_slot_troop_intro_response_2"),
+			# (troop_set_slot, ":npc", slot_troop_backstory_a, "str_slot_troop_backstory_a"),
+			# (troop_set_slot, ":npc", slot_troop_backstory_b, "str_slot_troop_backstory_b"),
+			# (troop_set_slot, ":npc", slot_troop_backstory_c, "str_slot_troop_backstory_c"),
+			# (troop_set_slot, ":npc", slot_troop_backstory_delayed, "str_slot_troop_backstory_delayed"),
+			# (troop_set_slot, ":npc", slot_troop_backstory_response_1, "str_slot_troop_backstory_response_1"),
+			# (troop_set_slot, ":npc", slot_troop_backstory_response_2, "str_slot_troop_backstory_response_2"),
+			# (troop_set_slot, ":npc", slot_troop_signup, "str_slot_troop_signup"),
+			# (troop_set_slot, ":npc", slot_troop_signup_2, "str_slot_troop_signup_2"),
+			# (troop_set_slot, ":npc", slot_troop_signup_response_1, "str_slot_troop_signup_response_1"),
+			# (troop_set_slot, ":npc", slot_troop_signup_response_2, "str_slot_troop_signup_response_2"),
+			# (troop_set_slot, ":npc", slot_troop_payment_request, "str_slot_troop_payment_request"),
+			#TOM
+				(try_end),
+				#Post 0907 changes begin
+				(call_script, "script_add_log_entry", logent_game_start, "trp_player", -1, -1, -1),
+				#Post 0907 changes end
+				
+				#Rebellion changes begin
+				# (troop_set_slot, "trp_kingdom_1_pretender",  slot_troop_original_faction, "fac_kingdom_1"),
+				# (troop_set_slot, "trp_kingdom_2_pretender",  slot_troop_original_faction, "fac_kingdom_2"),
+				# (troop_set_slot, "trp_kingdom_3_pretender",  slot_troop_original_faction, "fac_kingdom_3"),
+				(troop_set_slot, "trp_kingdom_2_pretender",  slot_troop_original_faction, "fac_kingdom_2"),
+				# (troop_set_slot, "trp_kingdom_5_pretender",  slot_troop_original_faction, "fac_kingdom_5"),
+				# (troop_set_slot, "trp_kingdom_6_pretender",  slot_troop_original_faction, "fac_kingdom_6"),
+				(troop_set_slot, "trp_kingdom_4_pretender",  slot_troop_original_faction, "fac_kingdom_4"),
+				(troop_set_slot, "trp_kingdom_9_pretender",  slot_troop_original_faction, "fac_kingdom_9"),
+				(troop_set_slot, "trp_kingdom_12_pretender",  slot_troop_original_faction, "fac_kingdom_12"),
+				(troop_set_slot, "trp_kingdom_13_pretender",  slot_troop_original_faction, "fac_kingdom_13"),
+				#        (troop_set_slot, "trp_kingdom_1_pretender", slot_troop_support_base,     "p_town_4"), #suno
+				#        (troop_set_slot, "trp_kingdom_2_pretender", slot_troop_support_base,     "p_town_2_3"), #curaw
+				#        (troop_set_slot, "trp_kingdom_3_pretender", slot_troop_support_base,     "p_town_14_1"), #town_18
+				#        (troop_set_slot, "trp_kingdom_4_pretender", slot_troop_support_base,     "p_town_2_4"), #wercheg
+				#        (troop_set_slot, "trp_kingdom_5_pretender", slot_troop_support_base,     "p_town_3"), #veluca
+				(try_for_range, ":pretender", pretenders_begin, pretenders_end),
+					(troop_set_slot, ":pretender", slot_lord_reputation_type, lrep_none),
+				(try_end),
+				#Rebellion changes end
+		])

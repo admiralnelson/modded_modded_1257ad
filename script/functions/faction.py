@@ -568,3 +568,45 @@ cf_get_random_active_faction_except_player_faction_and_faction = (
 				(assign, reg0, ":selected_faction"),
 		])
 		
+
+		
+		
+		#script_get_poorest_village_of_faction
+		# INPUT: arg1 = faction_no
+		# OUTPUT: reg0 = village_no
+get_poorest_village_of_faction = (
+	"get_poorest_village_of_faction",
+			[(store_script_param, ":faction_no", 1),
+				(assign, ":min_prosperity_village", -1),
+				(assign, ":min_prosperity", 101),
+				(try_for_range, ":village_no", villages_begin, villages_end),
+					(store_faction_of_party, ":village_faction", ":village_no"),
+					(eq, ":village_faction", ":faction_no"),
+					(party_get_slot, ":prosperity", ":village_no", slot_town_prosperity),
+					(lt, ":prosperity", ":min_prosperity"),
+					(assign, ":min_prosperity", ":prosperity"),
+					(assign, ":min_prosperity_village", ":village_no"),
+				(try_end),
+				(assign, reg0, ":min_prosperity_village"),
+		])
+		
+		# script_get_next_active_kingdom
+		# Input: arg1 = faction_no
+		# Output: reg0 = faction_no (does not choose player faction)
+get_next_active_kingdom = (
+	"get_next_active_kingdom",
+			[
+				(store_script_param, ":faction_no", 1),
+				(assign, ":end_cond", kingdoms_end),
+				(try_for_range, ":unused", kingdoms_begin, ":end_cond"),
+					(val_add, ":faction_no", 1),
+					(try_begin),
+						(ge, ":faction_no", kingdoms_end),
+						(assign, ":faction_no", kingdoms_begin),
+					(try_end),
+					(faction_slot_eq, ":faction_no", slot_faction_state, sfs_active),
+					(neq, ":faction_no", "fac_player_supporters_faction"),
+					(assign, ":end_cond", 0),
+				(try_end),
+				(assign, reg0, ":faction_no"),
+		])

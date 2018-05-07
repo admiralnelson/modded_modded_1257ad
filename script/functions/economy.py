@@ -733,3 +733,144 @@ get_prosperity_text_to_s50 = (
 					(str_store_string, s50, "@Very Rich"), #80..99
 				(try_end),
 		])
+
+
+#script_get_improvement_details
+		# WARNING: modified by 1257AD devs
+		# INPUT: arg1 = improvement
+		# OUTPUT: reg0 = base_cost
+get_improvement_details = (
+	"get_improvement_details",
+			[(store_script_param, ":improvement_no", 1),
+				(try_begin),
+					(eq, ":improvement_no", slot_center_has_manor),
+					(str_store_string, s0, "@Manor"),
+					(str_store_string, s1, "@A manor lets you rest at the village and pay your troops half wages while you rest."),
+					(assign, reg0, 8000),
+				(else_try),
+					(eq, ":improvement_no", slot_party_temp_slot_1),
+					(str_store_string, s0, "@Fortified manor house"),
+					(str_store_string, s1, "@A fortified manor house provides basic fortifications."),
+					(assign, reg0, 60000),
+			#tom
+				# (else_try),
+					# (eq, ":improvement_no", slot_center_has_temple),
+					# (str_store_string, s0, "@Temple"),
+					# (str_store_string, s1, "@A temple generates right to rule weekly by 1."),
+					# (assign, reg0, 8000),
+				# (else_try),
+					# (eq, ":improvement_no", slot_center_has_weaponsmith),
+					# (str_store_string, s0, "@Weapon smithy"),
+					# (str_store_string, s1, "@Weapon smithy makes weapons."),
+					# (assign, reg0, 6000),
+				# (else_try),
+					# (eq, ":improvement_no", slot_center_has_armorsmith),
+					# (str_store_string, s0, "@Armor smithy"),
+					# (str_store_string, s1, "@Armorer makes armor."),
+					# (assign, reg0, 6000),
+				# (else_try),
+					# (eq, ":improvement_no", slot_center_has_stable),
+					# (str_store_string, s0, "@Stable"),
+					# (str_store_string, s1, "@The smelly peasants breds horses for the lord."),
+					# (assign, reg0, 6000),
+				# (else_try),
+					# (eq, ":improvement_no", slot_center_has_tavern),
+					# (str_store_string, s0, "@Tavern"),
+					# (str_store_string, s1, "@A Tavern allows the peasants to get drunk and violent."),
+					# (assign, reg0, 6000),
+				# (else_try),
+					# (eq, ":improvement_no", slot_center_has_market),
+					# (str_store_string, s0, "@Market"),
+					# (str_store_string, s1, "@A marketplace allows rich traders and smelly peasants to sell there goods."),
+					# (assign, reg0, 6000),
+			#tom
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_fish_pond),
+					(str_store_string, s0, "@Mill"),
+					(str_store_string, s1, "@A mill increases village prosperity by 5%."),
+					(assign, reg0, 6000),
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_watch_tower),
+					(str_store_string, s0, "@Watch Tower"),
+					(str_store_string, s1, "@A watch tower lets the villagers raise alarm earlier. The time it takes for enemies to loot the village increases by 50%."),
+					(assign, reg0, 5000),
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_school),
+					(str_store_string, s0, "@School"),
+					(str_store_string, s1, "@A shool increases the loyality of the villagers to you by +1 every month."),
+					(assign, reg0, 9000),
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_messenger_post),
+					(str_store_string, s0, "@Messenger Post"),
+					(str_store_string, s1, "@A messenger post lets the inhabitants send you a message whenever enemies are nearby, even if you are far away from here."),
+					(assign, reg0, 4000),
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_prisoner_tower),
+					(str_store_string, s0, "@Prison Tower"),
+					(str_store_string, s1, "@A prison tower reduces the chance of captives held here running away successfully."),
+					(assign, reg0, 7000),
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_fortifications_1),
+					(str_store_string, s0, "@Improved fortifications 1"),
+					(str_store_string, s1, "@Surrounds your castle with walls 1"),
+					(assign, reg0, 100000),
+				(else_try),
+					(eq, ":improvement_no", slot_center_has_fortifications_2),
+					(str_store_string, s0, "@Improved fortifications 2"),
+					(str_store_string, s1, "@Surrounds your castle with walls 2"),
+					(assign, reg0, 140000),
+				(try_end),
+		])
+
+#script_good_price_affects_good_production
+		# INPUT: arg1 = center_no, arg2 input item no, arg3 production, arg4 impact_divisor
+		# OUTPUT: reg0 = production
+good_price_affects_good_production = (
+	"good_price_affects_good_production",
+			[
+				(store_script_param, ":center", 1),
+				(store_script_param, ":input_item_no", 2),
+				(store_script_param, ":input_item_no", 2),
+				(store_script_param, ":production", 3),
+				(store_script_param, ":impact_divisor", 4),
+				
+				(assign, reg4, ":production"),
+				
+				
+				
+				(try_begin),
+					(gt, ":production", 0), #let's take -20 as the zero production rate, although in actuality production can go lower, representing increased demand
+					
+					(store_sub, ":input_good_price_slot", ":input_item_no", trade_goods_begin),
+					(val_add, ":input_good_price_slot", slot_town_trade_good_prices_begin),
+					(party_get_slot, ":input_price", ":center", ":input_good_price_slot"),
+					
+					
+					
+					(try_begin), #1/2 impact for low prices
+						(lt, ":input_price", 1000),
+						(val_mul, ":impact_divisor", 2),
+					(try_end),
+					
+					(try_begin),
+						(gt, ":impact_divisor", 1),
+						(val_sub, ":input_price", 1000),
+						(val_div, ":input_price", ":impact_divisor"),
+						(val_add, ":input_price", 1000),
+					(try_end),
+					
+					
+					(val_mul, ":production", 1000),
+					(val_div, ":production", ":input_price"),
+					
+					#		(assign, reg5, ":production"),
+					#		(str_store_item_name, s4, ":input_item_no"),
+					#		(display_message, "@{s4} price of {reg3} reduces production from {reg4} to {reg5}"),
+					
+				(try_end),
+				
+				
+				(assign, reg0, ":production"),
+				
+		])
+		

@@ -268,3 +268,125 @@ update_all_notes = (
 				(try_end),
 		])
 		
+		
+		# script_add_log_entry
+		# WARNING: modified by 1257AD
+		# Input: arg1 = entry_type, arg2 = event_actor, arg3 = center_object, arg4 = troop_object, arg5 = faction_object
+		# Output: none
+add_log_entry = (
+	"add_log_entry",
+			[(store_script_param, ":entry_type", 1),
+				(store_script_param, ":actor", 2),
+				(store_script_param, ":center_object", 3),
+				(store_script_param, ":troop_object", 4),
+				(store_script_param, ":faction_object", 5),
+				(assign, ":center_object_lord", -1),
+				(assign, ":center_object_faction", -1),
+				(assign, ":troop_object_faction", -1),
+				
+				(try_begin),
+					(eq, ":entry_type", logent_border_incident_troop_attacks_neutral),
+					(str_store_troop_name, s20, ":actor"),
+					(str_store_troop_name, s21,":troop_object"),
+					(display_message, "@attacks neutral {s20} {s21}"),
+				(try_end),
+				
+				(try_begin),
+					(party_is_active, ":center_object", 0),
+					(party_get_slot, ":center_object_lord", ":center_object", slot_town_lord),
+					(store_faction_of_party, ":center_object_faction", ":center_object"),
+				(else_try),
+					(assign, ":center_object_lord", 0),
+					(assign, ":center_object_faction", 0),
+				(try_end),
+				
+				(try_begin),
+					(is_between, ":troop_object", 0, "trp_local_merchant"),
+					(store_troop_faction, ":troop_object_faction", ":troop_object"),
+				(else_try),
+					(assign, ":troop_object_faction", 0),
+				(try_end),
+				
+				(val_add, "$num_log_entries", 1),
+				
+				(store_current_hours, ":entry_time"),
+				(troop_set_slot, "trp_log_array_entry_type",            "$num_log_entries", ":entry_type"),
+				(troop_set_slot, "trp_log_array_entry_time",            "$num_log_entries", ":entry_time"),
+				(troop_set_slot, "trp_log_array_actor",                 "$num_log_entries", ":actor"),
+				(troop_set_slot, "trp_log_array_center_object",         "$num_log_entries", ":center_object"),
+				(troop_set_slot, "trp_log_array_center_object_lord",    "$num_log_entries", ":center_object_lord"),
+				(troop_set_slot, "trp_log_array_center_object_faction", "$num_log_entries", ":center_object_faction"),
+				(troop_set_slot, "trp_log_array_troop_object",          "$num_log_entries", ":troop_object"),
+				(troop_set_slot, "trp_log_array_troop_object_faction",  "$num_log_entries", ":troop_object_faction"),
+				(troop_set_slot, "trp_log_array_faction_object",        "$num_log_entries", ":faction_object"),
+				
+				(try_begin),
+					(eq, "$cheat_mode", 1),
+					(assign, reg3, "$num_log_entries"),
+					(assign, reg4, ":entry_type"),
+					(display_message, "@{!}Log entry {reg3}: type {reg4}"),
+					(try_begin),
+						(gt, ":center_object", 0),
+						(neq, ":entry_type", logent_traveller_attacked),
+						(neq, ":entry_type", logent_party_traded),
+						(party_is_active, ":center_object"), #sometimes is a troop
+						
+						(str_store_party_name, s4, ":center_object"),
+						(display_message, "@{!}Center: {s4}"),
+					(try_end),
+					(try_begin),
+						(gt, ":troop_object", 0),
+						(neq, ":entry_type", logent_traveller_attacked),
+						(neq, ":entry_type", logent_party_traded),
+						
+						(str_store_troop_name, s4, ":troop_object"),
+						(display_message, "@{!}Troop: {s4}"),
+					(try_end),
+					(try_begin),
+						(gt, ":center_object_lord", 0),
+						(neq, ":entry_type", logent_traveller_attacked),
+						(neq, ":entry_type", logent_party_traded),
+						
+						(str_store_troop_name, s4, ":center_object_lord"),
+						(display_message, "@{!}Lord: {s4}"),
+					(try_end),
+				(try_end),
+				
+				
+				(try_begin),
+					(this_or_next|eq, ":entry_type", logent_lord_defeated_by_player),
+					(this_or_next|eq, ":entry_type", logent_player_participated_in_major_battle),
+					(eq, ":entry_type", logent_player_participated_in_siege),
+					
+					(try_begin),
+						(eq, "$cheat_mode", 1),
+						(display_message, "@{!}Ally party is present"),
+					(try_end),
+					(try_for_range, ":hero", active_npcs_begin, active_npcs_end),
+						(party_count_companions_of_type, ":hero_present", "p_collective_friends", ":hero"),
+						(gt, ":hero_present", 0),
+						# rafi
+						(try_begin),
+							(this_or_next|eq, ":entry_type", logent_player_participated_in_major_battle),
+							(eq, ":entry_type", logent_player_participated_in_siege),
+							(try_begin),
+								(neg | is_between, ":hero", companions_begin, companions_end),
+								(call_script, "script_change_player_relation_with_troop", ":hero", 1),
+							(else_try),
+								(faction_slot_eq, "fac_player_supporters_faction", slot_faction_state, sfs_active),
+								(call_script, "script_change_player_relation_with_troop", ":hero", 1),
+							(try_end),
+						(else_try),
+							# end rafi
+							(troop_set_slot, ":hero", slot_troop_present_at_event, "$num_log_entries"),
+						(try_end),
+						#         (store_sub, ":skip_up_to_here", "$num_log_entries", 1),
+						#         (troop_set_slot, ":hero", slot_troop_last_comment_slot, ":skip_up_to_here"),
+						(try_begin),
+							(eq, "$cheat_mode", 1),
+							(str_store_troop_name, s4, ":hero"),
+							(display_message, "@{!}{s4} is present at event"),
+						(try_end),
+					(try_end),
+				(try_end),
+		])

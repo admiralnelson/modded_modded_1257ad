@@ -84,3 +84,164 @@ describe_center_relation_to_s3 = (
 				(str_store_string, s3, ":str_id"),
 		])
 		
+
+#script_get_name_from_dna_to_s50
+		# INPUT: arg1 = dna
+		# OUTPUT: s50 = name
+get_name_from_dna_to_s50 = ("get_name_from_dna_to_s50",
+			[(store_script_param, ":dna", 1),
+				(store_sub, ":num_names", names_end, names_begin),
+				(store_sub, ":num_surnames", surnames_end, surnames_begin),
+				(assign, ":selected_name", ":dna"),
+				(val_mod, ":selected_name", ":num_names"),
+				(assign, ":selected_surname", ":dna"),
+				(val_div, ":selected_surname", ":num_names"),
+				(val_mod, ":selected_surname", ":num_surnames"),
+				(val_add, ":selected_name", names_begin),
+				(val_add, ":selected_surname", surnames_begin),
+				(str_store_string, s50, ":selected_name"),
+				(str_store_string, s50, ":selected_surname"),
+		])
+
+
+		# script_get_rumor_to_s61
+		# Input: rumor_id
+		# Output: reg0 = 1 if rumor found, 0 otherwise; s61 will contain rumor string if found
+get_rumor_to_s61 = (
+	"get_rumor_to_s61",
+			[
+				(store_script_param, ":base_rumor_id", 1), # the script returns the same rumor for the same rumor id, so that one cannot hear all rumors by
+				# speaking to a single person.
+				
+				(store_current_hours, ":cur_hours"),
+				(store_div, ":cur_day", ":cur_hours", 24),
+				(assign, ":rumor_found", 0),
+				(assign, ":num_tries", 3),
+				(try_for_range, ":try_no", 0, ":num_tries"),
+					(store_mul, ":rumor_id", ":try_no", 6781),
+					(val_add, ":rumor_id", ":base_rumor_id"),
+					(store_mod, ":rumor_type", ":rumor_id", 7),
+					(val_add, ":rumor_id", ":cur_hours"),
+					(try_begin),
+						(eq,  ":rumor_type", 0),
+						(try_begin),
+							(store_sub, ":range", towns_end, towns_begin),
+							(store_mod, ":random_center", ":rumor_id", ":range"),
+							(val_add, ":random_center", towns_begin),
+							(party_slot_ge, ":random_center", slot_town_has_tournament, 1),
+							(neq, ":random_center", "$current_town"),
+							(str_store_party_name, s62, ":random_center"),
+							(str_store_string, s61, "@I heard that there will be a tournament in {s62} soon."),
+							(assign, ":rumor_found", 1),
+						(try_end),
+					(else_try),
+						(eq,  ":rumor_type", 1),
+						(try_begin),
+							(store_sub, ":range", active_npcs_end, original_kingdom_heroes_begin), #was reversed
+							(store_mod, ":random_hero", ":rumor_id", ":range"),
+							(val_add, ":random_hero", original_kingdom_heroes_begin),
+							(is_between, ":random_hero", active_npcs_begin, active_npcs_end),
+							(troop_get_slot, ":personality", ":random_hero", slot_lord_reputation_type),
+							(gt, ":personality", 0),
+							(store_add, ":rumor_string", ":personality", "str_gossip_about_character_default"),
+							(str_store_troop_name, s6, ":random_hero"),
+							(str_store_string, s61, ":rumor_string"),
+							(assign, ":rumor_found", 1),
+						(try_end),
+					(else_try),
+						(eq,  ":rumor_type", 2),
+						(try_begin),
+							(store_sub, ":range", trade_goods_end, trade_goods_begin),
+							(store_add, ":random_trade_good", ":rumor_id", ":cur_day"),
+							(store_mod, ":random_trade_good", ":random_trade_good", ":range"),
+							(store_add, ":random_trade_good_slot", ":random_trade_good", slot_town_trade_good_prices_begin),
+							(val_add, ":random_trade_good", trade_goods_begin),
+							(store_mul, ":min_price", average_price_factor, 3),
+							(val_div, ":min_price", 4),
+							(assign, ":min_price_center", -1),
+							(try_for_range, ":sub_try_no", 0, 10),
+								(store_sub, ":range", towns_end, towns_begin),
+								(store_add, ":center_rumor_id", ":rumor_id", ":sub_try_no"),
+								(store_mod, ":random_center", ":center_rumor_id", ":range"),
+								(val_add, ":random_center", towns_begin),
+								(neq, ":random_center", "$g_encountered_party"),
+								(party_get_slot, ":cur_price", ":random_center", ":random_trade_good_slot"),
+								(lt, ":cur_price", ":min_price"),
+								(assign, ":min_price", ":cur_price"),
+								(assign, ":min_price_center", ":random_center"),
+							(try_end),
+							(ge, ":min_price_center", 0),
+							(str_store_item_name, s62, ":random_trade_good"),
+							(str_store_party_name, s63, ":min_price_center"),
+							(str_store_string, s61, "@I heard that one can buy {s62} very cheap at {s63}."),
+							(assign, ":rumor_found", 1),
+						(try_end),
+					(else_try),
+						(eq,  ":rumor_type", 3),
+						(try_begin),
+							(store_sub, ":range", trade_goods_end, trade_goods_begin),
+							(store_add, ":random_trade_good", ":rumor_id", ":cur_day"),
+							(store_mod, ":random_trade_good", ":random_trade_good", ":range"),
+							(store_add, ":random_trade_good_slot", ":random_trade_good", slot_town_trade_good_prices_begin),
+							(val_add, ":random_trade_good", trade_goods_begin),
+							(store_mul, ":max_price", average_price_factor, 5),
+							(val_div, ":max_price", 4),
+							(assign, ":max_price_center", -1),
+							(try_for_range, ":sub_try_no", 0, 10),
+								(store_sub, ":range", towns_end, towns_begin),
+								(store_add, ":center_rumor_id", ":rumor_id", ":sub_try_no"),
+								(store_mod, ":random_center", ":center_rumor_id", ":range"),
+								(val_add, ":random_center", towns_begin),
+								(neq, ":random_center", "$g_encountered_party"),
+								(party_get_slot, ":cur_price", ":random_center", ":random_trade_good_slot"),
+								(gt, ":cur_price", ":max_price"),
+								(assign, ":max_price", ":cur_price"),
+								(assign, ":max_price_center", ":random_center"),
+							(try_end),
+							(ge, ":max_price_center", 0),
+							(str_store_item_name, s62, ":random_trade_good"),
+							(str_store_party_name, s63, ":max_price_center"),
+							(str_store_string, s61, "@I heard that they pay a very high price for {s62} at {s63}."),
+							(assign, ":rumor_found", 1),
+						(try_end),
+					(try_end),
+					(try_begin),
+						(gt, ":rumor_found", 0),
+						(assign, ":num_tries", 0),
+					(try_end),
+				(try_end),
+				(assign, reg0, ":rumor_found"),
+		])
+
+
+		#script_lord_comment_to_s43
+		#INPUT: lord troop
+		#OUTPUT: reputation strings in s43, reputation in reg0
+lord_comment_to_s43 = (
+	"lord_comment_to_s43",
+			[(store_script_param, ":lord", 1),
+				(store_script_param, ":default_string", 2),
+				
+				(troop_get_slot,":reputation", ":lord", slot_lord_reputation_type),
+				
+				(try_begin),
+					#some default strings will have added comments for the added commons reputation types
+					(try_begin),
+						(eq, ":reputation", lrep_roguish),
+						(assign, ":reputation", lrep_goodnatured),
+					(else_try),
+						(eq, ":reputation", lrep_custodian),
+						(assign, ":reputation", lrep_cunning),
+					(else_try),
+						(eq, ":reputation", lrep_benefactor),
+						(assign, ":reputation", lrep_goodnatured),
+					(try_end),
+				(try_end),
+				
+				(store_add, ":result", ":reputation", ":default_string"),
+				
+				(str_store_string, 43, ":result"),
+				(assign, reg0, ":result"),
+				
+				
+		])

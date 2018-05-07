@@ -605,4 +605,95 @@ activate_player_faction = (
 				
 		])
 		
+		# script_event_hero_taken_prisoner_by_player
+		# Input: arg1 = troop_no
+		# Output: none
+event_hero_taken_prisoner_by_player = (
+	"event_hero_taken_prisoner_by_player",
+			[
+				(store_script_param_1, ":troop_no"),
+				(try_begin),
+					(check_quest_active, "qst_persuade_lords_to_make_peace"),
+					(try_begin),
+						(quest_slot_eq, "qst_persuade_lords_to_make_peace", slot_quest_target_troop, ":troop_no"),
+						(val_mul, ":troop_no", -1),
+						(quest_set_slot, "qst_persuade_lords_to_make_peace", slot_quest_target_troop, ":troop_no"),
+						(val_mul, ":troop_no", -1),
+					(else_try),
+						(quest_slot_eq, "qst_persuade_lords_to_make_peace", slot_quest_object_troop, ":troop_no"),
+						(val_mul, ":troop_no", -1),
+						(quest_set_slot, "qst_persuade_lords_to_make_peace", slot_quest_object_troop, ":troop_no"),
+						(val_mul, ":troop_no", -1),
+					(try_end),
+					(neg|check_quest_concluded, "qst_persuade_lords_to_make_peace"),
+					(neg|quest_slot_ge, "qst_persuade_lords_to_make_peace", slot_quest_target_troop, 0),
+					(neg|quest_slot_ge, "qst_persuade_lords_to_make_peace", slot_quest_object_troop, 0),
+					(call_script, "script_succeed_quest", "qst_persuade_lords_to_make_peace"),
+				(try_end),
+				(call_script, "script_update_troop_location_notes", ":troop_no", 0),
+		])
+
+# script_stay_captive_for_hours
+		# WARNING: modified by 1257AD devs
+		# Input: arg1 = num_hours
+		# Output: none
+stay_captive_for_hours = (
+	"stay_captive_for_hours",
+			[
+				(store_script_param, ":num_hours", 1),
+				(store_current_hours, ":cur_hours"),
+				(val_add, ":cur_hours", ":num_hours"),
+				(val_max, "$g_check_autos_at_hour", ":cur_hours"),
+				(val_add, ":num_hours", 1),
+				#(rest_for_hours, ":num_hours", 0, 0),
+				# rafi
+				(rest_for_hours, ":num_hours", 3, 0),
+				# end
+		])
+
+
+		# script_set_parties_around_player_ignore_player
+		# Input: arg1 = ignore_range, arg2 = num_hours_to_ignore
+		# Output: none
+set_parties_around_player_ignore_player = (
+	"set_parties_around_player_ignore_player",
+			[(store_script_param, ":ignore_range", 1),
+				(store_script_param, ":num_hours", 2),
+				(try_for_parties, ":party_no"),
+					(party_is_active, ":party_no"),
+					(store_distance_to_party_from_party, ":dist", "p_main_party", ":party_no"),
+					(lt, ":dist", ":ignore_range"),
+					(party_ignore_player, ":party_no", ":num_hours"),
+				(try_end),
+		])
+
 		
+	#script_locate_player_minister
+	# call this procedure to display where is player's minister located
+	#INPUT: none
+	#OUTPUT: none
+locate_player_minister = (
+	"locate_player_minister", #maybe deprecate this
+		[
+		
+		(assign, ":walled_center_found", 0),
+		(try_for_range, ":walled_center", walled_centers_begin, walled_centers_end),
+			(lt, ":walled_center_found", centers_begin),
+			(store_faction_of_party, ":walled_center_faction", ":walled_center"),
+			(eq, ":walled_center_faction", "fac_player_supporters_faction"),
+			(neg|party_slot_ge, ":walled_center", slot_town_lord, active_npcs_begin), #ie, player or a reserved slot
+			(assign, ":walled_center_found", ":walled_center"),
+		(try_end),
+		
+		(troop_get_slot, ":old_location", "$g_player_minister", slot_troop_cur_center),
+		(troop_set_slot, "$g_player_minister", slot_troop_cur_center, ":walled_center_found"),
+		
+		(try_begin),
+			(neq, ":old_location", ":walled_center"),
+			(str_store_party_name, s10, ":walled_center"),
+			(str_store_troop_name, s11, "$g_player_minister"),
+			(display_message, "str_s11_relocates_to_s10"),
+		(try_end),
+		
+	])
+	

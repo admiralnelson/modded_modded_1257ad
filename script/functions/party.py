@@ -1074,3 +1074,33 @@ print_party_members = ("print_party_members",
 					(str_store_string, s51, "str_noone"),
 				(try_end),
 		])
+
+
+		# script_cf_party_remove_random_regular_troop
+		# Input: arg1 = party_no
+		# Output: troop_id that has been removed (can fail)
+cf_party_remove_random_regular_troop = (
+	"cf_party_remove_random_regular_troop",
+			[(store_script_param_1, ":party_no"),
+				(party_get_num_companion_stacks, ":num_stacks", ":party_no"),
+				(assign, ":num_troops", 0),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop", ":party_no", ":i_stack"),
+					(neg|troop_is_hero, ":stack_troop"),
+					(party_stack_get_size, ":stack_size", ":party_no", ":i_stack"),
+					(val_add, ":num_troops", ":stack_size"),
+				(try_end),
+				(assign, reg0, -1),
+				(gt, ":num_troops", 0),
+				(store_random_in_range, ":random_troop", 0, ":num_troops"),
+				(try_for_range, ":i_stack", 0, ":num_stacks"),
+					(party_stack_get_troop_id, ":stack_troop", ":party_no", ":i_stack"),
+					(neg|troop_is_hero, ":stack_troop"),
+					(party_stack_get_size, ":stack_size", ":party_no", ":i_stack"),
+					(val_sub, ":random_troop", ":stack_size"),
+					(lt, ":random_troop", 0),
+					(assign, ":num_stacks", 0), #break
+					(party_remove_members, ":party_no", ":stack_troop", 1),
+					(assign, reg0, ":stack_troop"),
+				(try_end),
+		])
