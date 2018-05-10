@@ -35,5 +35,4 @@ logs:
 -resumed-  
 (46%-ish, 275 out of 596 procedures/functions/cfunctions)  
 (57%-ish, 340 out of 596 procedures/functions/cfunctions)  
-(57%-ish, 340 out of 596 procedures/functions/cfunctions)  
 (70%-ish, 422 out of 596  procedures/functions/cfunctions)  
