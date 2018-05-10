@@ -38,4 +38,4 @@ logs:
 (70%-ish, 422 out of 596  procedures/functions/cfunctions)  
 
 ## important keywords so far
-1257AD, 1257AD devs, WARNING, modified, modded2x, tom, ozan, rafi, dplmc, diplomacy
+1257AD, 1257AD devs, WARNING, modified, modded2x, tom, ozan, rafi, dplmc, diplomacy begin, diplomacy end, freelancer
