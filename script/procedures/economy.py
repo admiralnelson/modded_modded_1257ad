@@ -547,3 +547,36 @@ update_village_market_towns = (
 				(try_end),
 		])    
 
+
+	#script_calculate_castle_prosperities_by_using_its_villages
+	#WARNING: modified by 1257AD devs
+	#This is called from within decide_faction_ai, or from (modded2x: again, wat? thing like this is so cryptic and hard to understand)
+	#INPUT: none
+	#OUTPUT: none
+calculate_castle_prosperities_by_using_its_villages =	(
+		"calculate_castle_prosperities_by_using_its_villages", #This is called from within decide_faction_ai, or from
+		[
+		(try_for_range, ":cur_castle", castles_begin, castles_end),
+			(assign, ":total_prosperity", 0),
+			(assign, ":total_villages", 0),
+			
+			(try_for_range, ":cur_village", villages_begin, villages_end),
+			(party_get_slot, ":bound_center", ":cur_village", slot_village_bound_center),
+			(eq, ":cur_castle", ":bound_center"),
+			
+			(party_get_slot, ":village_prosperity", ":cur_village", slot_town_prosperity),
+			
+			(val_add, ":total_prosperity", ":village_prosperity"),
+			(val_add, ":total_villages", 1),
+			(try_end),
+			
+			(try_begin),
+			(neg|eq, ":total_villages", 0), #tom
+			(store_div, ":castle_prosperity", ":total_prosperity", ":total_villages"),
+			(else_try),
+			(assign, ":castle_prosperity", 50),
+			(try_end),
+			
+			(party_set_slot, ":cur_castle", slot_town_prosperity, ":castle_prosperity"),
+		(try_end),
+	])

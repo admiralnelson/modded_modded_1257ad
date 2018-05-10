@@ -2256,3 +2256,459 @@ troop_get_relation_with_troop = (
 	])
 	
 	
+	#script_lord_get_home_center
+	# INPUT: troop no (lord)
+	# OUTPUT center
+lord_get_home_center = (
+	"lord_get_home_center",
+		[
+		(store_script_param, ":troop_no", 1),
+		(assign, ":result", -1),
+		
+		(try_for_range, ":center_no", walled_centers_begin, walled_centers_end),
+			(eq, ":result", -1),
+			(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+			(assign, ":result", ":center_no"),
+		(try_end),
+		
+		#NOTE : In old code if a lord has no walled center then home city of this lord is assigning to
+		#faction leader's home city. Now I changed this to assign home cities more logical and homogeneous.
+		#In new code if a lord has no walled center then his home city becomes his village's border_city.
+		#This means his home city becomes owner city of his village. If he has no village then as last change
+		#his home city become faction leader's home city.
+		(try_begin),
+			(eq, ":result", -1),
+			(try_for_range, ":center_no", centers_begin, centers_end),
+			(eq, ":result", -1),
+			(party_slot_eq, ":center_no", slot_town_lord, ":troop_no"),
+			
+			(try_begin),
+				(neg|is_between, ":center_no", walled_centers_begin, walled_centers_end),
+				(party_get_slot, ":bound_center", ":center_no", slot_village_bound_center),
+				(assign, ":result", ":bound_center"),
+			(try_end),
+			(try_end),
+		(try_end),
+		#If lord has no walled center and is player faction, then assign player court
+		(try_begin),
+			(eq, ":result", -1),
+			(store_faction_of_troop, ":faction_no", ":troop_no"),
+			(eq, ":faction_no", "fac_player_supporters_faction"),
+			(is_between, "$g_player_court", walled_centers_begin, walled_centers_end),
+			(store_faction_of_party, ":player_court_faction", "$g_player_court"),
+			(eq, ":player_court_faction", "fac_player_supporters_faction"),
+			
+			(assign, ":result", "$g_player_court"),
+		(try_end),
+		
+		#If lord has no walled center and any not walled village then assign faction capital
+		(try_begin),
+			(eq, ":result", -1),
+			(store_faction_of_troop, ":faction_no", ":troop_no"),
+			(faction_get_slot, ":faction_leader", ":faction_no", slot_faction_leader),
+			(neq, ":troop_no", ":faction_leader"),
+			(call_script, "script_lord_get_home_center", ":faction_leader"),
+			(gt, reg0, -1),
+			(assign, ":result", reg0),
+		(try_end),
+		
+		#Any center of the faction
+		(try_begin),
+			(eq, ":result", -1),
+			(store_faction_of_troop, ":faction_no", ":troop_no"),
+			
+			(try_for_range, ":walled_center", walled_centers_begin, walled_centers_end),
+			(eq, ":result", -1),
+			
+			(store_faction_of_party, ":center_faction", ":walled_center"),
+			(eq, ":faction_no", ":center_faction"),
+			(assign, ":result", ":walled_center"),
+			(try_end),
+		(try_end),
+		
+		
+		
+		(assign, reg0, ":result"),
+	])
+	
+	#script_get_kingdom_lady_social_determinants
+	# WARNING: modified by 1257AD devs contain diplomacy script/stuffs.
+	# CONTAINS: dimplomacy script
+	#Calradian society is rather patriarchal, at least among the upper classes
+	#INPUT: lady
+	#OUTPUT: closest male relative, town center
+get_kingdom_lady_social_determinants = (
+	"get_kingdom_lady_social_determinants", #Calradian society is rather patriarchal, at least among the upper classes
+		[
+		(store_script_param, ":kingdom_lady", 1),
+		
+		(store_faction_of_troop, ":faction_of_lady", ":kingdom_lady"),
+		(assign, ":center", -1),
+		(assign, ":closest_male_relative", -1),
+		(assign, ":best_center_score", 0),
+		
+		(try_begin),
+			(troop_slot_ge, ":kingdom_lady", slot_troop_spouse, 0),
+			(troop_get_slot, ":closest_male_relative", ":kingdom_lady", slot_troop_spouse),
+		(else_try),
+			(troop_slot_ge, ":kingdom_lady", slot_troop_father, 0),
+			(troop_get_slot, ":closest_male_relative", ":kingdom_lady", slot_troop_father),
+		(else_try),
+			(troop_slot_ge, ":kingdom_lady", slot_troop_guardian, 0),
+			(troop_get_slot, ":closest_male_relative", ":kingdom_lady", slot_troop_guardian),
+		(try_end),
+		
+		
+		(try_begin), #if ongoing social event (maybe add if not besieged)
+			(faction_slot_eq, ":faction_of_lady", slot_faction_ai_state, sfai_feast),
+			(faction_get_slot, ":feast_center", ":faction_of_lady", slot_faction_ai_object),
+			
+			(gt, ":closest_male_relative", -1),
+			(troop_get_slot, ":closest_male_party", ":closest_male_relative", slot_troop_leaded_party),
+			(party_is_active, ":closest_male_party"),
+			(party_get_attached_to, ":closest_male_cur_location", ":closest_male_party"),
+			
+			(eq, ":closest_male_cur_location", ":feast_center"),
+			(is_between, ":feast_center", walled_centers_begin, walled_centers_end),
+			
+			(assign, ":center", ":feast_center"),
+			
+		(else_try),
+			(troop_slot_eq, "trp_player", slot_troop_spouse, ":kingdom_lady"),
+			###diplomacy begin
+			(try_begin),
+			##diplomacy end
+			(is_between, "$g_player_court", walled_centers_begin, walled_centers_end),
+			##diplomacy begin
+			(else_try),
+			(troop_get_slot, ":cur_residence", ":kingdom_lady", slot_troop_cur_center),
+			(is_between, ":cur_residence", walled_centers_begin, walled_centers_end),
+			(party_slot_eq, ":cur_residence", slot_town_lord, "trp_player"),
+			(assign, ":center", ":cur_residence"),
+			(try_end),
+			(is_between, ":center",  walled_centers_begin, walled_centers_end),
+			##diplomacy end
+		(else_try),
+			(try_for_range, ":walled_center", walled_centers_begin, walled_centers_end),
+			(store_faction_of_party, ":walled_center_faction", ":walled_center"),
+			(this_or_next|eq, ":faction_of_lady", ":walled_center_faction"),
+			(neg|is_between, ":faction_of_lady", kingdoms_begin, kingdoms_end), #lady married to a player without a faction
+			
+			(party_get_slot, ":castle_lord", ":walled_center", slot_town_lord),
+			
+			(gt, ":castle_lord", -1),
+			
+			(call_script, "script_troop_get_family_relation_to_troop", ":kingdom_lady", ":castle_lord"),
+			
+			(try_begin),
+				(this_or_next|is_between, ":faction_of_lady", kingdoms_begin, kingdoms_end),
+				(troop_slot_eq, "trp_player", slot_troop_spouse, ":kingdom_lady"),
+				
+				(faction_slot_eq, ":faction_of_lady", slot_faction_leader, ":castle_lord"),
+				(val_max, reg0, 1),
+			(try_end),
+			
+			(try_begin),
+				(eq, "$cheat_mode", 2),
+				(str_store_troop_name, s3, ":kingdom_lady"),
+				(str_store_troop_name, s4, ":castle_lord"),
+				(str_store_party_name, s5, ":walled_center"),
+				(display_message, "str_checking_s3_at_s5_with_s11_relationship_with_s4_score_reg0"),
+				(str_clear, s11),
+			(try_end),
+			
+			(gt, reg0, ":best_center_score"),
+			
+			(assign, ":best_center_score", reg0),
+			(assign, ":center", ":walled_center"),
+			
+			
+			(try_end),
+		(try_end),
+		
+		(assign, reg0, ":closest_male_relative"),
+		(assign, reg1, ":center"),
+		
+		
+	])
+
+	#script_lady_evaluate_troop_as_suitor
+	#INPUT: lady, suitor
+	#OUTPUT: final_score
+lady_evaluate_troop_as_suitor = (
+	"lady_evaluate_troop_as_suitor",
+		[
+		(store_script_param, ":lady", 1),
+		(store_script_param, ":suitor", 2),
+		
+		(call_script, "script_troop_get_romantic_chemistry_with_troop", ":lady", ":suitor"),
+		(assign, ":romantic_chemistry", reg0),
+		
+		(try_begin),
+			(call_script, "script_cf_test_lord_incompatibility_to_s17", ":lady", ":suitor"),
+		(try_end),
+		
+		(store_sub, ":personality_modifier", 0, reg0),
+		(assign, reg2, ":personality_modifier"),
+		
+		(try_begin),
+			(troop_get_slot, ":renown_modifier", ":suitor", slot_troop_renown),
+			(val_div, ":renown_modifier", 20),
+			(try_begin),
+			(this_or_next|troop_slot_eq, ":lady", slot_lord_reputation_type, lrep_conventional),
+			(troop_slot_eq, ":lady", slot_lord_reputation_type, lrep_ambitious),
+			(val_mul, ":renown_modifier", 2),
+			(val_sub, ":renown_modifier", 15),
+			(try_end),
+		(try_end),
+		
+		(store_add, ":final_score", ":renown_modifier", ":personality_modifier"),
+		(val_add, ":final_score", ":romantic_chemistry"),
+		(assign, reg0, ":final_score"),
+	])
+	
+
+	#script_courtship_poem_reactions
+	#Called from dialogs
+	#INPUT: lady, poem
+	#OUTPUT: result
+courtship_poem_reactions = (
+	"courtship_poem_reactions", #parameters from dialog
+		[
+		(store_script_param, ":lady", 1),
+		(store_script_param, ":poem", 2),
+		
+		(troop_get_slot, ":lady_reputation", ":lady", slot_lord_reputation_type),
+		
+		(try_begin),
+			(eq, "$cheat_mode", 1),
+			(assign, reg4, ":poem"),
+			(assign, reg5, ":lady_reputation"),
+			(display_message, "str_poem_choice_reg4_lady_rep_reg5"),
+		(try_end),
+		
+		(try_begin), #conventional ++, ambitious -, adventurous -
+			(eq, ":poem", courtship_poem_tragic),
+			(eq, ":lady_reputation", lrep_conventional),
+			(str_store_string, s11, "str_ah__kais_and_layali__such_a_sad_tale_many_a_time_has_it_been_recounted_for_my_family_by_the_wandering_poets_who_come_to_our_home_and_it_has_never_failed_to_bring_tears_to_our_eyes"),
+			(assign, ":result", 5),
+		(else_try),
+			(eq, ":poem", courtship_poem_tragic),
+			(eq, ":lady_reputation", lrep_ambitious),
+			(str_store_string, s11, "str_kais_and_layali_three_hundred_stanzas_of_pathetic_sniveling_if_you_ask_me_if_kais_wanted_to_escape_heartbreak_he_should_have_learned_to_live_within_his_station_and_not_yearn_for_what_he_cannot_have"),
+			(assign, ":result", 0),
+		(else_try),
+			(eq, ":poem", courtship_poem_tragic),
+			(eq, ":lady_reputation", lrep_otherworldly),
+			(str_store_string, s11, "str_kais_and_layali_no_one_should_ever_have_written_such_a_sad_poem_if_it_was_the_destiny_of_kais_and_layali_to_be_together_than_their_love_should_have_conquered_all_obstacles"),
+			(assign, ":result", 1),
+		(else_try),
+			(eq, ":poem", courtship_poem_tragic),
+			#		moralizing and adventurous
+			(str_store_string, s11, "str_ah_kais_and_layali_a_very_old_standby_but_moving_in_its_way"),
+			(assign, ":result", 3),
+			#Heroic
+		(else_try), #adventurous ++, conventional -1, moralizing -1
+			(eq, ":poem", courtship_poem_heroic),
+			(eq, ":lady_reputation", lrep_adventurous),
+			(str_store_string, s11, "str_the_saga_of_helgered_and_kara_such_happy_times_in_which_our_ancestors_lived_women_like_kara_could_venture_out_into_the_world_like_men_win_a_name_for_themselves_and_not_linger_in_their_husbands_shadow"),
+			(assign, ":result", 5),
+		(else_try), #adventurous ++, conventional -1, moralizing -1
+			(eq, ":poem", courtship_poem_heroic),
+			(eq, ":lady_reputation", lrep_ambitious),
+			(str_store_string, s11, "str_ah_the_saga_of_helgered_and_kara_now_there_was_a_lady_who_knew_what_she_wanted_and_was_not_afraid_to_obtain_it"),
+			(assign, ":result", 2),
+		(else_try), #adventurous ++, conventional -1, moralizing -1
+			(eq, ":poem", courtship_poem_heroic),
+			(eq, ":lady_reputation", lrep_otherworldly),
+			(str_store_string, s11, "str_the_saga_of_helgered_and_kara_a_terrible_tale__but_it_speaks_of_a_very_great_love_if_she_were_willing_to_make_war_on_her_own_family"),
+			(assign, ":result", 2),
+		(else_try), #adventurous ++, conventional -1, moralizing -1
+			(eq, ":poem", courtship_poem_heroic),
+			(eq, ":lady_reputation", lrep_moralist),
+			(str_store_string, s11, "str_the_saga_of_helgered_and_kara_as_i_recall_kara_valued_her_own_base_passions_over_duty_to_her_family_that_she_made_war_on_her_own_father_i_have_no_time_for_a_poem_which_praises_such_a_woman"),
+			(assign, ":result", 0),
+		(else_try), #adventurous ++, conventional -1, moralizing -1
+			(eq, ":poem", courtship_poem_heroic),
+			(eq, ":lady_reputation", lrep_conventional),
+			(str_store_string, s11, "str_the_saga_of_helgered_and_kara_how_could_a_woman_don_armor_and_carry_a_sword_how_could_a_man_love_so_ungentle_a_creature"),
+			(assign, ":result", 0),
+			#Comic
+		(else_try), #ambitious ++, romantic -, moralizing 0
+			(eq, ":poem", courtship_poem_comic),
+			(eq, ":lady_reputation", lrep_otherworldly),
+			(str_store_string, s11, "str_a_conversation_in_the_garden_i_cannot_understand_the_lady_in_that_poem_if_she_loves_the_man_why_does_she_tease_him_so"),
+			(assign, ":result", 0),
+		(else_try), #ambitious ++, romantic -, moralizing 0
+			(eq, ":poem", courtship_poem_comic),
+			(eq, ":lady_reputation", lrep_moralist),
+			(str_store_string, s11, "str_a_conversation_in_the_garden_let_us_see__it_is_morally_unedifying_it_exalts_deception_it_ends_with_a_maiden_surrendering_to_her_base_passions_and_yet_i_cannot_help_but_find_it_charming_perhaps_because_it_tells_us_that_love_need_not_be_tragic_to_be_memorable"),
+			(assign, ":result", 1),
+		(else_try), #ambitious ++, romantic -, moralizing 0
+			(eq, ":poem", courtship_poem_comic),
+			(eq, ":lady_reputation", lrep_ambitious),
+			(str_store_string, s11, "str_a_conversation_in_the_garden_now_that_is_a_tale_every_lady_should_know_by_heart_to_learn_the_subtleties_of_the_politics_she_must_practice"),
+			(assign, ":result", 5),
+		(else_try), #ambitious ++, romantic -, moralizing 0
+			(eq, ":poem", courtship_poem_comic),
+			#adventurous, conventional
+			(str_store_string, s11, "str_a_conversation_in_the_garden_it_is_droll_i_suppose__although_there_is_nothing_there_that_truly_stirs_my_soul"),
+			(assign, ":result", 3),
+			
+			#Allegoric
+		(else_try), #moralizing ++, adventurous -, romantic -
+			(eq, ":poem", courtship_poem_allegoric),
+			(eq, ":lady_reputation", lrep_adventurous),
+			(str_store_string, s11, "str_storming_the_fortress_of_love_ah_yes_the_lady_sits_within_doing_nothing_while_the_man_is_the_one_who_strives_and_achieves_i_have_enough_of_that_in_my_daily_life_why_listen_to_poems_about_it"),
+			(assign, ":result", 0),
+		(else_try), #moralizing ++, adventurous -, romantic -
+			(eq, ":poem", courtship_poem_allegoric),
+			(this_or_next|eq, ":lady_reputation", lrep_conventional),
+			(eq, ":lady_reputation", lrep_moralist),
+			(str_store_string, s11, "str_storming_the_fortress_of_love_ah_yes_an_uplifting_tribute_to_the_separate_virtues_of_man_and_woman"),
+			(assign, ":result", 3),
+		(else_try), #moralizing ++, adventurous -, romantic -
+			(eq, ":poem", courtship_poem_allegoric),
+			(eq, ":lady_reputation", lrep_otherworldly),
+			(str_store_string, s11, "str_storming_the_fortress_of_love_ah_yes_but_although_it_is_a_fine_tale_of_virtues_it_speaks_nothing_of_passion"),
+			(assign, ":result", 1),
+		(else_try), #moralizing ++, adventurous -, romantic -
+			(eq, ":poem", courtship_poem_allegoric),
+			(eq, ":lady_reputation", lrep_ambitious),
+			(str_store_string, s11, "str_storming_the_fortress_of_love_ah_a_sermon_dressed_up_as_a_love_poem_if_you_ask_me"),
+			(assign, ":result", 1),
+			
+		(else_try), #romantic ++, moralizing 0, ambitious -
+			(eq, ":poem", courtship_poem_mystic),
+			(eq, ":lady_reputation", lrep_otherworldly),
+			(str_store_string, s11, "str_a_hearts_desire_ah_such_a_beautiful_account_of_the_perfect_perfect_love_to_love_like_that_must_be_to_truly_know_rapture"),
+			(assign, ":result", 4),
+			
+		(else_try), #romantic ++, moralizing 0, ambitious -
+			(eq, ":poem", courtship_poem_mystic),
+			(eq, ":lady_reputation", lrep_ambitious),
+			(str_store_string, s11, "str_a_hearts_desire_silly_if_you_ask_me_if_the_poet_desires_a_lady_then_he_should_endeavor_to_win_her__and_not_dress_up_his_desire_with_a_pretense_of_piety"),
+			(assign, ":result", 0),
+			
+		(else_try), #romantic ++, moralizing 0, ambitious -
+			(eq, ":poem", courtship_poem_mystic),
+			(eq, ":lady_reputation", lrep_moralist),
+			(str_store_string, s11, "str_a_hearts_desire_hmm__it_is_an_interesting_exploration_of_earthly_and_divine_love_it_does_speak_of_the_spiritual_quest_which_brings_out_the_best_in_man_but_i_wonder_if_the_poet_has_not_confused_his_yearning_for_higher_things_with_his_baser_passions"),
+			(assign, ":result", 2),
+			
+		(else_try), #romantic ++, moralizing 0, ambitious -
+			(eq, ":poem", courtship_poem_mystic),
+			(str_store_string, s11, "str_a_hearts_desire_oh_yes__it_is_very_worthy_and_philosophical_but_if_i_am_to_listen_to_a_bard_strum_a_lute_for_three_hours_i_personally_prefer_there_to_be_a_bit_of_a_story"),
+			(assign, ":result", 1),
+		(try_end),
+		
+		
+		(try_begin),
+			(eq, "$cheat_mode", 1),
+			(assign, reg4, ":result"),
+			(display_message, "str_result_reg4_string_s11"),
+		(try_end),
+		
+		
+		(assign, reg0, ":result"),
+		
+	])
+
+
+	#script_lord_find_alternative_faction
+	#WARNING: modified by 1257AD devs
+	#Also, make it so that lords will try to keep at least one center unassigned
+	#INPUT: troop no
+	#OUTPUT: new_faction
+lord_find_alternative_faction = (
+	"lord_find_alternative_faction", #Also, make it so that lords will try to keep at least one center unassigned
+	[
+		(store_script_param, ":troop_no", 1),
+		(store_faction_of_troop, ":orig_faction", ":troop_no"),
+		
+		(assign, ":new_faction", -1),
+		(assign, ":score_to_beat", -5),
+		
+		##tom
+		(assign, ":num_centers", 0),
+		(try_for_range, ":centers", walled_centers_begin, walled_centers_end),
+			(store_faction_of_party, ":center_faction", ":centers"),
+		(eq, ":orig_faction", ":center_faction"),
+		(val_add, ":num_centers", 1),
+		(try_end),
+		(try_begin),
+			(eq, ":num_centers", 0),
+		(neq, ":orig_faction", "fac_player_supporters_faction"),
+		(assign, ":score_to_beat", -100), ##a definite defection
+		(try_end),
+		##tom
+
+		(try_begin),
+			(store_random_in_range, ":advantegous_faction_change_time", 0, 10000), 
+
+			(this_or_next|le, "$g_advantegous_faction", 0),
+		(eq, ":advantegous_faction_change_time", 0),
+		(store_random_in_range, "$g_advantegous_faction", kingdoms_begin, kingdoms_end), 
+		(try_end),
+
+		(try_for_range, ":faction_no", kingdoms_begin, kingdoms_end),	  
+			(this_or_next|eq, "$g_give_advantage_to_original_faction", 1),
+		(neq, ":faction_no", ":orig_faction"),
+		 
+			(faction_slot_eq, ":faction_no", slot_faction_state, sfs_active),
+			(assign, ":number_of_walled_centers", 0),
+			(try_for_range, ":center_no", walled_centers_begin, walled_centers_end),
+			(store_faction_of_party, ":center_faction", ":center_no"),
+			(eq, ":center_faction", ":faction_no"),
+
+			(try_begin),
+				(party_slot_eq, ":center_no", slot_party_type, spt_town),
+			(val_add, ":number_of_walled_centers", 2),
+			(else_try),
+				(val_add, ":number_of_walled_centers", 1),
+			(try_end),
+		(try_end),
+
+			(assign, ":number_of_lords", 0),
+				(try_for_range, ":troop_id", original_kingdom_heroes_begin, active_npcs_end),
+					(store_troop_faction, ":faction_of_troop", ":troop_id"),
+					(eq, ":faction_of_troop", ":faction_no"),
+			(val_add, ":number_of_lords", 1),
+				(try_end),
+		(val_max, ":number_of_lords", 1),
+
+				(faction_get_slot, ":liege", ":faction_no", slot_faction_leader),
+			(call_script, "script_troop_get_relation_with_troop", ":troop_no", ":liege"),
+		(assign, ":relation_with_leader", reg0),
+
+		(store_mul, ":faction_score", ":number_of_walled_centers", 100),
+		(val_div, ":faction_score", ":number_of_lords"),
+		(val_add, ":faction_score", ":relation_with_leader"),
+
+		(try_begin),
+			(eq, ":faction_no", ":orig_faction"),
+			(eq, "$g_give_advantage_to_original_faction", 1),
+			(val_add, ":faction_score", 100),
+		(try_end),
+
+		(try_begin),
+			(eq, "$g_advantegous_faction", ":faction_no"),
+			(val_add, ":faction_score", 50),
+		(try_end),
+
+		(try_begin),
+			(eq, ":faction_no", "$players_kingdom"),
+			(val_sub, ":faction_score", 100),
+			(val_add, "$player_right_to_rule"),
+		(try_end),
+
+		(gt, ":faction_score", ":score_to_beat"),
+
+		(assign, ":score_to_beat", ":faction_score"),
+				(assign, ":new_faction", ":faction_no"),
+		(try_end),
+				
+		(assign, reg0, ":new_faction"),	
+	])
+
+	

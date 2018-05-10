@@ -336,3 +336,247 @@ appoint_faction_marshall = (
 		
 	])
 	
+
+	#script_faction_follows_controversial_policy
+	#INPUT: faction_no, policy_type
+	#OUTPUT: none
+faction_follows_controversial_policy =	(
+	"faction_follows_controversial_policy",
+		[
+		(store_script_param, ":faction_no", 1),
+		(store_script_param, ":policy_type", 2),
+		
+		(faction_get_slot, ":faction_leader", ":faction_no", slot_faction_leader),
+		
+		(try_begin),
+			(ge, "$cheat_mode", 1),
+			(str_store_faction_name, s3, ":faction_no"),
+			(display_message, "str_calculating_effect_for_policy_for_s3"),
+			
+			(val_add, "$number_of_controversial_policy_decisions", 1),
+			
+		(try_end),
+		
+		(try_begin),
+			(eq, ":policy_type", logent_policy_ruler_attacks_without_provocation),
+			(assign, ":hawk_relation_effect", 0),
+			(assign, ":honorable_relation_effect", -2),
+			(assign, ":honor_change", -1),
+			
+		(else_try),
+			(eq, ":policy_type", logent_policy_ruler_ignores_provocation),
+			(assign, ":hawk_relation_effect", -3),
+			(assign, ":honorable_relation_effect", 0),
+			(assign, ":honor_change", 0),
+			
+		(else_try),
+			(eq, ":policy_type", logent_policy_ruler_declares_war_with_justification),
+			(assign, ":hawk_relation_effect", 3),
+			(assign, ":honorable_relation_effect", 1),
+			(assign, ":honor_change", 0),
+			
+		(else_try),
+			(eq, ":policy_type", logent_policy_ruler_breaks_truce),
+			(assign, ":hawk_relation_effect", 0),
+			(assign, ":honorable_relation_effect", -3),
+			(assign, ":honor_change", -5),
+			
+		(else_try),
+			(eq, ":policy_type", logent_policy_ruler_makes_peace_too_soon),
+			(assign, ":hawk_relation_effect", -5),
+			(assign, ":honorable_relation_effect", 0),
+			(assign, ":honor_change", 0),
+			
+		(try_end),
+		
+		(try_begin),
+			(eq, ":faction_leader", "trp_player"),
+			(call_script, "script_change_player_honor", ":honor_change"),
+		(try_end),
+		
+		(try_for_range, ":lord", active_npcs_begin, active_npcs_end),
+			(troop_slot_eq, ":lord", slot_troop_occupation, slto_kingdom_hero),
+			(store_faction_of_troop, ":lord_faction", ":lord"),
+			(eq, ":lord_faction", ":faction_no"),
+			(neq, ":lord", ":faction_leader"),
+			(try_begin),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_martial),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_quarrelsome),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_selfrighteous),
+			(troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_debauched),
+			(call_script, "script_troop_change_relation_with_troop", ":faction_leader", ":lord", ":hawk_relation_effect"),
+			(val_add, "$total_policy_dispute_changes", ":hawk_relation_effect"),
+			(try_end),
+			
+			(try_begin),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_martial),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_goodnatured),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_selfrighteous),
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_benefactor), #new for enfiefed commoners
+			(this_or_next|troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_custodian), #new for enfiefed commoners
+			(troop_slot_eq, ":lord", slot_lord_reputation_type, lrep_upstanding),
+			(call_script, "script_troop_change_relation_with_troop", ":faction_leader", ":lord", ":honorable_relation_effect"),
+			(val_add, "$total_policy_dispute_changes", ":hawk_relation_effect"),
+			
+			(try_end),
+			
+		(try_end),
+		
+	])
+	
+
+
+	#script_indict_lord_for_treason
+	#originally included in simple_triggers. Needed to be moved here to allow player to indict
+	#INPUT: troop_no, faction
+	#OUTPUT: none
+indict_lord_for_treason =	(
+	"indict_lord_for_treason",#originally included in simple_triggers. Needed to be moved here to allow player to indict
+		[
+		(store_script_param, ":troop_no", 1),
+		(store_script_param, ":faction", 2),
+		
+		(troop_get_type, reg4, ":troop_no"),
+		
+		(try_for_range, ":center", centers_begin, centers_end), #transfer properties to liege
+			(party_slot_eq, ":center", slot_town_lord, ":troop_no"),
+			(party_set_slot, ":center", slot_town_lord, stl_unassigned),
+		(try_end),
+		
+		(faction_get_slot, ":faction_leader", ":faction", slot_faction_leader),
+		(call_script, "script_troop_get_relation_with_troop", ":troop_no", ":faction_leader"),
+		(assign, ":liege_to_lord_relation", reg0),
+		(store_sub, ":base_relation_modifier", -150, ":liege_to_lord_relation"),
+		(val_div, ":base_relation_modifier", 40),#-1 at -100, -2 at -70, -3 at -30,etc.
+		(val_min, ":base_relation_modifier", -1),
+		
+		#Indictments, cont: Influence relations
+		(try_for_range, ":active_npc", active_npcs_begin, active_npcs_end), #this effects all lords in all factions
+			(store_faction_of_troop, ":active_npc_faction", ":active_npc"),
+			(eq, ":faction", ":active_npc_faction"),
+			
+			(call_script, "script_troop_get_family_relation_to_troop", ":troop_no", ":active_npc"),
+			(assign, ":family_relation", reg0),
+			
+			(assign, ":relation_modifier", ":base_relation_modifier"),
+			(try_begin),
+			(gt, ":family_relation", 1),
+			(store_div, ":family_multiplier", reg0, 3),
+			(val_sub, ":relation_modifier", ":family_multiplier"),
+			(try_end),
+			
+			(lt, ":relation_modifier", 0),
+			
+			(call_script, "script_troop_change_relation_with_troop", ":faction_leader", ":active_npc", ":relation_modifier"),
+			(val_add, "$total_indictment_changes", ":relation_modifier"),
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(str_store_troop_name, s17, ":active_npc"),
+			(str_store_troop_name, s18, ":faction_leader"),
+			
+			(assign, reg3, ":relation_modifier"),
+			(display_message, "str_trial_influences_s17s_relation_with_s18_by_reg3"),
+			(try_end),
+		(try_end),
+		
+		#Indictments, cont: Check for other factions
+		(assign, ":new_faction", "fac_outlaws"),
+		(try_begin),
+			(eq, ":troop_no", "trp_player"),
+			(assign, ":new_faction", 0), #kicked out of faction
+		(else_try),
+			(call_script, "script_lord_find_alternative_faction", ":troop_no"),
+			(assign, ":new_faction", reg0),
+		(try_end),
+		
+		#Indictments, cont: Finalize where the lord goes
+		(try_begin),
+			(is_between, ":new_faction", kingdoms_begin, kingdoms_end),
+			
+			
+			(try_begin),
+			(ge, "$cheat_mode", 1),
+			(str_store_troop_name, s4, ":troop_no"),
+			(display_message, "@{!}DEBUG - {s4} faction changed in indictment"),
+			(try_end),
+			
+			
+			(call_script, "script_change_troop_faction", ":troop_no", ":new_faction"),
+			(try_begin), #new-begin
+			(neq, ":new_faction", "fac_player_supporters_faction"),
+			(troop_slot_eq, ":troop_no", slot_troop_occupation, slto_inactive),
+			(troop_set_slot, ":troop_no", slot_troop_occupation, slto_kingdom_hero),
+			(try_end), #new-end
+			(str_store_faction_name, s10, ":new_faction"),
+			(str_store_string, s11, "str_with_the_s10"),
+		(else_try),
+			(neq, ":troop_no", "trp_player"),
+			(call_script, "script_change_troop_faction", ":troop_no", "fac_outlaws"),
+			(str_store_string, s11, "str_outside_calradia"),
+		(else_try),
+			(eq, ":troop_no", "trp_player"),
+			(call_script, "script_player_leave_faction", 1),
+		(try_end),
+		
+		#Indictments, cont: Set up string
+		(try_begin),
+			(eq, ":troop_no", "trp_player"),
+			(str_store_string, s9, "str_you_have_been_indicted_for_treason_to_s7_your_properties_have_been_confiscated_and_you_would_be_well_advised_to_flee_for_your_life"),
+		(else_try),
+			(str_store_troop_name, s4, ":troop_no"),
+			(str_store_faction_name, s5, ":faction"),
+			(str_store_troop_name, s6, ":faction_leader"),
+			
+			(troop_get_type, reg4, ":troop_no"),
+			(str_store_string, s9, "str_by_order_of_s6_s4_of_the_s5_has_been_indicted_for_treason_the_lord_has_been_stripped_of_all_reg4herhis_properties_and_has_fled_for_reg4herhis_life_he_is_rumored_to_have_gone_into_exile_s11"),
+		(try_end),
+		(display_message, "@{!}{s9}"),
+		
+		#Indictments, cont: Remove party
+		(troop_get_slot, ":led_party", ":troop_no", slot_troop_leaded_party),
+		(try_begin),
+			(party_is_active, ":led_party"),
+			(neq, ":led_party", "p_main_party"),
+			(remove_party, ":led_party"),
+			(troop_set_slot, ":troop_no", slot_troop_leaded_party, -1),
+		(try_end),
+		
+		(try_begin),
+			(eq, "$cheat_mode", 1),
+			(this_or_next|eq, ":faction", "$players_kingdom"),
+			(eq, ":new_faction", "$players_kingdom"),
+			(call_script, "script_add_notification_menu", "mnu_notification_treason_indictment", ":troop_no", ":faction"),
+		(try_end),
+	])
+	
+	
+	# script_give_center_to_faction_while_maintaining_lord
+	# Input: arg1 = center_no, arg2 = faction
+	# Output: none
+give_center_to_faction_while_maintaining_lord =	(
+	"give_center_to_faction_while_maintaining_lord",
+		[
+		(store_script_param_1, ":center_no"),
+		(store_script_param_2, ":faction_no"),
+		
+		(store_faction_of_party, ":old_faction", ":center_no"),
+		(party_set_slot, ":center_no", slot_center_ex_faction, ":old_faction"),
+		(party_set_faction, ":center_no", ":faction_no"),
+		
+		(try_begin),
+			(party_slot_eq, ":center_no", slot_party_type, spt_village),
+			(party_get_slot, ":farmer_party", ":center_no", slot_village_farmer_party),
+			(gt, ":farmer_party", 0),
+			(party_is_active, ":farmer_party"),
+			(party_set_faction, ":farmer_party", ":faction_no"),
+		(try_end),
+		
+		(call_script, "script_update_faction_notes", ":faction_no"),
+		(call_script, "script_update_center_notes", ":center_no"),
+		
+		(try_for_range, ":other_center", centers_begin, centers_end),
+			(party_slot_eq, ":other_center", slot_village_bound_center, ":center_no"),
+			(call_script, "script_give_center_to_faction_while_maintaining_lord", ":other_center", ":faction_no"),
+		(try_end),
+	])
+	

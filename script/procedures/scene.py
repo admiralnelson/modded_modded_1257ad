@@ -1187,3 +1187,432 @@ place_player_banner_near_inventory_bms = (
 					#       (replace_scene_props, banner_scene_props_begin, ":flag_spr"),
 				(try_end),
 		])
+
+
+	#script_setup_tavern_attacker
+	# WARNING: modified by 1257AD devs
+	#INPUT: entry point in the area
+	#OUTPUT: none
+setup_tavern_attacker =	(
+	"setup_tavern_attacker",
+		[
+		(store_script_param, ":cur_entry", 1),
+		
+		#tom
+		#this is orignal
+		(try_begin),
+			(neg|troop_slot_eq, "trp_hired_assassin", slot_troop_cur_center, "$g_encountered_party"),
+			(troop_slot_eq, "trp_belligerent_drunk", slot_troop_cur_center, "$g_encountered_party"),
+			(set_visitor, ":cur_entry", "trp_belligerent_drunk"),
+		#(try_end),
+		(else_try),#this is not
+			(store_random_in_range, ":random", 0, 101),
+			(le, ":random", 10),
+			(set_visitor, ":cur_entry", "trp_belligerent_drunk"),
+		(try_end),
+		#tom
+		
+		(try_begin),
+			(troop_slot_eq, "trp_hired_assassin", slot_troop_cur_center, "$g_encountered_party"),
+			(set_visitor, ":cur_entry", "trp_hired_assassin"),
+		(try_end),
+	])
+
+	#script_activate_tavern_attackers
+	#INPUT: none
+	#OUTPUT: none
+activate_tavern_attackers =	(
+	"activate_tavern_attackers",
+		[
+		(set_party_battle_mode),
+		(try_for_agents, ":cur_agent"),
+			(agent_get_troop_id, ":cur_agent_troop", ":cur_agent"),
+			(this_or_next|eq, ":cur_agent_troop", "trp_fugitive"),
+			(this_or_next|eq, ":cur_agent_troop", "trp_belligerent_drunk"),
+			(eq, ":cur_agent_troop", "trp_hired_assassin"),
+			(agent_set_team, ":cur_agent", 1),
+			(assign, "$g_main_attacker_agent", ":cur_agent"),
+			(agent_ai_set_aggressiveness, ":cur_agent", 199),
+		(try_end),
+	])
+	
+	
+	#script_activate_tavern_attackers
+	#INPUT: none
+	#OUTPUT: none
+deactivate_tavern_attackers =	(
+	"deactivate_tavern_attackers",
+		[
+		(finish_party_battle_mode),
+		(try_for_agents, ":cur_agent"),
+			(agent_get_troop_id, ":cur_agent_troop", ":cur_agent"),
+			(this_or_next|eq, ":cur_agent_troop", "trp_fugitive"),
+			(this_or_next|eq, ":cur_agent_troop", "trp_belligerent_drunk"),
+			(eq, ":cur_agent_troop", "trp_hired_assassin"),
+			(agent_set_team, ":cur_agent", 0),
+			(agent_ai_set_aggressiveness, ":cur_agent", 0),
+		(try_end),
+	])
+
+
+	#script_activate_town_guard
+	#INPUT: none
+	#OUTPUT: none
+activate_town_guard =	(
+	"activate_town_guard",
+		[
+		(set_party_battle_mode),
+		#(get_player_agent_no, ":player_agent"),
+		#(agent_get_team, ":player_team", ":player_agent"),
+		
+		(try_for_agents, ":cur_agent"),
+			(agent_get_troop_id, ":troop_type", ":cur_agent"),
+			#(is_between, ":troop_type", "trp_teu_village_recruit", "trp_looter"), #tom
+			(is_between, ":troop_type", "trp_finn_village_recruit", "trp_xerina"), #tom
+			(agent_set_team, ":cur_agent", 1),
+			#(team_give_order, 1, grc_everyone, mordr_charge), - for some reason, this freezes everyone if the player is not yet spawned
+			#(try_begin),
+			#	(eq, "$g_main_attacker_agent", 0),
+			#	(assign, "$g_main_attacker_agent", ":cur_agent"),
+			#(try_end),
+		(else_try),
+			(this_or_next|is_between, ":cur_agent", walkers_begin, walkers_end),
+			(is_between, ":cur_agent", armor_merchants_begin, mayors_end),
+			
+			(agent_clear_scripted_mode, ":cur_agent"),
+			(agent_set_team, ":cur_agent", 2),
+		(try_end),
+	])
+	
+
+	#script_set_up_duel_with_troop
+	#INPUT: duel_troop
+	#OUTPUT: none
+set_up_duel_with_troop =	(
+	"set_up_duel_with_troop", #now the setup is handled through the menu
+		[
+		(store_script_param, "$g_duel_troop", 1),
+		(assign, "$g_start_arena_fight_at_nearest_town", 1),
+		(try_begin),
+			(eq, "$g_start_arena_fight_at_nearest_town", 1),
+		(try_end),
+		(unlock_achievement, ACHIEVEMENT_PUGNACIOUS_D),
+		(jump_to_menu, "mnu_arena_duel_fight"),
+		(finish_mission),
+		
+	])
+
+
+	# script_replace_scene_items_with_spawn_items_before_ms
+	# Input: none
+	# Output: none
+replace_scene_items_with_spawn_items_before_ms =	(
+	"replace_scene_items_with_spawn_items_before_ms",
+		[
+		(try_for_range, ":item_no", all_items_begin, all_items_end),
+			(scene_item_get_num_instances, ":num_instances", ":item_no"),
+			(item_set_slot, ":item_no", slot_item_num_positions, 0),
+			(assign, ":num_positions", 0),
+			(try_for_range, ":cur_instance", 0, ":num_instances"),
+			(scene_item_get_instance, ":scene_item", ":item_no", ":cur_instance"),
+			(prop_instance_get_position, "$g_position_to_use_for_replacing_scene_items", ":scene_item"),
+			(store_add, ":cur_slot", slot_item_positions_begin, ":num_positions"),
+			(item_set_slot, ":item_no", ":cur_slot", "$g_position_to_use_for_replacing_scene_items"),
+			(val_add, ":num_positions", 1),
+			(val_add, "$g_position_to_use_for_replacing_scene_items", 1),
+			(item_set_slot, ":item_no", slot_item_num_positions, ":num_positions"),
+			(try_end),
+			(replace_scene_items_with_scene_props, ":item_no", "spr_empty"),
+		(try_end),
+	])
+	
+	# script_replace_scene_items_with_spawn_items_after_ms
+	# Input: none
+	# Output: none
+replace_scene_items_with_spawn_items_after_ms =	(
+	"replace_scene_items_with_spawn_items_after_ms",
+		[
+		(try_for_range, ":item_no", all_items_begin, all_items_end),
+			(item_get_slot,  ":num_positions", ":item_no", slot_item_num_positions),
+			(try_for_range, ":cur_position", 0, ":num_positions"),
+			(store_add, ":cur_slot", slot_item_positions_begin, ":cur_position"),
+			(item_get_slot, ":pos_no", ":item_no", ":cur_slot"),
+			(set_spawn_position, ":pos_no"),
+			(spawn_item, ":item_no", 0),
+			(try_end),
+		(try_end),
+	])
+	
+	# script_iterate_pointer_arrow
+	# procedure to rotate that pointer arrow when you hold F1
+	# Input: none
+	# Output: none
+iterate_pointer_arrow =	(
+	"iterate_pointer_arrow",
+		[
+		(store_mission_timer_a_msec, ":cur_time"),
+		(try_begin),
+			(assign, ":up_down", ":cur_time"),
+			(assign, ":turn_around", ":cur_time"),
+			(val_mod, ":up_down", 1080),
+			(val_div, ":up_down", 3),
+			(scene_prop_get_instance, ":prop_instance", "spr_pointer_arrow", 0),
+			(prop_instance_get_position, pos0, ":prop_instance"),
+			(position_set_z_to_ground_level, pos0),
+			(position_move_z, pos0, "$g_pointer_arrow_height_adder", 1),
+			(set_fixed_point_multiplier, 100),
+			(val_mul, ":up_down", 100),
+			(store_sin, ":up_down_sin", ":up_down"),
+			(position_move_z, pos0, ":up_down_sin", 1),
+			(position_move_z, pos0, 100, 1),
+			(val_mod, ":turn_around", 2880),
+			(val_div, ":turn_around", 8),
+			(init_position, pos1),
+			(position_rotate_z, pos1, ":turn_around"),
+			(position_copy_rotation, pos0, pos1),
+			(prop_instance_set_position, ":prop_instance", pos0),
+		(try_end),
+	])
+
+
+	#script_initialize_tavern_variables
+	#INPUT: none
+	#OUTPUT: none
+initialize_tavern_variables =	(
+		"initialize_tavern_variables",
+		[
+		(assign, "$g_main_attacker_agent", 0),
+		(assign, "$g_attacker_drawn_weapon", 0),
+		(assign, "$g_start_belligerent_drunk_fight", 0),
+		(assign, "$g_start_hired_assassin_fight", 0),
+		(assign, "$g_belligerent_drunk_leaving", 0),
+	])
+	
+	#script_prepare_alley_to_fight
+	#INPUT: none
+	#OUTPUT: none
+prepare_alley_to_fight =	(
+		"prepare_alley_to_fight",
+		[
+		(party_get_slot, ":scene_no", "$current_town", slot_town_alley),
+		
+		#(store_faction_of_party, ":faction_no", "$current_town"),
+		
+		(modify_visitors_at_site, ":scene_no"),
+		
+		(reset_visitors),
+		(set_visitor, 0, "trp_player"),
+		
+		#(try_begin),
+		#  (eq, ":faction_no", "fac_kingdom_1"), #swadian
+		#  (assign, ":bandit_troop", "trp_steppe_bandit"),
+		#(else_try),
+		#  (eq, ":faction_no", "fac_kingdom_2"), #vaegir
+		#  (assign, ":bandit_troop", "trp_taiga_bandit"),
+		#(else_try),
+		#  (eq, ":faction_no", "fac_kingdom_3"), #khergit
+		#  (assign, ":bandit_troop", "trp_mountain_bandit"),
+		#(else_try),
+		#  (eq, ":faction_no", "fac_kingdom_4"), #nord
+		#  (assign, ":bandit_troop", "trp_sea_raider"),
+		#(else_try),
+		#  (eq, ":faction_no", "fac_kingdom_5"), #rhodok
+		#  (assign, ":bandit_troop", "trp_forest_bandit"),
+		#(else_try),
+		#  (eq, ":faction_no", "fac_kingdom_6"), #sarradin
+		#  (assign, ":bandit_troop", "trp_desert_bandit"),
+		#(try_end),
+		
+		#(set_visitor, 3, ":bandit_troop"),
+		(set_visitor, 3, "trp_bandit"),
+		
+		(assign, "$talked_with_merchant", 0),
+		(set_jump_mission, "mt_alley_fight"),
+		(jump_to_scene, ":scene_no"),
+		(change_screen_mission),
+	])
+	
+	#script_prepare_town_to_fight
+	#INPUT: none
+	#OUTPUT: none
+prepare_town_to_fight =	(
+		"prepare_town_to_fight",
+		[
+		(str_store_party_name_link, s9, "$g_starting_town"),
+		(str_store_string, s2, "str_save_town_from_bandits"),
+		(call_script, "script_start_quest", "qst_save_town_from_bandits", "$g_talk_troop"),
+		
+		(assign, "$g_mt_mode", tcm_default),
+		(store_faction_of_party, ":town_faction", "$current_town"),
+		(faction_get_slot, ":tier_2_troop", ":town_faction", slot_faction_tier_3_troop),
+		(faction_get_slot, ":tier_3_troop", ":town_faction", slot_faction_tier_3_troop),
+		(faction_get_slot, ":tier_4_troop", ":town_faction", slot_faction_tier_4_troop),
+		
+		(party_get_slot, ":town_scene", "$current_town", slot_town_center),
+		(modify_visitors_at_site, ":town_scene"),
+		(reset_visitors),
+		
+		#people spawned at #32, #33, #34, #35, #36, #37, #38 and #39 are town walkers.
+		(try_begin),
+			#(eq, "$town_nighttime", 0),
+			(try_for_range, ":walker_no", 0, num_town_walkers),
+			(store_add, ":troop_slot", slot_center_walker_0_troop, ":walker_no"),
+			(party_get_slot, ":walker_troop_id", "$current_town", ":troop_slot"),
+			(gt, ":walker_troop_id", 0),
+			(store_add, ":entry_no", town_walker_entries_start, ":walker_no"),
+			(set_visitor, ":entry_no", ":walker_troop_id"),
+			(try_end),
+		(try_end),
+		
+		#guards will be spawned at #25, #26 and #27
+		(set_visitors, 25, ":tier_2_troop", 1),
+		(set_visitors, 26, ":tier_3_troop", 1),
+		(set_visitors, 27, ":tier_4_troop", 1),
+		
+		(set_visitors, 10, "trp_looter", 1),
+		(set_visitors, 11, "trp_bandit", 1),
+		(set_visitors, 12, "trp_looter", 1),
+		
+		(store_faction_of_party, ":starting_town_faction", "$g_starting_town"),
+		(try_begin),
+			(eq, ":starting_town_faction", "fac_kingdom_1"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_1"),
+			#(assign, ":troop_of_bandit", "trp_forest_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_2"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_2"),
+			#(assign, ":troop_of_bandit", "trp_mountain_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_3"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_3"),
+			#(assign, ":troop_of_bandit", "trp_steppe_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_4"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_4"),
+			#(assign, ":troop_of_bandit", "trp_sea_raider"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_5"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_5"),
+			#(assign, ":troop_of_bandit", "trp_mountain_bandit"),
+		(else_try),
+			(this_or_next|eq, ":starting_town_faction", "fac_kingdom_6"),
+			(eq, ":starting_town_faction", "fac_kingdom_6"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_6"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_7"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_7"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_8"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_8"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_9"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_9"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_10"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_10"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_11"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_11"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_12"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_12"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_13"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_13"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_14"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_14"),
+			#(assign, ":troop_of_bandit", "trp_desert_bandit"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_15"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_15"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_16"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_16"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_17"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_17"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_18"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_18"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_19"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_19"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_20"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_20"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_papacy"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_21"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_22"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_22"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_23"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_23"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_24"),
+			(eq, ":starting_town_faction", "fac_kingdom_38"),
+			(eq, ":starting_town_faction", "fac_kingdom_39"),
+			(eq, ":starting_town_faction", "fac_kingdom_40"),
+			(eq, ":starting_town_faction", "fac_kingdom_41"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_24"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_25"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_25"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_26"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_26"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_27"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_27"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_28"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_28"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_29"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_29"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_30"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_30"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_31"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_31"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_32"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_32"),
+		(else_try),
+			(this_or_next|eq, ":starting_town_faction", "fac_kingdom_36"),
+			(this_or_next|eq, ":starting_town_faction", "fac_kingdom_34"),
+			(this_or_next|eq, ":starting_town_faction", "fac_kingdom_35"),					  
+			(eq, ":starting_town_faction", "fac_kingdom_33"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_2"),
+		(else_try),
+			(eq, ":starting_town_faction", "fac_kingdom_37"),
+			(assign, ":troop_of_merchant", "trp_merchant_kingdom_37"),
+											
+		(try_end),
+		(str_store_troop_name, s10, ":troop_of_merchant"),
+		
+		(set_visitors, 24, "trp_looter", 1),
+		(set_visitors, 2, "trp_looter", 2),
+		(set_visitors, 4, "trp_looter", 1),
+		(set_visitors, 5, "trp_looter", 2),
+		(set_visitors, 6, "trp_looter", 1),
+		(set_visitors, 7, "trp_looter", 1),
+		
+		(set_visitors, 3, ":troop_of_merchant", 1),
+		
+		(set_jump_mission,"mt_town_fight"),
+		(jump_to_scene, ":town_scene"),
+		(change_screen_mission),
+	])
+	

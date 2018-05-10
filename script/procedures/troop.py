@@ -1108,3 +1108,606 @@ troop_change_relation_with_troop = (
 		
 	])
 	
+	#script_age_troop_one_year
+	#NOTE: note to self modded2x: update lords, kings, and lady age in notes
+	#This is probably unnecessarily complicated, but can support a multi-generational mod
+	# INPUT: troop no
+	# OUTPUT: NONE
+age_troop_one_year =	(
+	"age_troop_one_year",
+		[
+		(store_script_param, ":troop_no", 1),
+		
+		(troop_get_type, ":is_female", ":troop_no"),
+		
+		(troop_get_slot, ":age", ":troop_no", slot_troop_age),
+		(troop_get_slot, ":appearance", ":troop_no", slot_troop_age_appearance),
+		
+		(val_add, ":age", 1),
+		(store_random_in_range, ":addition", 1, 5),
+		
+		(try_begin),
+			(eq, ":is_female", 1),
+			#		(val_add, ":addition", 2), #the women's age slider seems to produce less change than the male one - commented out: makes women look too old.
+		(try_end),
+		
+		(val_add, ":appearance", ":addition"),
+		(try_begin),
+			(gt, ":age", 45),
+			(store_attribute_level, ":strength", ":troop_no", ca_strength),
+			(store_attribute_level, ":agility", ":troop_no", ca_agility),
+			(store_random_in_range, ":random", 0, 50), #2% loss brings it down to about 36% by age 90, but of course can be counteracted by new level gain
+			(try_begin),
+			(lt, ":random", ":strength"),
+			(troop_raise_attribute, ":troop_no", ca_strength, -1),
+			(try_end),
+			(try_begin),
+			(lt, ":random", ":agility"),
+			(troop_raise_attribute, ":troop_no", ca_agility, -1),
+			(try_end),
+		(try_end),
+		
+		(val_clamp, ":appearance", 1, 100),
+		
+		(troop_set_slot, ":troop_no", slot_troop_age, ":age"),
+		(troop_set_slot, ":troop_no", slot_troop_age_appearance, ":appearance"),
+		(troop_set_age, ":troop_no", ":appearance"),
+	])
+	
+	#script_add_lady_items
+	#INPUT: lady no
+	#OUTPUT: NONE
+add_lady_items	= (
+	"add_lady_items",
+		[
+		(store_script_param, ":lady_no", 1),
+		#(troop_equip_items, ":lady_no"),
+		
+		(try_for_range, ":item", "itm_tutorial_spear", "itm_items_end"),
+			(troop_remove_item, ":lady_no", ":item"),
+		(try_end),
+		#(troop_clear_inventory, ":lady_no"),
+		
+		
+		(store_faction_of_troop, ":faction_no", ":lady_no"),
+		
+		(call_script, "script_raf_aor_faction_to_region", ":faction_no"),
+		#(store_random_in_range, ":random", 0, 6),
+
+		(try_begin),
+			(eq, reg0, region_mongol),
+			(store_random_in_range, ":dress", "itm_khergit_lady_dress", "itm_sarranid_lady_dress"),
+			(troop_add_item, ":lady_no", ":dress", 0),
+		(else_try),
+			(this_or_next | eq, reg0, region_andalusian),
+			(this_or_next | eq, reg0, region_north_african),
+			(eq, reg0, region_mamluk),
+			(store_random_in_range, ":dress", "itm_sarranid_lady_dress", "itm_sarranid_common_dress"),
+			(troop_add_item, ":lady_no", ":dress", 0),
+		(else_try),
+			(store_random_in_range, ":dress", "itm_red_dress", "itm_khergit_lady_dress"),
+			(troop_add_item, ":lady_no", ":dress", 0),
+		(try_end),
+		(troop_add_item, ":lady_no", "itm_blue_hose", 0),
+		(troop_equip_items, ":lady_no"),
+		
+		#(store_random_in_range, ":random", 0, 2),
+		
+		(try_begin),
+			#(eq, ":random", 1),
+			(try_begin),
+			# (troop_has_item_equipped, ":lady_no", "itm_khergit_lady_dress"),
+			# (troop_add_item, ":lady_no", "itm_khergit_lady_hat", 0),
+			# (else_try),
+			(this_or_next|troop_has_item_equipped, ":lady_no", "itm_red_dress"),
+			(this_or_next|troop_has_item_equipped, ":lady_no", "itm_brown_dress"),
+			(troop_has_item_equipped, ":lady_no", "itm_green_dress"),
+			(store_random_in_range, ":item", "itm_turret_hat_green", "itm_straw_hat"),
+			(troop_add_item, ":lady_no", ":item", 0),
+			# (else_try),
+			# (troop_has_item_equipped, ":lady_no", "itm_khergit_lady_dress_b"),
+			# (troop_add_item, ":lady_no", "itm_khergit_lady_hat_b", 0),
+			(else_try),
+			(troop_has_item_equipped, ":lady_no", "itm_sarranid_lady_dress"),
+			(troop_add_item, ":lady_no", "itm_sarranid_head_cloth", 0),
+			(else_try),
+			(troop_has_item_equipped, ":lady_no", "itm_sarranid_lady_dress_b"),
+			(troop_add_item, ":lady_no", "itm_sarranid_head_cloth_b", 0),
+			(try_end),
+			(troop_equip_items, ":lady_no"),
+		(try_end),
+		])
+
+	#script_init_troop_age
+	#INPUT: troop no, age
+	#OUTPUT: none
+init_troop_age	= (
+	"init_troop_age",
+		[
+		(store_script_param, ":troop_no", 1),
+		(store_script_param, ":age", 2), #minimum 20
+		
+		(try_begin),
+			(gt, ":age", 20),
+			(troop_set_slot, ":troop_no", slot_troop_age, 20),
+		(else_try),
+			(troop_set_slot, ":troop_no", slot_troop_age, ":age"),
+		(try_end),
+		
+		(store_sub, ":years_to_age", ":age", 20),
+		(troop_set_age, ":troop_no", 0),
+		
+		(try_begin),
+			(gt, ":years_to_age", 0),
+			(try_for_range, ":unused", 0, ":years_to_age"),
+			(call_script, "script_age_troop_one_year", ":troop_no"),
+			(try_end),
+		(try_end),
+		
+	])
+	
+	#script_assign_troop_love_interests
+	#Called at the beginning, or whenever a lord is spurned
+	#INPUT: troop no
+	#OUTPUT: none
+assign_troop_love_interests =	(
+	"assign_troop_love_interests",
+		[
+		(store_script_param, ":cur_troop", 1),
+		
+		(store_faction_of_troop, ":troop_faction", ":cur_troop"),
+		(try_for_range, ":unused", 0, 50),
+			(store_random_in_range, ":cur_lady", kingdom_ladies_begin, kingdom_ladies_end),
+			(troop_slot_eq, ":cur_lady", slot_troop_spouse, -1),
+			(store_faction_of_troop, ":lady_faction", ":cur_lady"),
+			(eq, ":troop_faction", ":lady_faction"),
+			(call_script, "script_troop_get_family_relation_to_troop", ":cur_troop", ":cur_lady"),
+			(eq, reg0, 0),
+			
+			(call_script, "script_troop_get_relation_with_troop", ":cur_troop", ":cur_lady"),
+			(eq, reg0, 0), #do not develop love interest if already spurned or courted
+			
+			(neg|troop_slot_eq, ":cur_troop", slot_troop_love_interest_1, ":cur_lady"),
+			(neg|troop_slot_eq, ":cur_troop", slot_troop_love_interest_2, ":cur_lady"),
+			(neg|troop_slot_eq, ":cur_troop", slot_troop_love_interest_3, ":cur_lady"),
+			(try_begin),
+			(troop_slot_eq, ":cur_troop", slot_troop_love_interest_1, 0),
+			(troop_set_slot, ":cur_troop", slot_troop_love_interest_1, ":cur_lady"),
+			(else_try),
+			(troop_slot_eq, ":cur_troop", slot_troop_love_interest_2, 0),
+			(troop_set_slot, ":cur_troop", slot_troop_love_interest_2, ":cur_lady"),
+			(else_try),
+			(troop_slot_eq, ":cur_troop", slot_troop_love_interest_3, 0),
+			(troop_set_slot, ":cur_troop", slot_troop_love_interest_3, ":cur_lady"),
+			(try_end),
+		(try_end),
+		
+	])
+
+	#script_courtship_event_troop_court_lady
+	#INPUT: suitor, lady
+	#OUTPUT: none
+courtship_event_troop_court_lady =(
+	"courtship_event_troop_court_lady",
+		[
+		(store_script_param, ":suitor", 1),
+		(store_script_param, ":lady", 2),
+		
+		
+		#(try_begin),
+		#(eq, "$cheat_mode", 1),
+		#(str_store_troop_name, s4, ":suitor"),
+		#(str_store_troop_name, s5, ":lady"),
+		#(troop_get_slot, ":lady_location", ":lady", slot_troop_cur_center),
+		#(str_store_party_name, s7, ":lady_location"),
+		#(display_message, "str_s4_pursues_suit_with_s5_in_s7"),
+		#(try_end),
+		
+		(troop_get_slot, ":previous_suitor", ":lady", slot_lady_last_suitor),
+		(troop_set_slot, ":lady", slot_lady_last_suitor, ":suitor"), #can determine quarrels
+		
+		(try_begin),
+			(eq, ":previous_suitor", "trp_player"),
+			
+			(troop_slot_ge, ":lady", slot_troop_met, 2),
+			(call_script, "script_troop_get_relation_with_troop", ":suitor", "trp_player"), #add this to list of quarrels
+			(assign, ":suitor_relation_w_player", reg0),
+			
+			(try_begin),
+			(this_or_next|troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_selfrighteous),
+			(this_or_next|troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_quarrelsome),
+			(troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_debauched),
+			(gt, ":suitor_relation_w_player", -20),
+			(call_script, "script_add_log_entry", logent_lords_quarrel_over_woman, ":suitor", "trp_player", ":lady", 0),
+			(else_try),
+			(is_between, ":suitor_relation_w_player", -5, -25),
+			(call_script, "script_add_log_entry", logent_lords_quarrel_over_woman, ":suitor", "trp_player", ":lady", 0),
+			(try_end),
+		(else_try),
+			(neq, ":previous_suitor", "trp_player"), #not the player
+			
+			(neq, ":suitor", ":previous_suitor"),
+			(ge, ":previous_suitor", active_npcs_begin),
+			
+			(call_script, "script_cf_test_lord_incompatibility_to_s17", ":suitor", ":previous_suitor"),
+			(call_script, "script_add_log_entry", logent_lords_quarrel_over_woman, ":suitor", ":previous_suitor", ":lady", 0),
+			
+			(call_script, "script_troop_get_relation_with_troop", ":suitor", ":previous_suitor"), #add this to list of quarrels
+			(ge, reg0, 0),
+			(call_script, "script_troop_change_relation_with_troop", ":suitor", ":previous_suitor", -20),
+			(val_add, "$total_courtship_quarrel_changes", -20),
+		(else_try),	 #quarrelsome lords quarrel anyway
+			(troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_quarrelsome),
+			(neq, ":suitor", ":previous_suitor"),
+			(ge, ":previous_suitor", active_npcs_begin),
+			
+			#		(neq, ":previous_suitor", "trp_player"),
+			
+			(call_script, "script_troop_get_relation_with_troop", ":suitor", ":previous_suitor"), #add this to list of quarrels
+			(lt, reg0, 10),
+			(call_script, "script_add_log_entry", logent_lords_quarrel_over_woman, ":suitor", ":previous_suitor", ":lady", 0),
+			(ge, reg0, 0),
+			(call_script, "script_troop_change_relation_with_troop", ":suitor", ":previous_suitor", -20),
+			(val_add, "$total_courtship_quarrel_changes", -20),
+			
+		(try_end),
+		
+		
+		#	(call_script, "script_troop_get_relation_with_troop", ":lady", ":suitor"),
+		#	(assign, ":orig_relation", reg0),
+		
+		(call_script, "script_lady_evaluate_troop_as_suitor", ":lady", ":suitor"),
+		
+		(store_random_in_range, ":random", 5, 16),
+		(store_div, ":relationship_change", reg0, ":random"),
+		
+		(call_script, "script_troop_get_relation_with_troop", ":lady", ":suitor"),
+		(assign, ":orig_relation", reg0),
+		
+		(call_script, "script_troop_change_relation_with_troop", ":lady", ":suitor", ":relationship_change"),
+		
+		(call_script, "script_troop_get_relation_with_troop", ":lady", ":suitor"),
+		(assign, ":lady_suitor_relation", reg0),
+		
+		(try_begin),
+			(ge, ":lady_suitor_relation", 10),
+			(lt, ":orig_relation", 10),
+			(call_script, "script_add_log_entry", logent_lady_favors_suitor, ":lady", 0, ":suitor", 0),
+			
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(display_message, "str_note__favor_event_logged"),
+			(try_end),
+			
+		(else_try),
+			(this_or_next|lt, ":lady_suitor_relation", -20),
+			(ge, ":lady_suitor_relation", 20),
+			
+			(call_script, "script_get_kingdom_lady_social_determinants", ":lady"),
+			(assign, ":guardian", reg0),
+			(ge, ":guardian", 0),  #tom - to prevent future errors
+			(call_script, "script_troop_get_relation_with_troop", ":suitor", ":guardian"),
+			(assign, ":suitor_guardian_relation", reg0),
+			#things come to a head, one way or another
+			
+			(assign, ":highest_competitor_lady_score", -1),
+			(assign, ":competitor_preferred_by_lady", -1),
+			
+			(assign, ":highest_competitor_guardian_score", ":suitor_guardian_relation"),
+			(assign, ":competitor_preferred_by_guardian", -1),
+			
+			#log potential competitors
+			(try_for_range, ":possible_competitor", lords_begin, lords_end),
+			(neq, ":possible_competitor", ":suitor"),
+			
+			(this_or_next|troop_slot_eq, ":possible_competitor", slot_troop_love_interest_1, ":lady"),
+			(this_or_next|troop_slot_eq, ":possible_competitor", slot_troop_love_interest_2, ":lady"),
+			(troop_slot_eq, ":possible_competitor", slot_troop_love_interest_3, ":lady"),
+			
+			(try_begin),
+				(call_script, "script_troop_get_relation_with_troop", ":possible_competitor", ":lady"),
+				(gt, reg0, ":highest_competitor_lady_score"),
+				(assign, ":competitor_preferred_by_lady", ":possible_competitor"),
+				(assign, ":highest_competitor_lady_score", reg0),
+			(try_end),
+			
+			(try_begin),
+				(call_script, "script_troop_get_relation_with_troop", ":possible_competitor", ":guardian"),
+				(gt, reg0, ":highest_competitor_guardian_score"),
+				(assign, ":competitor_preferred_by_guardian", ":possible_competitor"),
+				(assign, ":highest_competitor_guardian_score", reg0),
+			(try_end),
+			(try_end),
+			
+			#RESULTS
+			#Guardian forces lady to be betrothed to suitor now
+			(try_begin),
+			(lt, ":lady_suitor_relation", -20),
+			(this_or_next|troop_slot_eq, ":guardian", slot_lord_reputation_type, lrep_selfrighteous),
+			(this_or_next|troop_slot_eq, ":guardian", slot_lord_reputation_type, lrep_debauched),
+			(troop_slot_eq, ":guardian", slot_lord_reputation_type, lrep_quarrelsome),
+			(eq, ":competitor_preferred_by_guardian", -1),
+			
+			(this_or_next|troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_selfrighteous),
+			(this_or_next|troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_debauched),
+			(troop_slot_eq, ":suitor", slot_lord_reputation_type, lrep_quarrelsome),
+			
+			(troop_slot_eq, ":suitor", slot_troop_betrothed, -1),
+			(troop_slot_eq, ":lady", slot_troop_betrothed, -1),
+			
+			(call_script, "script_add_log_entry", logent_lady_betrothed_to_suitor_by_family, ":lady", 0, ":suitor", 0),
+			(troop_set_slot, ":suitor", slot_troop_betrothed, ":lady"),
+			(troop_set_slot, ":lady", slot_troop_betrothed, ":suitor"),
+			(store_current_hours, ":hours"),
+			(troop_set_slot, ":lady", slot_troop_betrothal_time, ":hours"),
+			(troop_set_slot, ":suitor", slot_troop_betrothal_time, ":hours"),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_result_lady_forced_to_agree_to_engagement"),
+			(try_end),
+			
+			#Lady rejects the suitor
+			(else_try),
+			(lt, ":lady_suitor_relation", -20),
+			
+			(call_script, "script_add_log_entry", logent_lady_rejects_suitor, ":lady", 0, ":suitor", 0),
+			(call_script, "script_courtship_event_lady_break_relation_with_suitor", ":lady", ":suitor"),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_result_lady_rejects_suitor"),
+			(try_end),
+			
+			#A happy engagement, with parental blessing
+			(else_try),
+			(gt, ":lady_suitor_relation", 20),
+			(gt, ":suitor_guardian_relation", 0),
+			(eq, ":competitor_preferred_by_lady", -1),
+			
+			(troop_slot_eq, ":suitor", slot_troop_betrothed, -1),
+			(troop_slot_eq, ":lady", slot_troop_betrothed, -1),
+			
+			(call_script, "script_add_log_entry", logent_lady_betrothed_to_suitor_by_choice, ":lady", 0, ":suitor", 0),
+			(troop_set_slot, ":suitor", slot_troop_betrothed, ":lady"),
+			(troop_set_slot, ":lady", slot_troop_betrothed, ":suitor"),
+			(store_current_hours, ":hours"),
+			(troop_set_slot, ":lady", slot_troop_betrothal_time, ":hours"),
+			(troop_set_slot, ":suitor", slot_troop_betrothal_time, ":hours"),
+			
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(str_store_troop_name, s4, ":lady"),
+				(str_store_troop_name, s5, ":suitor"),
+				(display_message, "str_result_happy_engagement_between_s4_and_s5"),
+			(try_end),
+			
+			#Lady elopes
+			(else_try),
+			(gt, ":lady_suitor_relation", 20),
+			
+			(eq, ":competitor_preferred_by_lady", -1),
+			(this_or_next|troop_slot_eq, ":guardian", slot_lord_reputation_type, lrep_adventurous),
+			(troop_slot_eq, ":guardian", slot_lord_reputation_type, lrep_ambitious),
+			
+			(troop_slot_eq, ":suitor", slot_troop_betrothed, -1),
+			(troop_slot_eq, ":lady", slot_troop_betrothed, -1),
+			
+			#lady elopes
+			(call_script, "script_courtship_event_bride_marry_groom", ":lady", ":suitor", 1),
+			#add elopements to quarrel descriptions
+			
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(str_store_troop_name, s4, ":lady"),
+				(str_store_troop_name, s5, ":suitor"),
+				(display_message, "str_result_s4_elopes_with_s5"),
+			(try_end),
+			
+			#Lady reluctantly agrees to marry under pressure from family
+			(else_try),
+			(troop_slot_eq, ":lady", slot_lord_reputation_type, lrep_conventional),
+			(eq, ":competitor_preferred_by_guardian", -1),
+			(gt, ":suitor_guardian_relation", 4),
+			
+			(store_random_in_range, ":random", 0, 5),
+			(eq, ":random", 0),
+			
+			(troop_slot_eq, ":suitor", slot_troop_betrothed, -1),
+			(troop_slot_eq, ":lady", slot_troop_betrothed, -1),
+			
+			(call_script, "script_add_log_entry", logent_lady_betrothed_to_suitor_by_pressure, ":lady", 0, ":suitor", 0),
+			(troop_set_slot, ":suitor", slot_troop_betrothed, ":lady"),
+			(troop_set_slot, ":lady", slot_troop_betrothed, ":suitor"),
+			(store_current_hours, ":hours"),
+			(troop_set_slot, ":lady", slot_troop_betrothal_time, ":hours"),
+			(troop_set_slot, ":suitor", slot_troop_betrothal_time, ":hours"),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(str_store_troop_name, s4, ":lady"),
+				(str_store_troop_name, s5, ":suitor"),
+				(display_message, "str_result_s4_reluctantly_agrees_to_engagement_with_s5"),
+			(try_end),
+			
+			#Stalemate -- make patience roll
+			(else_try),
+			(gt, ":lady_suitor_relation", 20),
+			
+			(store_random_in_range, reg3, 0, 3),
+			(try_begin),
+				(eq, "$cheat_mode", 1),
+				(display_message, "str_result_stalemate_patience_roll_=_reg3"),
+			(try_end),
+			
+			(eq, reg3, 0),
+			(call_script, "script_add_log_entry", logent_lady_rejected_by_suitor, ":lady", 0, ":suitor", 0),
+			(call_script, "script_courtship_event_lady_break_relation_with_suitor", ":lady", ":suitor"),
+			(try_end),
+			
+		(try_end),
+		
+	])
+	
+
+	#script_courtship_event_lady_break_relation_with_suitor
+	#INPUT: lady, suitor
+	#OUTPUT: none
+courtship_event_lady_break_relation_with_suitor	 = (
+	"courtship_event_lady_break_relation_with_suitor", #parameters from dialog
+		[
+		(store_script_param, ":lady", 1),
+		(store_script_param, ":suitor", 2),
+		
+		(try_for_range, ":love_interest_slot", slot_troop_love_interest_1, slot_troop_love_interests_end),
+			(troop_slot_eq, ":suitor", ":love_interest_slot", ":lady"),
+			(troop_set_slot, ":suitor", ":love_interest_slot", 0),
+		(try_end),
+		(call_script, "script_assign_troop_love_interests", ":suitor"),
+		
+		(try_begin),
+			(troop_slot_eq, ":lady", slot_troop_betrothed, ":suitor"),
+			
+			
+			(troop_set_slot, ":lady", slot_troop_betrothed, -1),
+			(troop_set_slot, ":suitor", slot_troop_betrothed, -1),
+		(try_end),
+		
+		
+	])
+
+	#script_courtship_event_bride_marry_groom
+	#INPUT: bride, groom, elopement
+	#OUTPUT: none
+courtship_event_bride_marry_groom =	(
+	"courtship_event_bride_marry_groom", #parameters from dialog or scripts
+		[
+		(store_script_param, ":bride", 1),
+		(store_script_param, ":groom", 2),
+		(store_script_param, ":elopement", 3),
+		
+		(try_begin),
+			(eq, ":bride", "trp_player"),
+			(assign, ":venue", "$g_encountered_party"),
+		(else_try),
+			(troop_get_slot, ":venue", ":bride", slot_troop_cur_center),
+		(try_end),
+		
+		(store_faction_of_troop, ":groom_faction", ":groom"),
+		
+		
+		(try_begin),
+			(eq, ":elopement", 0),
+			(call_script, "script_add_log_entry", logent_lady_marries_suitor, ":bride", ":venue", ":groom", 0),
+		(else_try),
+			(call_script, "script_add_log_entry", logent_lady_elopes_with_lord, ":bride", ":venue", ":groom", 0),
+		(try_end),
+		
+		(str_store_troop_name, s3, ":bride"),
+		(str_store_troop_name, s4, ":groom"),
+		(str_store_party_name, s5, ":venue"),
+		
+		(try_begin),
+			(eq, "$cheat_mode", 1),
+			(display_message, "str_s3_marries_s4_at_s5"),
+		(try_end),
+		
+		(troop_set_slot, ":bride", slot_troop_spouse, ":groom"),
+		(troop_set_slot, ":groom", slot_troop_spouse, ":bride"),
+		
+		#Break groom's romantic relations
+		(try_for_range, ":love_interest_slot", slot_troop_love_interest_1, slot_troop_love_interests_end),
+			(troop_set_slot, ":groom", ":love_interest_slot", 0),
+		(try_end),
+		
+		#Break bride's romantic relations
+		(try_for_range, ":active_npc", active_npcs_begin, active_npcs_end),
+			(try_for_range, ":love_interest_slot", slot_troop_love_interest_1, slot_troop_love_interests_end),
+			(troop_slot_eq, ":active_npc", ":love_interest_slot", ":bride"),
+			(call_script, "script_courtship_event_lady_break_relation_with_suitor", ":bride", ":active_npc"),
+			(try_end),
+		(try_end),
+		
+		
+		
+		(troop_set_slot, ":bride", slot_troop_betrothed, -1),
+		(troop_set_slot, ":groom", slot_troop_betrothed, -1),
+		
+		
+		
+		#change relations with family
+		(try_for_range, ":family_member", lords_begin, lords_end),
+			(call_script, "script_troop_get_family_relation_to_troop", ":bride", ":family_member"),
+			(gt, reg0, 0),
+			(store_div, ":family_relation_boost", reg0, 3),
+			(try_begin),
+			(eq, ":elopement", 1),
+			(val_mul, ":family_relation_boost", -2),
+			(try_end),
+			(call_script, "script_troop_change_relation_with_troop", ":groom", ":bride", ":family_relation_boost"),
+			(val_add, "$total_courtship_quarrel_changes", ":family_relation_boost"),
+		(try_end),
+		
+		(try_begin),
+			(this_or_next|eq, ":groom", "trp_player"),
+			(eq, ":bride", "trp_player"),
+			(call_script, "script_change_player_right_to_rule", "trp_player", 15),
+		(try_end),
+		
+		
+		(try_begin),
+			(eq, ":groom", "trp_player"),
+			(check_quest_active, "qst_wed_betrothed"),
+			(call_script, "script_succeed_quest", "qst_wed_betrothed"),
+			(call_script, "script_end_quest", "qst_wed_betrothed"),
+		(try_end),
+		
+		
+		(try_begin),
+			(check_quest_active, "qst_visit_lady"),
+			(quest_slot_eq, "qst_visit_lady", slot_quest_giver_troop, ":bride"),
+			(call_script, "script_abort_quest", "qst_visit_lady", 0),
+		(try_end),
+		
+		
+		(try_begin),
+			(eq, ":groom", "trp_player"),
+			(check_quest_active, "qst_visit_lady"),
+			(call_script, "script_abort_quest", "qst_visit_lady", 0),
+		(try_end),
+		(try_begin),
+			(eq, ":groom", "trp_player"),
+			(check_quest_active, "qst_duel_courtship_rival"),
+			(call_script, "script_abort_quest", "qst_duel_courtship_rival", 0),
+		(try_end),
+		
+		
+		(try_begin),
+			(eq, ":bride", "trp_player"),
+			(call_script, "script_player_join_faction", ":groom_faction"),
+			(assign, "$player_has_homage", 1),
+		(else_try),
+			(eq, ":groom", "trp_player"),
+			(troop_set_faction, ":bride", "$players_kingdom"),
+		(else_try),
+			(troop_set_faction, ":bride", ":groom_faction"),
+		(try_end),
+		
+		(try_begin),
+			(this_or_next|eq, ":groom", "trp_player"),
+			(eq, ":bride", "trp_player"),
+			(unlock_achievement, ACHIEVEMENT_HAPPILY_EVER_AFTER),
+			(try_begin),
+			(eq, ":elopement", 1),
+			(unlock_achievement, ACHIEVEMENT_HEART_BREAKER),
+			(try_end),
+		(try_end),
+		
+		
+		
+		(try_begin),
+			(this_or_next|eq, ":groom", "trp_player"),
+			(eq, ":bride", "trp_player"),
+			#(eq, ":elopement", 0),
+			(call_script, "script_start_wedding_cutscene", ":groom", ":bride"),
+		(try_end),
+	])
+	
+	

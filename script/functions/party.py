@@ -1104,3 +1104,42 @@ cf_party_remove_random_regular_troop = (
 					(assign, reg0, ":stack_troop"),
 				(try_end),
 		])
+
+	# script_distance_between_factions
+	# INPUT: attacker_party, defender_party
+	# OUTPUT: distance
+distance_between_factions =	("distance_between_factions",
+		[
+		(store_script_param_1, ":attacker_party"),
+		(store_script_param_2, ":defender_party"),
+		(assign, ":distance", -1),
+		
+		(try_for_range, ":attacker_centers", walled_centers_begin, walled_centers_end),
+			(store_faction_of_party, ":cur_faction", ":attacker_centers"),
+			(eq, ":cur_faction", ":attacker_party"),
+			(try_for_range, ":defender_centers", walled_centers_begin, walled_centers_end),
+			(store_faction_of_party, ":cur_faction", ":defender_centers"),
+			(eq, ":cur_faction", ":defender_party"),
+			
+			(store_distance_to_party_from_party,":war_distance",":attacker_centers",":defender_centers"),
+			(try_begin),
+				(lt, ":distance", 0),
+				(assign, ":distance", ":war_distance"),
+			(else_try),
+				(lt, ":war_distance", ":distance"),
+				(assign, ":distance", ":war_distance"),
+			(try_end),
+			
+			(try_end),
+		(try_end),
+		
+		# (try_begin),
+		# (le, ":distance", 0),
+		# (assign, ":distance", 9999),
+		# (try_end),
+		#(str_store_faction_name_link, s1, ":attacker_party"),
+		#(str_store_faction_name_link, s2, ":defender_party"),
+		#(display_message, "@--DEBUG-- war between {s1} and {s2}, distance is: {reg0}"),
+		
+		(assign, reg0, ":distance"),
+	])

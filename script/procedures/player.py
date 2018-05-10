@@ -697,3 +697,21 @@ locate_player_minister = (
 		
 	])
 	
+	
+	#script_change_player_right_to_rule
+	#INPUT: right_to_rule_dif
+	#OUTPUT: none
+change_player_right_to_rule =	(
+		"change_player_right_to_rule",
+		[
+		(store_script_param_1, ":right_to_rule_dif"),
+		(val_add, "$player_right_to_rule", ":right_to_rule_dif"),
+		(val_clamp, "$player_right_to_rule", 0, 100),
+		(try_begin),
+			(gt, ":right_to_rule_dif", 0),
+			(display_message, "@You gain right to rule."),
+		(else_try),
+			(lt, ":right_to_rule_dif", 0),
+			(display_message, "@You lose right to rule."),
+		(try_end),
+	])

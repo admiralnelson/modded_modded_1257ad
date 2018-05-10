@@ -874,3 +874,128 @@ good_price_affects_good_production = (
 				
 		])
 		
+#script_center_get_goods_availability
+	#INPUT: center_no
+	#OUTPUT: hardship_index
+center_get_goods_availability = (
+	"center_get_goods_availability",
+		[
+		(store_script_param, ":center_no", 1),
+		
+		(str_store_party_name, s4, ":center_no"),
+		
+		(assign, ":hardship_index", 0),
+		(try_for_range, ":cur_good", trade_goods_begin, trade_goods_end),
+			#Must have consumption of at least 4 to be relevant
+			#This prevents perishables and raw materials from having a major impact
+			(try_begin),
+			(is_between, ":center_no", villages_begin, villages_end),
+			(item_get_slot, ":consumer_consumption", ":cur_good", slot_item_rural_demand),
+			(else_try),
+			(item_get_slot, ":consumer_consumption", ":cur_good", slot_item_urban_demand),
+			(try_end),
+			(gt, ":consumer_consumption", 2),
+			
+			(store_div, ":max_impact", ":consumer_consumption", 4), #was 4
+			
+			#High-demand items like grain tend to have much more dramatic price differentiation, so they yield substantially higher results than low-demand items
+			
+			(store_sub, ":cur_good_price_slot", ":cur_good", trade_goods_begin),
+			(val_add, ":cur_good_price_slot", slot_town_trade_good_prices_begin),
+			(party_get_slot, ":price", ":center_no", ":cur_good_price_slot"),
+			
+			(store_sub, ":price_differential", ":price", 1000),
+			(gt, ":price_differential", 200), #was 100
+			
+			(val_div, ":price_differential", 200),
+			(val_min, ":price_differential", ":max_impact"),
+			
+			(val_add, ":hardship_index", ":price_differential"),
+		(try_end),
+		
+		(assign, reg0, ":hardship_index"),
+		
+		(try_begin),
+			(eq, "$cheat_mode", 1),
+			(display_message, "@{!}DEBUG -- hardship index for {s4} = {reg0}"),
+		(try_end),
+	])
+
+	
+	#script_process_player_enterprise
+	#INPUT: item_type, center
+	#OUTPUT:
+	#	reg0 profit_per_cycle"
+	#	reg1 final_price_for_total_produced_goods"
+	#	reg2 final_price_for_total_inputs"
+	#	reg3 price_of_labor"
+	#	reg4 final_price_for_single_produced_good"
+	#	reg5 final_price_for_single_input"
+	#	reg10 final_price_for_secondary_input"
+process_player_enterprise = (
+	"process_player_enterprise",
+		#reg0: Profit per cycle
+		[
+		(store_script_param, ":item_type", 1),
+		(store_script_param, ":center", 2),
+		
+		(item_get_slot, ":price_of_labor", ":item_type", slot_item_overhead_per_run),
+		
+		(item_get_slot, ":base_price", ":item_type", slot_item_base_price),
+		(store_sub, ":cur_good_price_slot", ":item_type", trade_goods_begin),
+		(val_add, ":cur_good_price_slot", slot_town_trade_good_prices_begin),
+		(party_get_slot, ":cur_price_modifier", ":center", ":cur_good_price_slot"),
+		(store_mul, ":final_price_for_single_produced_good", ":base_price", ":cur_price_modifier"),
+		(val_div, ":final_price_for_single_produced_good", 1000),
+		(item_get_slot, ":number_of_outputs_produced", ":item_type", slot_item_output_per_run),
+		(store_mul, ":final_price_for_total_produced_goods", ":number_of_outputs_produced", ":final_price_for_single_produced_good"),
+		
+		(item_get_slot, ":primary_raw_material", ":item_type", slot_item_primary_raw_material),
+		(item_get_slot, ":base_price", ":primary_raw_material", slot_item_base_price),
+		(store_sub, ":cur_good_price_slot", ":primary_raw_material", trade_goods_begin),
+		(val_add, ":cur_good_price_slot", slot_town_trade_good_prices_begin),
+		(party_get_slot, ":cur_price_modifier", ":center", ":cur_good_price_slot"),
+		(store_mul, ":final_price_for_single_input", ":base_price", ":cur_price_modifier"),
+		(val_div, ":final_price_for_single_input", 1000),
+		(item_get_slot, ":number_of_inputs_required", ":item_type", slot_item_input_number),
+		(try_begin),
+			(lt, ":number_of_inputs_required", 0),
+			(store_div, ":final_price_for_total_inputs", ":final_price_for_single_input", 2),
+		(else_try),
+			(store_mul, ":final_price_for_total_inputs", ":final_price_for_single_input", ":number_of_inputs_required"),
+		(try_end),
+		
+		(try_begin),
+			(item_slot_ge, ":item_type", slot_item_secondary_raw_material, 1),
+			(item_get_slot, ":secondary_raw_material", ":item_type", slot_item_secondary_raw_material),
+			(item_get_slot, ":base_price", ":secondary_raw_material", slot_item_base_price),
+			(store_sub, ":cur_good_price_slot", ":secondary_raw_material", trade_goods_begin),
+			(val_add, ":cur_good_price_slot", slot_town_trade_good_prices_begin),
+			(party_get_slot, ":cur_price_modifier", ":center", ":cur_good_price_slot"),
+			
+			(try_begin),
+			(lt, ":number_of_inputs_required", 0),
+			(store_div, ":final_price_for_secondary_input", ":final_price_for_secondary_input", 2),
+			(else_try),
+			(store_mul, ":final_price_for_secondary_input", ":final_price_for_secondary_input", ":number_of_inputs_required"),
+			(try_end),
+			
+			(store_mul, ":final_price_for_secondary_input", ":base_price", ":cur_price_modifier"),
+			(val_div, ":final_price_for_secondary_input", 1000),
+		(else_try),
+			(assign, ":final_price_for_secondary_input", 0),
+		(try_end),
+		
+		(store_sub, ":profit_per_cycle", ":final_price_for_total_produced_goods", ":final_price_for_total_inputs"),
+		(val_sub, ":profit_per_cycle", ":price_of_labor"),
+		(val_sub, ":profit_per_cycle", ":final_price_for_secondary_input"),
+		
+		(assign, reg0, ":profit_per_cycle"),
+		(assign, reg1, ":final_price_for_total_produced_goods"),
+		(assign, reg2, ":final_price_for_total_inputs"),
+		(assign, reg3, ":price_of_labor"),
+		(assign, reg4, ":final_price_for_single_produced_good"),
+		(assign, reg5, ":final_price_for_single_input"),
+		(assign, reg10, ":final_price_for_secondary_input"),
+	])
+	

@@ -426,3 +426,42 @@ remove_manor_objects= (
 	(try_end),
 
 		])
+
+
+	
+	#script_manor_set_unique_scene
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	# NOTE: modded2x: might be cool to alter the terrain algorithms
+	#input:manor_party_id, center
+	#output: none
+	#description: sets the manor scene based on it's terrain type
+manor_set_unique_scene = (
+	"manor_set_unique_scene",
+		[
+		(store_script_param, ":manor_party_id", 1),
+		(store_script_param, ":center", 2),
+		(party_get_slot, ":culture", ":center", slot_center_culture),
+		
+		(party_get_current_terrain, ":terrain", ":manor_party_id"),
+		(try_begin),
+			(this_or_next|eq, ":culture", "fac_culture_finnish"),
+			(this_or_next|eq, ":culture", "fac_culture_mazovian"),
+			(this_or_next|eq, ":culture", "fac_culture_teutonic"),
+			(eq, ":culture", "fac_culture_baltic"),
+			(party_set_slot, ":manor_party_id", slot_castle_exterior, "scn_manor_fortified_teutonic"),
+		(else_try),
+			(this_or_next|eq, ":terrain", rt_snow),
+			(eq, ":terrain", rt_snow_forest),
+			(party_set_slot, ":manor_party_id", slot_castle_exterior, "scn_manor_fortified_euro_snow"),
+		(else_try),
+			(this_or_next|eq, ":terrain", rt_desert),
+			(eq, ":terrain", rt_desert_forest),
+			(party_set_slot, ":manor_party_id", slot_castle_exterior, "scn_manor_fortified_euro_desert"),
+		(else_try),
+			(this_or_next|eq, ":terrain", rt_steppe),
+			(eq, ":terrain", rt_steppe_forest),
+			(party_set_slot, ":manor_party_id", slot_castle_exterior, "scn_manor_fortified_euro_steppe"),
+		(else_try),
+			(party_set_slot, ":manor_party_id", slot_castle_exterior, "scn_manor_fortified_euro_plains"),
+		(try_end),
+		])

@@ -245,3 +245,43 @@ lord_comment_to_s43 = (
 				
 				
 		])
+
+#script_reduce_exact_number_to_estimate
+	#This is used to simulate limited intelligence
+	#It is roughly analogous to the descriptive strings which the player will receive from alarms
+	#Information is presumed to be accurate for four days
+	#This is obviously cheating for the AI, as the AI will have exact info for four days, and no info at all after that.
+	#It would be fairly easy to log the strength at a center when it is scouted, if we want, but I have not done that at this point,
+	#The AI also has a hive mind -- ie, each party knows what its allies are thinking. In this, AI factions have an advantage over the player
+	#It would be a simple matter to create a set of arrays in which each party's knowledge is individually updated, but that would also take up a lot of data space
+	#INPUT: exact_number
+	#OUTPUT: estimate
+reduce_exact_number_to_estimate =	(
+		"reduce_exact_number_to_estimate",	
+		[
+		(store_script_param, ":exact_number", 1),
+		
+		(try_begin),
+			(lt, ":exact_number", 500),
+			(assign, ":estimate", 0),
+		(else_try),
+			(lt, ":exact_number", 1000),
+			(assign, ":estimate", 750),
+		(else_try),
+			(lt, ":exact_number", 2000),
+			(assign, ":estimate", 1500),
+		(else_try),
+			(lt, ":exact_number", 4000),
+			(assign, ":estimate", 3000),
+		(else_try),
+			(lt, ":exact_number", 8000),
+			(assign, ":estimate", 6000),
+		(else_try),
+			(lt, ":exact_number", 16000),
+			(assign, ":estimate", 12000),
+		(else_try),
+			(assign, ":estimate", 24000),
+		(try_end),
+		
+		(assign, reg0, ":estimate"),
+	])

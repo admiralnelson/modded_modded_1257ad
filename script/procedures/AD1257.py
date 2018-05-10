@@ -566,3 +566,33 @@ spawn_bandit_lairs = (
 			(try_end), #cycle end
 		(try_end),
 	])
+
+#script_raf_replace_troop
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#INPUT: party_id, old_troop, new_troop
+	#OUTPUT: NONE
+raf_replace_troop =(
+	"raf_replace_troop",
+		[
+		(store_script_param, ":party_id", 1),
+		(store_script_param, ":old_troop", 2),
+		(store_script_param, ":new_troop", 3),
+		
+		(party_get_num_companion_stacks, ":num_stacks",":party_id"),
+		(try_for_range_backwards, ":stack_no", 0, ":num_stacks"),
+			(party_stack_get_troop_id,     ":stack_troop",":party_id",":stack_no"),
+			(try_begin),
+			(eq, ":stack_troop", ":old_troop"),
+			(party_stack_get_size,    ":stack_size",":party_id",":stack_no"),
+			(party_remove_members, ":party_id", ":stack_troop", ":stack_size"),
+			(party_add_members, ":party_id", ":new_troop", ":stack_size"),
+			(try_begin),
+				(eq, ":party_id", "p_main_party"),
+				(str_store_troop_name, s1, ":stack_troop"),
+				(str_store_troop_name, s2, ":new_troop"),
+				(assign, reg0, ":stack_size"),
+				#(display_message, "@replacing {s1} with {s2}, qty: {reg0}", 0xff0000),
+			(try_end),
+			(try_end),
+		(try_end),
+	])

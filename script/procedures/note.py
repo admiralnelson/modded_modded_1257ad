@@ -390,3 +390,64 @@ add_log_entry = (
 					(try_end),
 				(try_end),
 		])
+
+
+	#script_add_rumor_string_to_troop_notes
+	# called from dialog
+	#INPUT: object_1, object_2, string
+	#OUTPUT: NONE 
+add_rumor_string_to_troop_notes = (
+	"add_rumor_string_to_troop_notes", #parameters from dialog
+		[
+		(store_script_param, ":object_1", 1),
+		(store_script_param, ":object_2", 2),
+		(store_script_param, ":string", 3),
+		
+		(str_store_troop_name, s10, "$g_talk_troop"),
+		(str_store_string_reg, s11, ":string"),
+		
+		(store_current_hours, ":hours"),
+		(call_script, "script_game_get_date_text", 0, ":hours"),
+		
+		(str_store_string, s5, "str_s10_said_on_s1_s11__"),
+		
+		(try_begin),
+			(is_between, ":object_1", active_npcs_begin, kingdom_ladies_end),
+			(troop_get_slot, ":current_rumor_note", ":object_1", slot_troop_current_rumor),
+			(val_add, ":current_rumor_note", 1),
+			(try_begin),
+			(neg|is_between, ":current_rumor_note", 3, 16),
+			(assign, ":current_rumor_note", 3),
+			(try_end),
+			(troop_set_slot, ":object_1", slot_troop_current_rumor, ":current_rumor_note"),
+			
+			(add_troop_note_from_sreg, ":object_1", ":current_rumor_note", s5, 0), #troop, note slot, string, show
+			
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(str_store_troop_name, s3, ":object_1"),
+			(assign, reg4, ":current_rumor_note"),
+			(display_message, "str_rumor_note_to_s3s_slot_reg4_s5"),
+			(try_end),
+		(try_end),
+		
+		(try_begin),
+			(is_between, ":object_2", active_npcs_begin, kingdom_ladies_end),
+			(troop_get_slot, ":current_rumor_note", ":object_2", slot_troop_current_rumor),
+			(val_add, ":current_rumor_note", 1),
+			(try_begin),
+			(neg|is_between, ":current_rumor_note", 3, 16),
+			(assign, ":current_rumor_note", 3),
+			(try_end),
+			(troop_set_slot, ":object_2", slot_troop_current_rumor, ":current_rumor_note"),
+			
+			(add_troop_note_from_sreg, ":object_2", ":current_rumor_note", s5, 0), #troop, note slot, string, show
+			
+			(try_begin),
+			(eq, "$cheat_mode", 1),
+			(str_store_troop_name, s3, ":object_2"),
+			(assign, reg4, ":current_rumor_note"),
+			(display_message, "str_rumor_note_to_s3s_slot_reg4_s5"),
+			(try_end),
+		(try_end),
+	])
