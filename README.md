@@ -36,3 +36,6 @@ logs:
 (46%-ish, 275 out of 596 procedures/functions/cfunctions)  
 (57%-ish, 340 out of 596 procedures/functions/cfunctions)  
 (70%-ish, 422 out of 596  procedures/functions/cfunctions)  
+
+## important keywords so far
+1257AD, 1257AD devs, WARNING, modified, modded2x, tom, ozan, rafi, dplmc, diplomacy
