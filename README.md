@@ -25,9 +25,9 @@ Might experiment with it
 - [ ] Custom troop trees
 - [ ] terrain generation algorithm (at: procedures/scene.py/setup_random_scene)
 - [ ] manor terrain generation algorithm (at: procedures/AD1257_manor_scene.py/manor_set_unique_scene)
-- [ ] from thread no 214303306 at: 214387974/8
-      >You can disguise and enter a hostile territory and join their tournament
-      >this has no special interactions
+- [ ] from thread no 214303306 at: 214387634  
+      >You can disguise and enter a hostile territory and join their tournament   
+      >this has no special interactions   
 
 logs:  
 (1%-ish, 41 out of 596 procedures/functions/cfunctions)   
