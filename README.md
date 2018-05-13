@@ -19,7 +19,9 @@ Suggestion from last thread 211791549
 - [ ] autobuy/autosell/auto upgrade
 - [ ] put villagers in
 - [ ] scale down maps
-- [ ] spawn army dismounted in village
+- [ ] spawn army dismounted in village  
+suggestion from last thread 214500021
+- [ ] crusader bug
 
 Might experiment with it
 - [ ] Custom troop trees
