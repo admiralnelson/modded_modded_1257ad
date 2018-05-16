@@ -113,4 +113,77 @@ lord_find_alternative_faction_old = (
 		(assign, reg0, ":new_faction"),	
 	])
 	
-	
+		#script_raf_troop_get_religion
+		# INPUT: troop
+		# OUTPUT: religion	 		
+raf_troop_get_religion = (
+	"raf_troop_get_religion",
+		[
+			(store_script_param, ":troop", 1),
+			
+			(assign, reg0, -1),
+			(store_troop_faction, ":faction", ":troop"),
+			(try_begin),
+			(eq, ":faction", "fac_kingdom_1"),
+			(assign, reg0, religion_catholic),
+			(else_try),
+			(eq, ":faction", "fac_kingdom_2"),
+			(assign, reg0, religion_pagan_balt),
+			(else_try),
+			(eq, ":faction", "fac_kingdom_20"),
+			(assign, reg0, religion_muslim),
+			(else_try),
+			(eq, ":faction", "fac_kingdom_3"),
+			(assign, reg0, religion_pagan_mongol),
+			(else_try),
+			(eq, ":faction", "fac_kingdom_8"),
+			(assign, reg0, religion_orthodox),
+			(try_end),
+		])
+
+		#script_raf_religion_to_s11
+		# INPUT: faction
+		# OUTPUT: s11 religion string
+raf_religion_to_s11 = (
+	"raf_religion_to_s11",
+		[
+			(store_script_param, ":faction_no", 1),
+			(faction_get_slot, ":religion", ":faction_no", slot_faction_religion),
+			(try_begin),
+			(eq, ":religion", religion_catholic),
+			(str_store_string, s11, "str_religion_catholic"),
+			(else_try),
+			(eq, ":religion", religion_pagan_balt),
+			(str_store_string, s11, "str_religion_pagan_balt"),
+			(else_try),
+			(eq, ":religion", religion_pagan_mongol),
+			(str_store_string, s11, "str_religion_pagan_mongol"),
+			(else_try),
+			(eq, ":religion", religion_muslim),
+			(str_store_string, s11, "str_religion_muslim"),
+			(else_try),
+			(eq, ":religion", religion_orthodox),
+			(str_store_string, s11, "str_religion_orthodox"),
+			(try_end),
+		])
+
+##script_check_if_faction_is_at_war - tom made
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	##Input: faction_id
+	##output: reg0 - sets 1 if at war, 0 if not
+	##description: Check if at war with any other major faction. 
+check_if_faction_is_at_war = (
+	"check_if_faction_is_at_war",
+		[
+		(store_script_param, ":faction", 1),
+		
+		(assign, reg0, 0),
+		(assign, ":end", kingdoms_end),
+		(try_for_range, ":faction2", kingdoms_begin, ":end"),
+			(neq, ":faction", ":faction2"),
+			(store_relation, ":relation", ":faction2", ":faction"),
+			(lt, ":relation", 0),
+			(assign, reg0, 1),
+			(assign, ":end", -5), #break;
+		(try_end),
+		])

@@ -3447,14 +3447,7 @@ game_menus = [ #
 	),
 	
 	("mod_troop_rebalance",0,
-	 "This is an experimental feature to rebalances troop armour values to their appropriate tier. {s10}^^\
-	 What does it do? The troops are automaticly re-equiped via scripts with a set range of body armours and helmets\
-	 appriopriate to their tier and culture.^^\
-	 Using this feature will make the gameplay more balanced, while still being historically correct. This\
-	 howerver will likely make the artistic values of the troop design obsolete.^^\
-	 To turn of this feature you will require to reaload the game (it will not effect the save game in any way).\
-	 It's require you to do so, so the game engine could reload the troop items from the mod files. Turning on this feature\
-	 does not require you to reload the game.",
+	 "This is an experimental feature to rebalances troop armour values to their appropriate tier. {s10}^^ What does it do? The troops are automaticly re-equiped via scripts with a set range of body armours and helmets appriopriate to their tier and culture.^^ Using this feature will make the gameplay more balanced, while still being historically correct. This  howerver will likely make the artistic values of the troop design obsolete.^^ To turn of this feature you will require to reaload the game (it will not effect the save game in any way). It's require you to do so, so the game engine could reload the troop items from the mod files. Turning on this feature does not require you to reload the game.",
 	 "none",
 	 [
 	(try_begin),
@@ -18704,10 +18697,7 @@ game_menus = [ #
 		[
 	 (try_begin),
 			 (eq, "$g_battle_result", 1),
-		 (str_store_string, s9, "@You slaughter the bastards, like they were nothing!\
-		 The peasents cheer you're name and are planing on holding a feast in the near\
-		 future to honor you!\
-		 "),
+		 (str_store_string, s9, "@You slaughter the bastards, like they were nothing! The peasents cheer you're name and are planing on holding a feast in the near future to honor you!"),
 		 (else_try),
 			 (str_store_string, s9, "@Try as you might, you could not defeat the bastards.\
  They had there fun with the settlement peasents and went off,\

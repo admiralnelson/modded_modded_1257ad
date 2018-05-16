@@ -28,7 +28,12 @@ num_merchandise_goods = 36
 
 triggers = [
 # Tutorial:
-  (0.1, 0, ti_once, [(map_free,0)], [(dialog_box,"str_tutorial_map1")]),
+  (0.1, 0, ti_once, [(map_free,0)], [
+    (dialog_box,"str_tutorial_map1"),
+    #Modded2x begin
+    (call_script, "script_modded2x_print_fizzbuzz", 70),
+    #Modded2x end
+    ]),
 
 # Refresh Merchants
   (0.0, 0, 168.0, [], #168

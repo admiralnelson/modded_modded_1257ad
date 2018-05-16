@@ -285,7 +285,7 @@ orig_battle_tactic_apply_aux = (
 				(assign, reg0, ":battle_tactic"),
 		])
 
-# script_battle_tactic_apply_aux
+# script_orig_battle_tactic_apply_aux
 		# Input: team_no, battle_tactic
 		# Output: battle_tactic
 orig_battle_tactic_apply_aux = (
