@@ -1,0 +1,474 @@
+from header import *
+from header import *
+
+#script_get_noble_troop
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#input: center to earch for
+	#output: reg1- the troop, -1 if not found
+get_noble_troop = (
+	"get_noble_troop",
+		[
+		(store_script_param, ":center", 1),
+		
+		(assign, reg1, -1),
+		(assign, ":higher", "$lance_troop_reserve"),
+		(try_for_range, ":index", 0, ":higher"), #spin trough all the reserve
+			(troop_slot_eq, "trp_lances_places_reserve", ":index", ":center"), #matching center
+			(troop_get_slot,":troop", "trp_lances_troops_reserve", ":index"), #get troop
+			#(party_get_slot, ":culture", ":center", slot_center_culture),
+			#(call_script, "script_troop_find_culture", ":troop", ":culture"),
+			#(eq, reg0, 2), #found a noble!
+			(assign, ":top_faction", "fac_player_faction"),
+			(try_for_range, ":culture", "fac_culture_finnish", ":top_faction"),
+				(call_script, "script_troop_find_culture", ":troop", ":culture"),
+			(eq, reg0, 2), #found a noble!
+			(assign, ":top_faction", -1),
+			(try_end),
+			(eq, reg0, 2), #found a noble!
+			
+			(troop_set_slot, "trp_lances_troops_reserve",":index", 0),
+			(troop_set_slot, "trp_lances_places_reserve",":index", 0),
+			(assign, reg1, ":troop"),
+			(assign, ":higher", -1),
+		(try_end),
+		])
+
+			#script_get_commoner_troop
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#input: center to earch for
+	#output: reg1- the troop, -1 if not found
+get_commoner_troop = (
+	"get_commoner_troop",
+		[
+		(store_script_param, ":center", 1),
+		
+		(assign, reg1, -1),
+		(assign, ":higher", "$lance_troop_reserve"),
+		(try_for_range, ":index", 0, ":higher"), #spin trough all the reserve
+			(troop_slot_eq, "trp_lances_places_reserve", ":index", ":center"), #matching center
+			(troop_get_slot,":troop", "trp_lances_troops_reserve", ":index"), #get troop
+			# (party_get_slot, ":culture", ":center", slot_center_culture),
+			# (call_script, "script_troop_find_culture", ":troop", ":culture"),
+			# (is_between, reg0, 0, 2), #found a commoner!
+			
+			(assign, ":top_faction", "fac_player_faction"),
+			(try_for_range, ":culture", "fac_culture_finnish", ":top_faction"),
+				(call_script, "script_troop_find_culture", ":troop", ":culture"),
+			(is_between, reg0, 0, 2), #found a commoner!
+			(assign, ":top_faction", -1),
+			(try_end),
+			(is_between, reg0, 0, 2), #found a commoner!
+			
+			(troop_set_slot, "trp_lances_troops_reserve",":index", 0),
+			(troop_set_slot, "trp_lances_places_reserve",":index", 0),
+			(assign, reg1, ":troop"),
+			(assign, ":higher", -1),
+		(try_end),
+		])
+
+	#script_search_for_troop
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#description: searches for such a troop in service and returns the it's index in the array
+	#input: troop
+	#output: reg0- troop index at the array
+search_for_troop = (
+	"search_for_troop",
+		[
+		(store_script_param, ":troop", 1),
+		
+		(assign, reg0, -1),
+		(assign, ":higher", "$lance_troop_serving"),
+		(try_for_range, ":index", 0, ":higher"), 
+			(troop_slot_eq, "trp_lances_troop_in_combat", ":index", 0), #is not flaged yet
+			(troop_slot_eq, "trp_lances_troops", ":index", ":troop"), #the troop matches
+			(assign, reg0, ":index"),
+			(troop_set_slot, "trp_lances_troop_in_combat", ":index", 1),
+			(assign, ":higher", -1), #break
+		(try_end),
+		])
+
+		#script_fill_lance
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#description: select the troop for recruitment
+	#input: spawn_center, party_to_fill
+	#output: spawned party_id
+fill_lance = (
+	"fill_lance",
+	[
+		(store_script_param, ":center", 1), #party to recruit from
+		(store_script_param, ":spawned_party", 2), #party to fill with troops
+		#(store_script_param, ":type", 2),  #
+		#(store_script_param, ":fac", 3), 
+		 
+		#get prosperity, original faction
+		(party_get_slot, ":orig_faction", ":center", slot_center_original_faction),
+
+		(party_get_slot, ":orig_culture", ":center", slot_center_culture),
+		(party_get_slot, ":prosperity", ":center", slot_town_prosperity),
+		(party_get_slot, ":nobles", ":center", slot_center_nobility_law),
+		(party_get_slot, ":regulars", ":center", slot_center_commoner_law),
+		(party_stack_get_troop_id, ":leader", ":spawned_party"),
+		(store_faction_of_party, ":cur_faction", ":center"),
+		
+		#check for minor cultures - update this for regular system as well
+		(call_script, "script_get_orig_culture", ":orig_faction", ":cur_faction", ":orig_culture"),
+		(assign, ":orig_culture", reg0),
+		
+		#based on prosperity design assign the chances 
+		# (try_begin), #low
+			# (lt, ":prosperity", 25),
+			# (assign, ":tier1", 50),
+			# (assign, ":tier2", 85),
+			# (assign, ":tier3", 95),
+			# (assign, ":tier4", 95),
+			# #(display_message, "@low"),
+		# (else_try), #avg
+			# #(ge, ":prosperity", 25),
+			# (lt, ":prosperity", 75),
+			# (assign, ":tier1", 30),
+			# (assign, ":tier2", 80),
+			# (assign, ":tier3", 95),
+			# (assign, ":tier4", 95),
+			# #(display_message, "@avg"),
+		# (else_try), #high
+		 # # (ge, ":prosperity", 75),
+			# (assign, ":tier1", 10),
+			# (assign, ":tier2", 75),
+			# (assign, ":tier3", 90),
+			# (assign, ":tier4", 90),
+			# #(display_message, "@high"),
+		# (try_end),
+		(try_begin), ##lance recruited from town/castle
+			(is_between, ":spawned_party", walled_centers_begin, walled_centers_end),
+			(party_slot_ge, ":spawned_party", slot_town_lord, 0), #assigned center
+			(party_get_slot, ":leader", ":spawned_party", slot_town_lord),
+		(try_end),
+		
+		#troop types
+		(faction_get_slot, ":village_troop", ":orig_culture", slot_faction_tier_1_troop),
+		(faction_get_slot, ":castle_troop", ":orig_culture", slot_faction_tier_1_castle_troop),
+		(faction_get_slot, ":town_troop", ":orig_culture", slot_faction_tier_1_town_troop),
+		
+		#get regular troop types
+		(assign, ":chance_for_village", 50),
+		(try_begin), #castle
+			#(this_or_next|is_between, ":center", villages_begin, villages_end),
+			(is_between, ":center", castles_begin, castles_end),
+			(assign, ":chance_for_village", 50),
+			#(assign, ":regular_troop", ":village_troop"),
+		(else_try), #village
+			(is_between, ":center", villages_begin, villages_end),
+			(assign, ":chance_for_village", 70),
+		(else_try), #town
+			(assign, ":chance_for_village", 30),
+		(try_end),
+		
+		(store_random_in_range, ":random", 1, 101),
+		(try_begin), #village troop if random < chance_for_village
+			(le, ":random", ":chance_for_village"),
+			(assign, ":regular_troop", ":village_troop"),
+		(else_try), #town lance!
+			(assign, ":regular_troop", ":town_troop"),
+		(try_end),
+		
+		#lets fill special troops
+		(try_begin), #crusader knights
+			(eq, ":leader", "trp_knight_23_6"), # teutonic
+			(assign, ":regular_troop", "trp_teu_town_1"),
+			(assign, ":castle_troop", "trp_teu_horse_1"),
+		(else_try),
+			(eq, ":leader", "trp_knight_23_1"), # hospitaller
+			(store_random_in_range, ":castle_troop", "trp_hospitaller_half_brother", "trp_saint_lazarus_half_brother"),
+		(else_try),	
+				(eq, ":leader", "trp_knight_23_2"), # templar
+			(assign, ":castle_troop", "trp_templar_half_brother", "trp_hospitaller_half_brother"),
+		(else_try),	
+				(eq, ":leader", "trp_knight_16_1"), # santiago
+			(assign, ":castle_troop", "trp_santiago_half_brother", "trp_calatrava_half_brother"),
+		(else_try),	
+				(eq, ":leader", "trp_knight_18_9"), # caltrava
+			(assign, ":castle_troop", "trp_calatrava_half_brother", "trp_saint_thomas_half_brother"),
+		(else_try), #cuman
+			(eq, ":leader", "trp_knight_7_15"), 
+			#(assign, ":regular_troop", "trp_teu_town_1"),
+			(assign, ":town_troop", "trp_cuman_tribesman"),
+			(assign, ":castle_troop", "trp_cuman_horseman"),
+		(else_try), #monogls recruit mongols as well
+			(neg|is_between, ":spawned_party", centers_begin, centers_end),
+			(this_or_next|is_between, ":leader", "trp_knight_3_1", "trp_knight_3_20"), #mongol
+			(this_or_next|is_between, ":leader", "trp_knight_27_4", "trp_knight_2_1"), #ilkhanate
+			(this_or_next|eq, ":leader", "trp_kingdom_3_lord"), #mongol
+			(eq, ":leader", "trp_kingdom_27_lord"), #ilkhanate
+			(assign, ":regular_troop", "trp_tatar_tribesman"),
+			(assign, ":castle_troop", "trp_tatar_horseman"),  
+		(try_end),
+		
+		###initiate amount of troop ratio
+		#in the future do a script call?
+		# (try_begin), #lords - double to save cpu
+			# (is_between, ":leader", active_npcs_begin, active_npcs_end),
+			# (assign, ":nobles", 4),
+			# (assign, ":regulars", 16),
+		# (else_try), #player
+			#(assign, ":nobles", 2),
+			#(assign, ":regulars", 8),
+		# (try_end),
+		
+		(try_begin), ## error fix
+			(neg|is_between, ":nobles", size_small, size_large +1),
+			(assign, ":nobles", size_average),
+		(try_end),
+		(try_begin), ## error fix
+			(neg|is_between, ":regulars", size_small, size_large +1),
+			(assign, ":regulars", size_average),
+		(try_end),
+		
+		(call_script, "script_get_lance_precentage", ":nobles", ":prosperity"),
+		(assign, ":tier1", reg1),
+		(assign, ":tier2", reg2),
+		(assign, ":tier3", reg3),
+		#(assign, ":tier1", reg1),
+		
+		#lets spin the dice for the troop.
+		(try_for_range, reg10, 0, ":nobles"),
+			(store_random_in_range, ":random", 1, 101),
+			(try_begin),
+				(eq, ":spawned_party", "p_main_party"),
+			(party_slot_ge, ":center", slot_number_nobles, 1),
+			(call_script, "script_get_noble_troop", ":center"),
+			(ge, reg1, 0),
+			(party_get_slot,":amount", ":center", slot_number_nobles),
+			(val_sub, ":amount", 1),
+			(party_set_slot,":center", slot_number_nobles, ":amount"),
+			#(str_store_troop_name, s0, reg1),
+			#(display_message, "@noble: {s0}"),
+			(else_try),
+				(lt, ":random", ":tier1"),
+			#(display_message, "@spawning tier 1"),
+			#(party_add_members, ":spawned_party", ":castle_troop", 1),
+			(assign, reg1, ":castle_troop"),
+			(else_try),
+				(lt, ":random", ":tier2"),
+			(call_script, "script_choose_random_troop_for_lance", ":castle_troop", 2),
+			#(display_message, "@spawning tier 2"),
+			(else_try),
+				(lt, ":random", ":tier3"),
+			#(assign, ":temp_troop", ":castle_troop"),
+			(call_script, "script_choose_random_troop_for_lance", ":castle_troop", 3),
+			#(display_message, "@spawning tier 3"),
+			(else_try),
+				#(ge, ":random", ":tier4"),
+			(store_random_in_range, ":random2", 0, 100),
+				(try_begin),
+				(lt, ":random2", 50),
+				(call_script, "script_choose_random_troop_for_lance", ":castle_troop", 4),
+				#(display_message, "@spawning tier 4"),
+			(else_try),
+				(call_script, "script_choose_random_troop_for_lance", ":castle_troop", 5),
+				#(display_message, "@spawning tier 5"),
+			(try_end),
+			(try_end),
+			# (try_begin),
+				# (eq, reg1, "trp_player"),
+			# (str_store_party_name,s0,":center"),
+				# (display_message, "@ADDING PLAYER noble! {s0}"),
+				# (assign, reg1, ":castle_troop"),
+			# (try_end),
+			(try_begin),
+				(eq,":spawned_party", "p_main_party"),
+			(call_script, "script_add_lance_troop_to_regulars", reg1, ":center"),
+			(try_end),
+			(party_add_members, ":spawned_party", reg1, 1),
+		(try_end),
+		
+		(call_script, "script_get_lance_precentage", ":regulars", ":prosperity"),
+		(assign, ":tier1", reg1),
+		(assign, ":tier2", reg2),
+		(assign, ":tier3", reg3),
+		
+		(val_mul, ":regulars", 4),
+		#do these cycles a script call?
+		(try_for_range, reg10, 0, ":regulars"),
+			(store_random_in_range, ":random", 1, 101),
+			(try_begin),
+				(eq, ":spawned_party", "p_main_party"),
+			(party_slot_ge, ":center", slot_number_commoner, 1),
+			(call_script, "script_get_commoner_troop", ":center"),
+			(ge, reg1, 0),
+			(party_get_slot,":amount", ":center", slot_number_commoner),
+			(val_sub, ":amount", 1),
+			(party_set_slot,":center", slot_number_commoner, ":amount"),
+			(str_store_troop_name, s0, reg1),
+			#(display_message, "@commoner: {s0}"),
+			(else_try),	
+				(lt, ":random", ":tier1"),
+			#(party_add_members, ":spawned_party", ":regular_troop", 1),
+			(assign, reg1, ":regular_troop"),
+			#(display_message, "@spawning tier 1"),
+			(else_try),
+				(lt, ":random", ":tier2"),
+			(call_script, "script_choose_random_troop_for_lance", ":regular_troop", 2),
+			#(display_message, "@spawning tier 2"),
+			(else_try),
+				(lt, ":random", ":tier3"),
+			#(assign, ":temp_troop", ":regular_troop"),
+			(call_script, "script_choose_random_troop_for_lance", ":regular_troop", 3),
+			#(display_message, "@spawning tier 3"),
+			(else_try),
+				#(ge, ":random", ":tier4"),
+			(store_random_in_range, ":random2", 0, 100),
+				(try_begin),
+				(lt, ":random2", 50),
+				(call_script, "script_choose_random_troop_for_lance", ":regular_troop", 4),
+				#(display_message, "@spawning tier 4"),
+			(else_try),
+				(call_script, "script_choose_random_troop_for_lance", ":regular_troop", 5),
+				#(display_message, "@spawning tier 5"),
+			(try_end),
+			(try_end),
+			#(try_begin),
+				#(eq, reg1, "trp_player"),
+				#(display_message, "@ADDING PLAYER regular! {s0}"),
+				#(assign, reg1, ":regular_troop"),
+			#(try_end),
+			(try_begin),
+				(eq,":spawned_party", "p_main_party"),
+			(call_script, "script_add_lance_troop_to_regulars", reg1, ":center"),
+			(try_end),
+			(party_add_members, ":spawned_party", reg1, 1),
+		(try_end),
+		
+		(assign, reg0, ":spawned_party"),
+		])
+
+	##script_choose_random_troop_for_lance - tom made
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	##description: gets a random troop for the lance. Either one of the two upgrade troops, 
+	##the only one if one is available, or just returns the orignal troop if non upgradable
+	##input: original_troop to upgrade from, which tier to return
+	##output: returns via reg0
+choose_random_troop_for_lance = (
+	"choose_random_troop_for_lance",
+		[ 
+			(store_script_param, ":orig_troop", 1),
+			(store_script_param, ":tier", 2),
+		(val_sub, ":tier", 1),
+		#set a fail-safe
+		
+		(assign, reg1, ":orig_troop"),
+		#get the upgrade paths
+		(assign, ":first", -1),
+		(assign, ":second", -1),
+		(troop_get_upgrade_troop, ":first", ":orig_troop", 0),
+		(troop_get_upgrade_troop, ":second", ":orig_troop", 1),
+		#choose the troop
+		(try_begin),
+			(gt, ":first", 0),
+			(gt, ":second", 0),
+			(store_random_in_range, ":random", 0, 101),
+			(try_begin),
+				(lt, ":random", 50),
+			(assign, reg1, ":first"),
+			#(display_message, "@first"),
+			(else_try),
+				(assign, reg1, ":second"),
+			#(display_message, "@second"),
+			(try_end),
+		(else_try),
+			(gt, ":first", 0),
+			(assign, reg1, ":first"),
+			#(display_message, "@second failed, adds first"),
+		(else_try),
+			(gt, ":second", 0),
+			(assign, reg1, ":second"),
+			#(display_message, "@FAILSESAFE: first failed, adds first"),  
+		(try_end),
+		(try_begin),
+			(gt, ":tier", 1),
+			(call_script, "script_choose_random_troop_for_lance", reg1, ":tier"),
+		(try_end),
+		(assign, reg2, ":tier"),
+		#(display_message, "@exiting tier:{reg2}"),
+		])
+
+	## script_get_lance_size
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	## description: returns the size of the lance
+		## Input: item_no, agent_no
+		## Output: reg0 - tottal size, reg1 - noble size, reg2 - commoner size 
+get_lance_size = (
+	"get_lance_size",
+	[
+		(store_script_param, ":center", 1),
+		
+		(party_get_slot, ":noble", ":center", slot_center_nobility_law),
+		(party_get_slot, ":commoner", ":center", slot_center_commoner_law),
+		
+		(val_mul, ":commoner", 4),
+		(try_begin),
+			(le, ":commoner", 0),
+		(assign, ":commoner", 1),
+		(try_end),
+		(try_begin),
+			(le, ":noble", 0),
+		(assign, ":noble", 1),
+		(try_end),
+		(store_add, reg0, ":commoner", ":noble"),
+		(assign, reg1, ":noble"),
+		(assign, reg2, ":commoner"),
+	])
+	
+	## script_get_lance_precentage
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	## description: returns the precentage for lance troop tier chance
+		## Input: item_no, agent_no
+		## Output: reg1 - tier1, reg2 - tier2, reg3 - tier3, reg4 - tier4, reg5 - tier5 
+get_lance_precentage = (
+	"get_lance_precentage",
+	[
+		(store_script_param, ":law", 1),
+		(store_script_param, ":prosperity", 2),
+		
+		#(party_get_slot, ":noble", ":center", slot_center_nobility_law),
+		#(party_get_slot, ":commoner", ":center", slot_center_commoner_law),
+		#(party_get_slot, ":prosperity", ":center", slot_town_prosperity),
+		
+		(try_begin), #low
+			(le, ":prosperity", 25),
+			(assign, ":tier1", 50),
+			(assign, ":tier2", 90),
+			(assign, ":tier3", 95),
+			#(assign, ":tier4", 100),
+			#(display_message, "@low"),
+		(else_try), #avg
+			(le, ":prosperity", 75),
+			(assign, ":tier1", 30),
+			(assign, ":tier2", 80),
+			(assign, ":tier3", 90),
+			#(assign, ":tier4", 100),
+			#(display_message, "@avg"),
+		(else_try), #high
+			(assign, ":tier1", 10),
+			(assign, ":tier2", 70),
+			(assign, ":tier3", 85),
+			#(assign, ":tier4", 100),
+			#(display_message, "@high"),
+		(try_end),
+		
+		(try_begin),
+		(eq, ":law", size_small),
+		(val_sub, ":tier1", tier1_dif),
+		(val_sub, ":tier2", tier2_dif),
+		(val_sub, ":tier3", tier3_dif),
+		(else_try),
+		(eq, ":law", size_large),
+		(val_add, ":tier1", tier1_dif),
+		(val_add, ":tier2", tier2_dif),
+		(val_add, ":tier3", tier3_dif),
+		(try_end),
+		
+		(assign, reg1, ":tier1"),
+		(assign, reg2, ":tier2"),
+		(assign, reg3, ":tier3"),
+	])
+	

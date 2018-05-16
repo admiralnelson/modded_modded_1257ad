@@ -157,3 +157,56 @@ spawn_manor_party = (
 		(party_set_name, ":party_id", s2),
 		(assign, reg0, ":party_id"),
 	])
+
+#script_update_manor_infested_by_bandits
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#input: none
+	#output: none
+	#description: updates the manors with possible crysis. Called from triggers
+	#0 - none
+	#1 - regular bandits
+	#2 - mercenery band rampaging
+	#3 - two nobles conflicting
+	#4 - angry peasents are angry for some reason
+	#5 - 
+update_manor_infested_by_bandits = (
+	"update_manor_infested_by_bandits",
+	 [
+		#0 - none
+		#1 - regular bandits
+		#2 - mercenery band rampaging
+		#3 - two nobles conflicting
+		#4 - angry peasents are angry for some reason
+		#5 - 
+		(troop_get_slot,":manor_amount","trp_manor_array",0),
+		(try_for_range, ":slot", 1, ":manor_amount"),
+			(troop_get_slot,":manor","trp_manor_array",":slot"),
+		(party_clear, ":manor"),
+		(party_set_slot, ":manor", slot_village_state, svs_normal),
+		(store_random_in_range, ":random", 0, 100),
+		(party_clear_particle_systems, ":manor"),
+		#manors with walls does not get infested(unique manors that is)
+		(try_begin),
+			(party_slot_eq, ":manor", manor_slot_walls, manor_building_operational),
+			(assign, ":random", 0), #not infested
+		(try_end),
+		(try_begin), #monastery does not get infested
+			(party_get_template_id, ":manor_template", ":manor"),
+			(eq, ":manor_template", "pt_monastery"),
+			(assign, ":random", 0), #not infested
+		(try_end),
+		
+		#note manor bandits work diffrently from villages. We store id of the crysis, insted of the troop infesting it.
+		
+		(try_begin),
+			(lt, ":random", 80), 
+			(party_set_slot,":manor",slot_village_infested_by_bandits, 0),
+			(party_clear_particle_systems, ":manor"),
+		(else_try),
+			(store_random_in_range, ":random", 1, 3),
+			(party_set_slot,":manor",slot_village_infested_by_bandits,":random"),
+			#(party_add_particle_system, ":manor", "psys_map_village_fire"),
+					(party_add_particle_system, ":manor", "psys_map_village_fire_smoke"),
+			(try_end),
+		(try_end),
+	 ])

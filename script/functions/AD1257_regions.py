@@ -304,3 +304,42 @@ raf_aor_region_to_faction = (
 			(assign, reg0, "fac_kingdom_12"),
 		(try_end),
 		])
+
+#script_get_orig_culture
+	# WARNING: this is totally new procedure (not present in native). 1257AD devs
+	#description: auxilary script to get the culture to recruit troops
+	#input: original faction, cur faction, original culture
+	#output reg0 - culture to use for troops
+get_orig_culture =	(
+	"get_orig_culture",
+		[
+			(store_script_param, ":orig_faction", 1),
+		(store_script_param, ":cur_faction", 2),
+		(store_script_param, ":orig_culture", 3),
+		
+			(try_begin), #balts under teutons
+				(this_or_next|eq, ":orig_culture", "fac_culture_baltic"),
+			(eq, ":orig_culture", "fac_culture_finnish"),
+			(eq, ":cur_faction", "fac_kingdom_1"), #set to teutonic
+			(assign, ":orig_culture", "fac_culture_teutonic"),
+		(else_try), #latin
+			(eq, ":orig_culture", "fac_culture_byzantium"),
+			(eq, ":cur_faction", "fac_kingdom_26"),
+			(assign, ":orig_culture", "fac_culture_italian"),
+		(else_try), # if crusader states conquers arabians
+			# (this_or_next|eq, ":orig_faction", "fac_kingdom_25"), ##mamluks
+				# (eq, ":orig_faction", "fac_kingdom_28"), ##Hafsid
+			(eq, ":cur_faction", "fac_kingdom_23"), #and now they are crusader
+			(assign, ":orig_culture", "fac_culture_western"),  #crusader culture
+		(else_try),
+			(eq, ":orig_faction", "fac_kingdom_23"), #if originaly crusader states
+			(neq, ":cur_faction", "fac_kingdom_23"), #but no longer theres
+			(assign, ":orig_culture", "fac_culture_mamluke"),  #mamluk culture
+		# (else_try), #anatolians - armenians and turks
+			# (this_or_next|eq, ":orig_culture", "fac_culture_anatolian"), 
+			# (eq, ":orig_culture", "fac_culture_anatolian_christian"), 
+			# (eq, ":cur_faction", "fac_kingdom_27"),
+			
+		(try_end),
+		(assign, reg0, ":orig_culture"),
+		])

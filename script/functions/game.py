@@ -209,3 +209,300 @@ game_get_money_text =	(
 			(try_end),
 			(set_result_string, s1),
 	])
+
+		#script_game_get_troop_wage
+		# WARNING : HEAVILY Modified by 1257AD devs
+		# INPUT: troop_id, party_id
+		# OUTPUT: wage set trigger register reg0
+game_get_troop_wage = (
+	"game_get_troop_wage",
+			[
+			(store_script_param, ":troop_id", 1),
+			(store_script_param_2, ":party_id"), #party id
+			
+			#TOM
+			(assign, ":value", 0), #the thing to compare to others
+			# (assign, ":value2", 0), #the thing to compare to others
+			# (assign, ":meele", 0),
+			# (assign, ":range", 0),
+			# (assign, ":ammo", 0),
+			(assign, ":head", 0),
+			(assign, ":body", 0),
+			(assign, ":foot", 0),
+			# (assign, ":hand", 0),
+			# (assign, ":shield", 0),
+			(assign, ":mount", 1), #NO NEED?
+			(try_begin),
+				(neg|troop_is_hero, ":troop_id"),
+				(troop_get_inventory_capacity,":cap",":troop_id"),
+				(try_for_range, ":inventory", 0, ":cap"), #lets get troop inventory capacity
+				(troop_get_inventory_slot,":item",":troop_id",":inventory"), #lets get it's item
+				(gt, ":item", 0), #it's not nothing
+				(item_get_type, ":item_type", ":item"), #lets get it type
+				(try_begin), #meele weapon
+					# (this_or_next|eq, ":item_type", itp_type_one_handed_wpn),
+					# (this_or_next|eq, ":item_type", itp_type_two_handed_wpn),
+					# (eq, ":item_type", itp_type_polearm),
+					# (item_get_slot, ":value", ":item", slot_item_thrust_damage),
+					# (item_get_slot, ":value2", ":item", slot_item_swing_damage),
+					# (val_add, ":value", ":value2"),
+					# (gt, ":value", ":meele"),
+					# (assign, ":meele", ":value"),
+					# (else_try), #range
+					# (this_or_next|eq, ":item_type", itp_type_bow),
+					# (this_or_next|eq, ":item_type", itp_type_crossbow),
+					# (eq, ":item_type", itp_type_thrown),
+					# (item_get_slot, ":value", ":item", slot_item_thrust_damage),
+					# (item_get_slot, ":value2", ":item", slot_item_swing_damage),
+					# (val_add, ":value", ":value2"),
+					# (gt, ":value", ":meele"),
+					# (assign, ":meele", ":value"),
+					# (else_try), #ammo
+					# (this_or_next|eq, ":item_type", itp_type_arrows),
+					# (eq, ":item_type", itp_type_bolts),
+					# (item_get_slot, ":value", ":item", slot_item_thrust_damage),
+					# (item_get_slot, ":value2", ":item", slot_item_swing_damage),
+					# (val_add, ":value", ":value2"),
+					# (gt, ":value", ":ammo"),
+					# (assign, ":ammo", ":value"),
+					#(else_try), #shield
+					#(eq, ":item_type", itp_type_shield),
+					#(item_get_slot, ":value", ":item", slot_item_body_armor), #no idea which
+					# (item_get_slot, ":value2", ":item", slot_item_head_armor), #should give the proper value
+					#(val_add, ":value", ":value2"),
+					#(item_get_slot, ":value2", ":item", slot_item_leg_armor), #so lets check them all
+					#(val_add, ":value", ":value2"),
+					#(gt, ":value", ":shield"),
+					#(assign, ":shield", ":value"),
+					#(else_try), #head armor
+					(eq, ":item_type", itp_type_head_armor),
+					(item_get_slot, ":value", ":item", slot_item_head_armor),
+					(gt, ":value", ":head"),
+					(assign, ":head", ":value"),
+				(else_try), #body armor
+					(eq, ":item_type", itp_type_body_armor),
+					(item_get_slot, ":value", ":item", slot_item_body_armor),
+					(gt, ":value", ":body"),
+					(assign, ":body", ":value"),
+				(else_try), #foot armor
+					(eq, ":item_type", itp_type_foot_armor),
+					(item_get_slot, ":value", ":item", slot_item_leg_armor),
+					(gt, ":value", ":foot"),
+					(assign, ":foot", ":value"),
+					# (else_try), #hand armor
+					# (eq, ":item_type", itp_type_hand_armor),
+					# (item_get_slot, ":value", ":item", slot_item_body_armor), #presume it's this?
+					# (gt, ":value", ":hand"),
+					# (assign, ":hand", ":value"),
+				(else_try),
+					(eq, ":item_type", itp_type_horse),
+					(assign, ":mount", 2),
+				(try_end),
+				(try_end),
+				#(store_add, ":offense", ":meele", ":range"),
+				#(val_add, ":offense", ":ammo"),
+				#(store_add, ":defense", ":head", ":body"),
+				#(val_add, ":defense", ":shield"),
+				#(val_add, ":defense", ":foot"),
+				#(val_add, ":defense", ":hand"),
+				#(assign, ":offense", 0),
+				#(val_mul, ":defense", ":mount"),
+				#(store_add, ":wage", ":offense", ":defense"),
+				(store_add, ":wage", ":head", ":body"),
+				(val_div, ":wage", 4),
+				#(val_mul, ":wage", 2),
+				
+				
+				(try_begin),
+				(store_character_level,":troop_lvl",":troop_id"),
+				(neg|ge, ":troop_lvl", 6),
+				#(val_mul, ":wage", 3),
+				(val_div, ":wage", 3),
+				(val_mul, ":wage", 2),
+				(else_try),
+				(val_sub, ":wage", 3),
+				(try_end),
+				
+				(try_begin),
+				#(else_try),
+				(store_character_level,":troop_lvl",":troop_id"),
+				(ge, ":troop_lvl", 19),
+				(val_add, ":wage", 3),
+				(val_mul, ":wage", 2),
+				
+				(try_begin),
+					(ge, ":troop_lvl", 30),
+					(val_add, ":wage", 210), #60
+				(else_try),
+					(ge, ":troop_lvl", 27),
+					(val_add, ":wage", 110), #30
+				(else_try),
+					(ge, ":troop_lvl", 24),
+					(val_add, ":wage", 10),
+					#(else_try),
+					
+					#(val_div, ":wage", 2),
+				(try_end),
+				(try_end),
+				(try_begin),
+				(eq, ":mount", 2),
+				(val_mul, ":wage", 5), #5
+				(val_div, ":wage", 4), #4
+				(try_end),
+			(try_end),
+			#(val_max, ":wage", 8),
+			#TOM
+			
+			#TOM - this was original
+			# (try_begin),
+			# (neg|troop_is_hero, ":troop_id"),
+			# (troop_get_slot, ":offense", ":troop_id", kt_slot_troop_o_val),
+			# (troop_get_slot, ":defense", ":troop_id", kt_slot_troop_d_val),
+			# (store_add, ":wage", ":offense", ":defense"),
+			# (try_end),
+			#TOM
+			
+			(try_begin),
+				(is_between, ":troop_id", companions_begin, companions_end),
+				(store_character_level, ":level", ":troop_id"),
+				(store_mul, ":offense", ":level", 3),
+				(val_add, ":offense", 50),
+				(store_mul, ":defense", ":level", 2),
+				(val_add, ":defense", 20),
+				(store_add, ":wage", ":offense", ":defense"),
+				
+				(val_div, ":wage", 2),
+				
+				(val_max, ":wage", 1),
+				(val_sub, ":wage", 31),
+				(val_max, ":wage", 1),
+				(store_mul, reg0, ":wage", ":wage"),
+				
+				(assign, ":wage", reg0),
+				
+				(val_div, ":wage", 200),
+				
+				(try_begin),
+				(lt, ":wage", 80),
+				(val_mul, ":wage", 3),
+				(try_end),
+				
+				(val_mul, ":wage", 2),
+				(val_div, ":wage", 3),
+				
+			(try_end),
+			
+			(party_get_template_id, ":template", ":party_id"),
+			#tom
+			##this one for lance system - player only
+			#troop upkeep whitout a fief is super low
+			(try_begin),
+				(eq, "$use_feudal_lance", 1),
+				(this_or_next|gt, "$g_player_crusading", 0),  
+				(eq, "$use_feudal_lance", 1), #intented double check
+				(eq, ":template", "p_main_party"),
+				(assign, ":reduce", 0),
+				(try_for_range, ":center_no", centers_begin, centers_end),
+					(party_slot_eq, ":center_no", slot_town_lord, "trp_player"),
+					(assign, ":reduce", 1),
+				(assign, ":center_no", -1),
+				(try_end),
+				(eq, ":reduce", 0),
+				(val_mul, ":wage", 2),
+				(val_div, ":wage", 3),
+				
+				(val_max, ":wage", 3),
+			(else_try), #in times of peace, as a lord - increase upkeep.
+				(eq, "$use_feudal_lance", 1),
+				(this_or_next|gt, "$g_player_crusading", 0),  
+				(eq, "$use_feudal_lance", 1), #intented double check
+				(eq, ":template", "p_main_party"),
+				(assign, ":lord", 0),
+				(try_for_range, ":center_no", centers_begin, centers_end),
+					(party_slot_eq, ":center_no", slot_town_lord, "trp_player"),
+					(assign, ":lord", 1),
+				(store_faction_of_party, ":faction", ":center_no"),
+				(assign, ":center_no", -1),
+				(try_end),
+				(eq, ":lord", 1),
+				(call_script, "script_check_if_faction_is_at_war", ":faction"),
+				(eq, reg0, 0), #at peace
+				(val_mul, ":wage", 3),
+				(val_div, ":wage", 2),
+			(try_end),
+			#tom end
+			#tom
+			#(game_get_reduce_campaign_ai, ":reduce_campaign_ai"), mod options now
+			 
+				
+			(try_begin), #player only
+				(this_or_next|eq, ":party_id", "p_main_party"),
+				(eq, ":template", "pt_merc_party"),
+				(try_begin),
+				(eq, "$tom_difficulty_wages", 0), #hard (1x or 2x reinforcing)
+				(val_mul, ":wage", 3),
+				(val_div, ":wage", 2),
+				(else_try),
+				(eq, "$tom_difficulty_wages", 1), #moderate (1x reinforcing)
+				(else_try),
+				(eq, "$tom_difficulty_wages", 2), #easy (none or 1x reinforcing)
+				(val_div, ":wage", 2),
+				(try_end),
+				(val_max, ":wage", 3),
+			(try_end),
+			
+			
+			
+			# (val_div, ":wage", 2),
+			
+			# (val_max, ":wage", 1),
+			# (val_sub, ":wage", 31),
+			# (val_max, ":wage", 1),
+			# (store_mul, reg0, ":wage", ":wage"),
+			
+			# (assign, ":wage", reg0),
+			
+			# (val_div, ":wage", 200),
+			
+			# (try_begin),
+			# (lt, ":wage", 80),
+			# (val_mul, ":wage", 3),
+			# (try_end),
+			
+			# (val_mul, ":wage", 2),
+			# (val_div, ":wage", 3),
+			
+			(try_begin),
+				(neq, ":troop_id", "trp_player"),
+				(neq, ":troop_id", "trp_kidnapped_girl"),
+				(neg|is_between, ":troop_id", pretenders_begin, pretenders_end),
+				(val_max, ":wage", 1),
+			(try_end),
+			
+			(assign, ":troop_leadership", -1),
+			(try_begin),
+				(ge, ":party_id", 0),
+				(try_begin),
+				(this_or_next | party_slot_eq, ":party_id", slot_party_type, spt_town),
+				(party_slot_eq, ":party_id", slot_party_type, spt_castle),
+				(party_get_slot, ":troop_leadership", ":party_id", slot_town_lord),
+				(else_try),
+				(eq, ":party_id", "p_main_party"),
+				(assign, ":troop_leadership", "trp_player"),
+				(else_try),
+				(party_stack_get_troop_id, ":troop_leadership", ":party_id", 0),
+				(try_end),
+			(try_end),
+			
+			(try_begin),
+				(ge, ":troop_leadership", 0),
+				(store_skill_level, ":leadership_level", "skl_leadership", ":troop_leadership"),
+				(store_mul, ":leadership_bonus", 5, ":leadership_level"),
+				(store_sub, ":leadership_factor", 100, ":leadership_bonus"),
+				(val_mul, ":wage", ":leadership_factor"),  #wage = wage * (100 - 5*leadership)/100
+				(val_div, ":wage", 100),
+			(try_end),
+			
+			(assign, reg0, ":wage"),
+			(set_trigger_result, reg0),
+			])

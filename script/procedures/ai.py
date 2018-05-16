@@ -140,3 +140,68 @@ calculate_troop_ai = (
 				(try_end),
 		])
 		
+		# script_decide_run_away_or_not
+	# Input: none
+	# Output: none
+decide_run_away_or_not = (
+	"decide_run_away_or_not",
+		[
+			(store_script_param, ":cur_agent", 1),
+			(store_script_param, ":mission_time", 2),
+			
+			(assign, ":force_retreat", 0),
+			(agent_get_team, ":agent_team", ":cur_agent"),
+			(agent_get_division, ":agent_division", ":cur_agent"),
+			(try_begin),
+				(lt, ":agent_division", 9), #static classes
+				(team_get_movement_order, ":agent_movement_order", ":agent_team", ":agent_division"),
+				(eq, ":agent_movement_order", mordr_retreat),
+				(assign, ":force_retreat", 1),
+			(try_end),
+
+			(agent_get_slot, ":is_cur_agent_running_away", ":cur_agent", slot_agent_is_running_away),
+			(try_begin),
+				(eq, ":is_cur_agent_running_away", 0),
+				(try_begin),
+					(eq, ":force_retreat", 1),
+					(agent_clear_scripted_mode, ":cur_agent"),	#handle scripted mode troops - motomataru
+					(agent_start_running_away, ":cur_agent"),
+					(agent_set_slot, ":cur_agent",  slot_agent_is_running_away, 1),
+				(else_try),
+					(ge, ":mission_time", 45), #first 45 seconds anyone does not run away whatever happens.
+					(agent_get_slot, ":agent_courage_score", ":cur_agent",  slot_agent_courage_score),
+					(store_agent_hit_points, ":agent_hit_points", ":cur_agent"),
+					(val_mul, ":agent_hit_points", 4),
+					(try_begin),
+						(agent_is_ally, ":cur_agent"),
+						(val_sub, ":agent_hit_points", 100), #ally agents will be more tend to run away, to make game more funnier/harder
+					(try_end),
+					(val_mul, ":agent_hit_points", 10),
+					(store_sub, ":start_running_away_courage_score_limit", 3500, ":agent_hit_points"), 
+					(lt, ":agent_courage_score", ":start_running_away_courage_score_limit"), #if (courage score < 3500 - (agent hit points * 40)) and (agent is not running away) then start running away, average hit points : 50, average running away limit = 1500
+
+					(agent_get_troop_id, ":troop_id", ":cur_agent"), #for now do not let heroes to run away from battle
+					(neg|troop_is_hero, ":troop_id"),
+																
+					(agent_clear_scripted_mode, ":cur_agent"),	#handle scripted mode troops - motomataru
+					(agent_start_running_away, ":cur_agent"),
+					(agent_set_slot, ":cur_agent",  slot_agent_is_running_away, 1),
+				(try_end),
+			(else_try),
+				(neq, ":force_retreat", 1),
+				(agent_get_slot, ":agent_courage_score", ":cur_agent",  slot_agent_courage_score),
+				(store_agent_hit_points, ":agent_hit_points", ":cur_agent"),      
+				(val_mul, ":agent_hit_points", 4),
+				(try_begin),
+					(agent_is_ally, ":cur_agent"),
+					(val_sub, ":agent_hit_points", 100), #ally agents will be more tend to run away, to make game more funnier/harder
+				(try_end),
+				(val_mul, ":agent_hit_points", 10),
+				(store_sub, ":stop_running_away_courage_score_limit", 3700, ":agent_hit_points"), 
+				(ge, ":agent_courage_score", ":stop_running_away_courage_score_limit"), #if (courage score > 3700 - agent hit points) and (agent is running away) then stop running away, average hit points : 50, average running away limit = 1700
+				(agent_stop_running_away, ":cur_agent"),
+				(agent_set_slot, ":cur_agent",  slot_agent_is_running_away, 0),
+			(try_end),      
+	]) 
+#ozan
+		

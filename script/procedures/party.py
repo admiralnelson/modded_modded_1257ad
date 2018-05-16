@@ -3,7 +3,7 @@ from header import *
 		#script_party_calculate_regular_strength:
 		# INPUT:
 		# param1: Party-id
-party_calculate_regular_strength	= (
+party_calculate_regular_strength = (
 	"party_calculate_regular_strength",
 			[
 				(store_script_param_1, ":party"), #Party_id

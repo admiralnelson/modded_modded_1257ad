@@ -2567,6 +2567,8 @@ slot_item_banner = 222
 slot_prop_oil = 400
 ##constants
 oil_timer = 5  #in seconds
+MODDED2x_AIAgentResetTimer = 6
+MODDED2x_AIAgentResetNow = 5
 ###SIEGES
 
 #+FREELANCER start

@@ -866,12 +866,8 @@ good_price_affects_good_production = (
 					#		(assign, reg5, ":production"),
 					#		(str_store_item_name, s4, ":input_item_no"),
 					#		(display_message, "@{s4} price of {reg3} reduces production from {reg4} to {reg5}"),
-					
 				(try_end),
-				
-				
-				(assign, reg0, ":production"),
-				
+				(assign, reg0, ":production"),	
 		])
 		
 #script_center_get_goods_availability

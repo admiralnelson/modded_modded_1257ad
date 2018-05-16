@@ -64,6 +64,10 @@ siege_init_ai_and_belfry = (
 				(set_show_messages, 0),
 				(team_give_order, "$attacker_team", grc_everyone, mordr_stand_ground),
 				(team_give_order, "$attacker_team_2", grc_everyone, mordr_stand_ground),
+				#modded2x begin
+				(team_give_order, "$attacker_team", grc_everyone, mordr_fire_at_will),
+				(team_give_order, "$attacker_team_2", grc_everyone, mordr_fire_at_will),
+				#modded2x end
 				(set_show_messages, 1),
 		])
 

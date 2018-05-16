@@ -491,21 +491,46 @@ siege_tick =	(
   1, 0, 0, [],
   [
 	(val_add, "$do_the_oil", 1),
+	#modded2x begin
+	(val_add, "$MODDED2x_agentAIReset", 1),
+	(try_begin),
+	  (ge, "$MODDED2x_agentAIReset", MODDED2x_AIAgentResetTimer),
+	  	(assign, "$MODDED2x_agentAIReset", 0),
+	  	(display_message, "@Modded2 debug: Timer reset, NOW"),
+	(try_end),
+	(try_begin),
+	  (ge, "$MODDED2x_agentAIReset", MODDED2x_AIAgentResetNow),
+	  	(display_message, "@Modded2 debug: AI agents reset, NOW"),
+	(try_end),
+	(set_show_messages, 0),
+  		(team_give_order, "$attacker_team", grc_everyone, mordr_fire_at_will),
+	(set_show_messages, 1),
+	#modded2x end
 	(try_begin),
 	  (gt, "$do_the_oil", oil_timer),
 	  (assign, "$do_the_oil", 0),
 	(try_end),
+
 	(get_player_agent_no, ":p_agent"),
 	(try_for_agents, ":agent"),
 	  (agent_is_alive, ":agent"),
 	  (agent_get_team, ":team", ":agent"),
 	  (this_or_next|eq, ":team", 1),
       (eq, ":team", 3),
+      (neq, ":agent", ":p_agent"),
 	  (try_begin),
-	    (neq, ":agent", ":p_agent"),
-	    (agent_clear_scripted_mode, ":agent"), #attackers sometimes go funny
-	    (agent_force_rethink, ":agent"), #attackers sometimes go funny
+	   	(agent_clear_scripted_mode, ":agent"), #attackers sometimes go funny     	    
+	   	(try_begin),
+	    	(ge, "$MODDED2x_agentAIReset", MODDED2x_AIAgentResetNow),
+	      		(agent_clear_scripted_mode, ":agent"), #attackers sometimes go funny     	    
+	  	    	(agent_force_rethink, ":agent"), #attackers sometimes go funny
+	  	(try_end),
+		   #modded2x end
+	    #(neq, ":agent", ":p_agent"),
+	    #(agent_clear_scripted_mode, ":agent"), #attackers sometimes go funny
+	    #(agent_force_rethink, ":agent"), #attackers sometimes go funny
 	  (try_end),
+
 	  ##boiling oil
 	  (try_begin),
 	    (le, "$do_the_oil", oil_timer), #every 5 sec
@@ -530,6 +555,9 @@ siege_tick =	(
 		  (try_end),
 		(try_end),
 	  (try_end),
+
+	  
+
 	  (neq, ":agent", ":p_agent"),
 	  ##door brakedown
 	  (agent_get_position,pos0,":agent"),
@@ -623,6 +651,14 @@ siege_init =	(
 
 	(troop_set_slot, "trp_oil_array", 0, ":slot"),
 	(assign, "$do_the_oil", 0),
+
+	#modded2x begin
+	#var
+		(assign, "$MODDED2x_agentAIReset", 0),
+	(team_give_order, "$attacker_team", grc_everyone, mordr_fire_at_will),
+	(team_give_order, "$attacker_team2", grc_everyone , mordr_fire_at_will),
+	
+	#modded2x end
   ]) 
   
 siege_attacker_regroup = (

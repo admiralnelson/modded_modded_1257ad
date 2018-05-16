@@ -596,3 +596,38 @@ raf_replace_troop =(
 			(try_end),
 		(try_end),
 	])
+
+#script_raf_send_messenger_to_companion
+		# WARNING: this is totally new procedure (not present in native). 1257AD devs
+		# INPUT: target_party, orders_object
+		# OUTPUT: NONE 		
+raf_send_messenger_to_companion = (
+	"raf_send_messenger_to_companion",
+		[
+			(store_script_param, ":target_party", 1),
+			(store_script_param, ":orders_object", 2),
+			
+			(set_spawn_radius, 1),
+			(spawn_around_party, "$current_town", "pt_messenger_party"),
+			(assign,":spawned_party",reg0),
+			(party_add_members, ":spawned_party", "trp_raf_messenger", 1),
+			(try_begin),
+			(gt, "$players_kingdom", 0),
+			(party_set_faction, ":spawned_party", "$players_kingdom"),
+			(party_set_slot, ":spawned_party", slot_center_original_faction, "$players_kingdom"),
+			(else_try),
+			(party_set_faction, ":spawned_party", "fac_player_faction"),
+			(party_set_slot, ":spawned_party", slot_center_original_faction, "fac_player_faction"),
+			(try_end),
+			
+			(party_set_slot, ":spawned_party", slot_party_type, raf_spt_messenger),
+			(party_set_slot, ":spawned_party", slot_party_home_center, "$current_town"),
+			
+			(party_set_ai_behavior, ":spawned_party", ai_bhvr_travel_to_party),
+			(party_set_ai_object, ":spawned_party", ":target_party"),
+			(party_set_slot, ":spawned_party", slot_party_ai_object, ":target_party"),
+			(party_set_slot, ":spawned_party", slot_party_orders_object, ":orders_object"),
+			(troop_set_slot, ":orders_object", slot_troop_traveling, 1),
+			
+		])
+		
