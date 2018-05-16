@@ -503,7 +503,7 @@ siege_tick =	(
 	  	(display_message, "@Modded2 debug: AI agents reset, NOW"),
 	(try_end),
 	(set_show_messages, 0),
-  		(team_give_order, "$attacker_team", grc_everyone, mordr_fire_at_will),
+  		(team_give_order, "$attacker_team", grc_everyone, mordr_fire_at_will), #NOTE modde2x: make sure opposing AI is set to "Fire at Will"
 	(set_show_messages, 1),
 	#modded2x end
 	(try_begin),
@@ -530,6 +530,28 @@ siege_tick =	(
 	    #(agent_clear_scripted_mode, ":agent"), #attackers sometimes go funny
 	    #(agent_force_rethink, ":agent"), #attackers sometimes go funny
 	  (try_end),
+	  ##NOTE: 
+	  # modded2x
+	  # ORIGINAL SCRIPT WAS: 
+	  #(try_for_agents, ":agent"),
+	  #	(agent_is_alive, ":agent"),
+	  #	(agent_get_team, ":team", ":agent"),
+	  #	(this_or_next|eq, ":team", 1),
+      #    (eq, ":team", 3),
+	  #	   (try_begin),
+	  #  		(neq, ":agent", ":p_agent"),
+	  #  			(agent_clear_scripted_mode, ":agent"), #attackers sometimes go funny 
+	  #				^--- somehow the AI was set to scripted mode. Can't figured out where the source. Probably from Mod_formation procedures. 
+	  #  			(agent_force_rethink, ":agent"), #attackers sometimes go funny
+	  #				^--- this caused the AI to reset themselves
+	  #				this can be solved by using a "timer", the AI no longer reset themselves everytime they want to use their bows/crossbows/missles.
+	  #	(try_end),
+	  # ....
+	  #(try_end)
+	  # 
+	  # Although this solution is hacky, now the opposing AI shoot their arrows 99%.
+	  # I didn't tested yet with freelance mode, but I am 100% sure this will work for freelancer also.
+
 
 	  ##boiling oil
 	  (try_begin),
