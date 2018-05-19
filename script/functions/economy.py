@@ -830,7 +830,6 @@ good_price_affects_good_production = (
 			[
 				(store_script_param, ":center", 1),
 				(store_script_param, ":input_item_no", 2),
-				(store_script_param, ":input_item_no", 2),
 				(store_script_param, ":production", 3),
 				(store_script_param, ":impact_divisor", 4),
 				

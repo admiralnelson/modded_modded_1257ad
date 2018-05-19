@@ -4177,5 +4177,6 @@ str_npc_payment_recruit = 4175
 str_npc_payment_disband = 4176
 str_economy_build = 4177
 str_economy_demolish = 4178
+str_modded2x_agpl = 4179
 
 

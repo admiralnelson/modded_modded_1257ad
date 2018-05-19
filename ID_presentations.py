@@ -54,3 +54,4 @@ prsnt_economy_build = 52
 prsnt_taragoth_lords_report = 53
 prsnt_order_display = 54
 prsnt_character_creation1 = 55
+prsnt_fizzbuzz = 56

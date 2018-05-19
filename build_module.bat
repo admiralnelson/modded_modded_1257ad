@@ -43,5 +43,7 @@ echo Script processing has ended.
 echo.
 echo ______________________________
 echo.
+rem BEEP:
+echo 
 echo Press any key to exit. . .
 pause>nul

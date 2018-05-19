@@ -25917,7 +25917,7 @@ itm_spear_p,
 			itm_leather_gloves,
 			itm_sword_type_xiii,
 			itm_glaive,
-		itm_spear_d,
+		  itm_spear_d,
       itm_spear_e,
       itm_spear_f,
       itm_spear_h,
@@ -25964,16 +25964,13 @@ itm_spear_p,
 		0, 0, fac_kingdom_1,
 		[
 			itm_sword_type_xii,
-
       itm_gambeson_a,
       itm_gambeson_b,
       itm_gambeson_c,
       itm_gambeson_d,
-                        itm_kau_padded_mail_a,
-
+      itm_kau_padded_mail_a,
 			itm_woolen_hose,
       itm_courser,
-
 			itm_leather_gloves,
 
 		],

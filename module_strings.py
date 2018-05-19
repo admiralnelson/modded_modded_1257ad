@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from text.Modded2x import * #modded2x strings
+
 strings = [
   ("no_string", "NO STRING!"),
   ("empty_string", " "),
@@ -5834,4 +5836,4 @@ We apologize sincerely if you contributed your suggestions and feedback but were
  
  
  
- ]
+ ] + modded2x_strings
