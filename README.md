@@ -6,10 +6,10 @@ note:
 2. change output directory in module info.
 
 TODO:
-- [ ] code refactoring and documentation (70%-ish, 422 out of 596  procedures/functions/cfunctions)  
+- [x] code refactoring and documentation 
 - [ ] import troop trees from modded 1257AD + weapon balance ofc  
 - [ ] brainybots 
-- [ ] fix retarded siege AI
+- [x] fix retarded siege AI
 
 Suggestion from last thread 211791549
 - [ ] fix venetian troop bug
@@ -41,6 +41,6 @@ logs:
 (46%-ish, 275 out of 596 procedures/functions/cfunctions)  
 (57%-ish, 340 out of 596 procedures/functions/cfunctions)  
 (70%-ish, 422 out of 596  procedures/functions/cfunctions)  
-
+(100, 596 out of 596  procedures/functions/cfunctions)  
 ## important keywords so far
 1257AD, 1257AD devs, WARNING, modified, modded2x, tom, ozan, rafi, dplmc, diplomacy begin, diplomacy end, freelancer
