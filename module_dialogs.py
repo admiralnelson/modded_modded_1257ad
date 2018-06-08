@@ -7,6 +7,7 @@ from header_parties import *
 from header_item_modifiers import *
 from header_skills import *
 from header_triggers import *
+from header_music import *
 from ID_troops import *
 from ID_party_templates import *
 
@@ -12999,7 +13000,7 @@ dialogs = [
 						  (val_add, ":rtr", 5),
 						  (str_store_faction_name, s1, ":cur_faction"),
 						  (str_store_faction_name, s2, "fac_player_supporters_faction"),
-						  (display_message, "@{s1} recognize you as the rightful king of {s2}"),
+						  (display_message, "@{s1} recognize you as the rightful ruler of {s2}"),
 						(try_end),
 						(call_script, "script_change_player_right_to_rule", ":rtr"),
 						(store_random_in_range, ":crown", "itm_crown_european", "itm_seljuk_hair"),
@@ -13731,6 +13732,17 @@ dialogs = [
                            (call_script, "script_change_player_relation_with_troop", "$g_talk_troop", "$log_comment_relation_change"),
                          (try_end),
                          (assign, "$g_comment_found", 0),
+                         #modded2x begin
+													(try_begin),
+														(store_relation,":relation", "$g_encountered_party_faction","fac_player_supporters_faction"),
+														(str_store_faction_name, s0, "$g_encountered_party_faction"),
+														(assign, reg0, ":relation"),
+														(display_message, "@[dialog]encountered  faction : {s0}, relation {reg0} "),
+										    			(lt, ":relation", -5),	
+											    			(call_script, "script_music_set_situation_with_culture", mtf_sit_encounter_hostile),
+											    (try_end),
+													
+													#modded2x end
                     ]],
 
 #Troop commentaries changes end
@@ -21094,7 +21106,16 @@ dialogs = [
        (call_script, "script_lord_comment_to_s43", "$g_talk_troop", "str_lord_challenged_default"),
 
        (call_script, "script_make_kingdom_hostile_to_player", "$g_encountered_party_faction", -3),
-
+       #modded2x begin
+				(try_begin),
+					(store_relation,":relation", "$g_encountered_party_faction","fac_player_supporters_faction"),
+					(str_store_faction_name, s0, "$g_encountered_party_faction"),
+					(assign, reg0, ":relation"),
+					(display_message, "@[dialog - provoke by player] encountered  faction : {s0}, relation {reg0} "),
+	    			(lt, ":relation", -5),	
+		    			(call_script, "script_music_set_situation_with_culture", mtf_sit_encounter_hostile),
+		    (try_end),
+				#modded2x end
        (try_begin),
          (gt, "$g_talk_troop_relation", -10),
          (call_script, "script_change_player_relation_with_troop", "$g_talk_troop", -1),

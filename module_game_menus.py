@@ -1134,18 +1134,20 @@ game_menus = [ #
 		"Select your character's gender.",
 		"none",
 		[
+			#modded2x begin
 			(try_begin),
 			(eq, "$culture_pool_initialized", 0),
 			(call_script, "script_initialize_culture_pools"),
 			(assign, "$culture_pool_initialized", 1),
-		(try_end),
+			(try_end),
 		
-		#equiping troops
-		(try_begin),
+			#equiping troops
+			(try_begin),
 			(eq, "$culture_pool", 0),
 			(assign, "$culture_pool", 1),
 			(call_script, "script_rebalance_troops_by_culture"),
-		(try_end),  
+			(try_end),  
+			#modded2x end
 	],
 		[
 			("start_male",[],"Male",
@@ -4191,6 +4193,7 @@ game_menus = [ #
 			(assign, "$g_enemy_party", "$g_encountered_party"),
 			(assign, "$g_ally_party", -1),
 			(call_script, "script_encounter_calculate_fit"),
+			
 			(try_begin),
 				(eq, "$new_encounter", 1),
 				(assign, "$new_encounter", 0),
@@ -5069,8 +5072,8 @@ game_menus = [ #
 			 (eq, "$g_battle_result", 1),
 			 (eq, "$g_enemy_fit_for_battle", 0),
 			 (str_store_string, s11, "@You were victorious!"),
-#       (play_track, "track_bogus"), #clear current track.
-#       (call_script, "script_music_set_situation_with_culture", mtf_sit_victorious),
+       (play_track, "track_bogus"), #clear current track.
+       (call_script, "script_music_set_situation_with_culture", mtf_sit_victorious),
 			 (try_begin),
 				 (gt, "$g_friend_fit_for_battle", 1),
 				 (set_background_mesh, "mesh_pic_victory"),
@@ -6861,6 +6864,7 @@ game_menus = [ #
 		"You are laying siege to {s1}. {s2} {s3}",
 		"none",
 		[
+
 				(troop_get_type, ":is_female", "trp_player"),
 				(try_begin),
 					(eq, ":is_female", 1),
@@ -6921,6 +6925,9 @@ game_menus = [ #
 							(eq, "$g_siege_method", 2),
 							(str_store_string, s3, "@The siege tower is built and ready to make an assault."),
 						(try_end),
+						#modded2x begin
+						(call_script, "script_music_set_situation_with_culture", mtf_sit_encounter_hostile),
+						#modded2x end
 					(try_end),
 				(try_end),
 

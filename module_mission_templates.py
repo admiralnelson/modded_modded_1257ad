@@ -260,14 +260,15 @@ change_weather = (
 	(assign, "$tom_sand_storm", 0), #tom
     (call_script, "script_change_rain_or_snow"),
 	
+	# modded2x disable shitty shaders
 	#### shaders
-	(set_fixed_point_multiplier, 100),
-	(try_begin),
-	  (is_currently_night),
-	  (set_shader_param_float, "@vFresnelMultiplier", shader_float_default),
-	(else_try),
-      (set_shader_param_float, "@vFresnelMultiplier", shader_float_day),
-	(try_end),
+	#(set_fixed_point_multiplier, 100),
+	#(try_begin),
+	#  (is_currently_night),
+	#  (set_shader_param_float, "@vFresnelMultiplier", shader_float_default),
+	#(else_try),
+    #  (set_shader_param_float, "@vFresnelMultiplier", shader_float_day),
+	#(try_end),
 	#### shaders
 	
 	#(music_set_culture, mtf_sit_fight),
@@ -4087,6 +4088,9 @@ common_siege_init = (
 common_music_situation_update = (
   30, 0, 0, [],
   [
+  # modded2x begin
+    (call_script, "script_combat_music_set_situation_with_culture"), #tom
+  # modded2x end
   #tom	
   ##(music_set_culture, mtf_culture_all),
 	##(music_set_situation, mtf_sit_fight), 
@@ -5641,7 +5645,7 @@ mission_templates = [
                              #(add_reinforcements_to_entry, 1, 29), #tom
 							(add_reinforcements_to_entry, 1, 40),
                            (try_end),
-                           (call_script, "script_combat_music_set_situation_with_culture"),
+                           (call_script, "script_combat_music_set_situation_with_culture", mtf_sit_fight),
                            # deathcam
                            (assign, "$dmod_current_agent", -1),
                            (assign, "$dmod_move_camera", -1),

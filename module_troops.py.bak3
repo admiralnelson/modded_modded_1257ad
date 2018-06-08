@@ -342,7 +342,7 @@ equipment_tier_1_foot = [
   itm_spiked_club,
   itm_scythe,
   itm_hatchet,
-  itm_club,
+  itm_modded_club,
   itm_pitch_fork,
   itm_pickaxe,
 
@@ -825,7 +825,8 @@ troops = [
 		mercenary_face_1, mercenary_face_2
 	],
 
-  #modded2x begin
+
+# modded2x begin
 
   ["modded_tutorial_maceman", "Templar Senior Militia Spearman", "Templar Senior Militia Spearmen", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_shield, no_scene, 0, fac_kingdom_1, [itm_spear_a, itm_spear_b, itm_spear_c, itm_spear_d, itm_spear_e, itm_spear_f, itm_spear_h, itm_spear_j, itm_spear_k, itm_mail_coif, itm_vik_norman_helmet_b, itm_raf_spangen, itm_elm8, itm_elm2, itm_elm3, itm_kolpak_mail, itm_leather_fur_boots, itm_red_hose, itm_green_hose, itm_grey_hose, itm_dark_grey_hose, itm_yellow_hose, itm_tied_up_shoes, itm_green_hose_b, itm_blue_hose_mod, itm_tab_shield_heater_c, itm_templar_kettlehat_a_mail, itm_hospitaller_kettlehat_a_mail, itm_templar_mail_a, itm_templar_gambeson_a, itm_hospitaller_knight_a, itm_hospitaller_gambeson_a, itm_spear_g, itm_spear_i, itm_spear_l, itm_spear_m, itm_spear_n, itm_spear_o, itm_spear_p, itm_pickaxe, itm_spiked_club, itm_fighting_pick, itm_military_pick, itm_hatchet, itm_raf_one_handed_axe_a, itm_raf_one_handed_axe_b, itm_raf_one_handed_axe_c, itm_raf_one_handed_axe_d, itm_raf_one_handed_axe_e, itm_raf_one_handed_axe_f, itm_raf_one_handed_axe_g, itm_raf_one_handed_axe_h, itm_military_sickle_a], str_15|agi_12|int_6|cha_6|level(20), wpex(100,10,200,10,10,40), knows_shield_3|knows_power_strike_5|knows_power_throw_1|knows_weapon_master_4|knows_ironflesh_1|knows_athletics_4, 0x00000000000c314458e36fd8d292379a00000000001d42ac0000000000000000, 0x0000000f7a0c300458e36fd8d292379a00000000001d42ac0000000000000000],
 
@@ -861,11 +862,14 @@ troops = [
 
   ["modded_arena_training_fighter_10", "Templar Sword & Bucklerman", "Templar Sword & Bucklermen", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_gloves|tf_guarantee_shield, no_scene, 0, fac_kingdom_1, [itm_leather_fur_boots, itm_red_hose, itm_green_hose, itm_grey_hose, itm_dark_grey_hose, itm_yellow_hose, itm_tied_up_shoes, itm_green_hose_b, itm_blue_hose_mod, itm_hospitaller_kettlehat_a_mail, itm_templar_kettlehat_a_mail, itm_mail_mittens, itm_cp391_sword, itm_talak_buckler, itm_templar_tunic_a, itm_templar_knight_a, itm_templar_knight_b, itm_templar_knight_c, itm_balt_footman_helmet, itm_balt_helmet_b, itm_rnd_helm_06, itm_hospitaller_kettlehat_a, itm_elm6, itm_elm8, itm_leather_warrior_cap, itm_norman_coif_b, itm_kolpak_mail, itm_mail_coif_b, itm_mail_coif_c, itm_norman_faceplate, itm_flat_topped_helmet_a, itm_flat_topped_helmet_b, itm_great_helmet_d, itm_great_helmet_decorative, itm_kettlehat_b, itm_rhodok_four_plated_helmet], str_18|agi_16|int_9|cha_9|level(25), wpex(300,10,10,10,10,10), knows_shield_6|knows_power_strike_6|knows_weapon_master_1|knows_ironflesh_6|knows_athletics_6, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000bc00062c76ddcdf7feefbffff00000000001efdbc0000000000000000],
 
-  #modded2x end
+  
+
+# modded2x end
+
 
 	### MERC GENERIC NEW
 	##GENERAL EUROPEAN MERCS
-	["merc_euro_spearman", "European Mercenary Spearman", "European Mercenary Spearmen", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_shield, no_scene, 0, fac_kingdom_1, [itm_mail_coif, itm_great_helmet_d, itm_elm1, itm_elm2, itm_norman_coif_d, itm_kettle_cloth, itm_elm3, itm_elm8, itm_norman_faceplate, itm_norman_coif_a, itm_vik_spangen_a, itm_norman_coif_e, itm_kettlehat_b, itm_arming_cap, itm_flat_topped_helmet_b, itm_kau_padded_mail_a, itm_kau_mail_shirt_a, itm_surcoat_c, itm_surcoat_d, itm_surcoat_e, itm_gambeson_a, itm_gambeson_b, itm_gambeson_c, itm_gambeson_d, itm_red_hose, itm_green_hose, itm_grey_hose, itm_dark_grey_hose, itm_yellow_hose, itm_tied_up_shoes, itm_blue_hose_mod, itm_tab_shield_kite_c, itm_reiforced_shield_horse, itm_reiforced_shield_infantry, itm_spear_c, itm_spear_d, itm_spear_e, itm_spear_f, itm_spear_h, itm_spear_j, itm_spear_k, itm_spear_l, itm_spear_m, itm_spear_n, itm_spear_o, itm_spear_p, itm_raf_one_handed_axe_a, itm_raf_one_handed_axe_b, itm_raf_one_handed_axe_c, itm_raf_one_handed_axe_d, itm_raf_one_handed_axe_e, itm_raf_one_handed_axe_f, itm_raf_one_handed_axe_g, itm_pickaxe, itm_spiked_club, itm_fighting_pick, itm_military_pick, itm_hatchet, itm_military_sickle_a, itm_spear_a, itm_spear_b, itm_spear_g, itm_spear_i], str_15|agi_12|int_6|cha_6|level(20), wpex(270,270,270,10,10,180), knows_shield_6|knows_power_strike_6|knows_power_throw_4|knows_weapon_master_5|knows_ironflesh_7|knows_athletics_2|knows_riding_4, 0x00000000000c314458e36fd8d292379a00000000001d42ac0000000000000000, 0x0000000f7a0c300458e36fd8d292379a00000000001d42ac0000000000000000],
+["merc_euro_spearman", "European Mercenary Spearman", "European Mercenary Spearmen", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_shield, no_scene, 0, fac_kingdom_1, [itm_mail_coif, itm_great_helmet_d, itm_elm1, itm_elm2, itm_norman_coif_d, itm_kettle_cloth, itm_elm3, itm_elm8, itm_norman_faceplate, itm_norman_coif_a, itm_vik_spangen_a, itm_norman_coif_e, itm_kettlehat_b, itm_arming_cap, itm_flat_topped_helmet_b, itm_kau_padded_mail_a, itm_kau_mail_shirt_a, itm_surcoat_c, itm_surcoat_d, itm_surcoat_e, itm_gambeson_a, itm_gambeson_b, itm_gambeson_c, itm_gambeson_d, itm_red_hose, itm_green_hose, itm_grey_hose, itm_dark_grey_hose, itm_yellow_hose, itm_tied_up_shoes, itm_blue_hose_mod, itm_tab_shield_kite_c, itm_reiforced_shield_horse, itm_reiforced_shield_infantry, itm_spear_c, itm_spear_d, itm_spear_e, itm_spear_f, itm_spear_h, itm_spear_j, itm_spear_k, itm_spear_l, itm_spear_m, itm_spear_n, itm_spear_o, itm_spear_p, itm_raf_one_handed_axe_a, itm_raf_one_handed_axe_b, itm_raf_one_handed_axe_c, itm_raf_one_handed_axe_d, itm_raf_one_handed_axe_e, itm_raf_one_handed_axe_f, itm_raf_one_handed_axe_g, itm_pickaxe, itm_spiked_club, itm_fighting_pick, itm_military_pick, itm_hatchet, itm_military_sickle_a, itm_spear_a, itm_spear_b, itm_spear_g, itm_spear_i], str_15|agi_12|int_6|cha_6|level(20), wpex(270,270,270,10,10,180), knows_shield_6|knows_power_strike_6|knows_power_throw_4|knows_weapon_master_5|knows_ironflesh_7|knows_athletics_2|knows_riding_4, 0x00000000000c314458e36fd8d292379a00000000001d42ac0000000000000000, 0x0000000f7a0c300458e36fd8d292379a00000000001d42ac0000000000000000],
 
   ["merc_euro_guisarmer", "European Mercenary Guisarmier", "European Mercenary Guisarmiers", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet, no_scene, 0, fac_kingdom_1, [itm_arming_cap, itm_mail_coif, itm_great_helmet_d, itm_elm1, itm_elm2, itm_great_helmet_decorative, itm_norman_coif_d, itm_kettle_cloth, itm_elm3, itm_elm8, itm_maciejowski_kettle_hat_b, itm_maciejowski_kettle_hat_a, itm_norman_faceplate, itm_priest_cap_2, itm_norman_coif_a, itm_vik_spangen_a, itm_norman_coif_e, itm_kettlehat_b, itm_arming_cap, itm_flat_topped_helmet_b, itm_surcoat_a, itm_surcoat_b, itm_surcoat_c, itm_surcoat_d, itm_surcoat_e, itm_gambeson_a, itm_gambeson_b, itm_gambeson_c, itm_gambeson_d, itm_bill, itm_leather_fur_boots, itm_red_hose, itm_green_hose, itm_grey_hose, itm_dark_grey_hose, itm_yellow_hose, itm_tied_up_shoes, itm_green_hose_b, itm_blue_hose_mod, itm_voulge, itm_club_with_spike_head, itm_long_hafted_knobbed_mace, itm_military_scythe, itm_modded_tutorial_battle_axe1, itm_modded_tutorial_arrows1, itm_modded_tutorial_bolts1, itm_cartridges, itm_modded_lute1, itm_sarranid_mace_1, itm_modded_arena_axe, itm_staff, itm_quarter_staff, itm_pitch_fork, itm_sarranid_axe_b, itm_iron_staff], str_15|agi_12|int_6|cha_6|level(20), wpex(270,270,270,10,10,180), knows_shield_6|knows_power_strike_6|knows_power_throw_4|knows_weapon_master_5|knows_ironflesh_7|knows_athletics_2|knows_riding_4, 0x00000000000c314458e36fd8d292379a00000000001d42ac0000000000000000, 0x0000000f7a0c300458e36fd8d292379a00000000001d42ac0000000000000000],
 
@@ -982,16 +986,8 @@ troops = [
   ["cuman_heavy_lancer", "Cuman Royal Lancer", "Cuman Royal Lancers", tf_mounted|tf_guarantee_all_wo_ranged, no_scene, 0, fac_khergits, [itm_sword_khergit_4, itm_rus_mask_helmet, itm_cuman_shield_a_3, itm_cuman_shield_b_3, itm_cuman_shield_c_3, itm_mon_lamellar_horse_c, itm_lamellar_vest_khergit, itm_kipchak_lamellar_a, itm_nikloskoe_helmet_warrior, itm_kiev_helmet_2_facemail, itm_cuman_boots, itm_rus_helmet_a, itm_rus_helmet_3, itm_light_lance, itm_lance, itm_heavy_lance, itm_muslim_lance, itm_bamboo_spear, itm_berber_spear], str_25|agi_15|int_12|cha_20|level(30), wpex(325,10,325,10,10,10), knows_shield_6|knows_power_strike_6|knows_weapon_master_5|knows_horse_archery_1|knows_ironflesh_2|knows_athletics_2|knows_riding_8, 0x00000007c9003109207000000000000000000000001c80470000000000000000, 0x0000000fff0061cd6d7ffbdf9df6ebee00000000001ffb7f0000000000000000],
 
 
-	##CUMANS
-	###HISTORICAL MERCS
-	
-	
-	
-
-#soldiers:
-#This troop is the troop marked as soldiers_begin
-
-["farmer", "Farmer", "Farmers", tf_guarantee_boots|tf_guarantee_armor, no_scene, 0, fac_commoners, [itm_modded_club, itm_1257_hood, itm_woolen_cap, itm_leather_cap, itm_straw_hat, itm_peasant_tunic_a, itm_peasant_b, itm_peasant_c, itm_peasant_d, itm_tunic_with_green_cape, itm_peasant_f, itm_peasant_g, itm_woolen_hose, itm_wrapping_boots, itm_modded_practice_sword, itm_modded_practice_dagger, itm_javelin, itm_darts, itm_fustibalus, itm_throwing_knives, itm_stones, itm_modded_club, itm_sickle], str_9|agi_9|int_6|cha_5|level(5), wp(70), knows_shield_2|knows_power_strike_3|knows_power_throw_1|knows_weapon_master_2|knows_athletics_1, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000bc00062c76ddcdf7feefbffff00000000001efdbc0000000000000000],
+## soldier_begin:
+  ["farmer", "Farmer", "Farmers", tf_guarantee_boots|tf_guarantee_armor, no_scene, 0, fac_commoners, [itm_modded_club, itm_1257_hood, itm_woolen_cap, itm_leather_cap, itm_straw_hat, itm_peasant_tunic_a, itm_peasant_b, itm_peasant_c, itm_peasant_d, itm_tunic_with_green_cape, itm_peasant_f, itm_peasant_g, itm_woolen_hose, itm_wrapping_boots, itm_modded_practice_sword, itm_modded_practice_dagger, itm_javelin, itm_darts, itm_fustibalus, itm_throwing_knives, itm_stones, itm_modded_club, itm_sickle], str_9|agi_9|int_6|cha_5|level(5), wp(70), knows_shield_2|knows_power_strike_3|knows_power_throw_1|knows_weapon_master_2|knows_athletics_1, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000bc00062c76ddcdf7feefbffff00000000001efdbc0000000000000000],
 
   ["crusader_turkopole", "Turcopole", "Turcopoles", tf_mounted|tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_horse|tf_guarantee_shield|tf_guarantee_ranged, no_scene, 0, fac_kingdom_1, [itm_nomad_bow, itm_arabian_sword_a, itm_arabian_sword_b, itm_kau_mail_b, itm_kau_mail_a, itm_baltic_ponted_helmet, itm_berber_white_turban, itm_elm1, itm_elm2, itm_mamluke_helm_ventail, itm_arab_shield_f_3, itm_arab_shield_g_3, itm_arab_shield_h_3, itm_arab_shield_i_3, itm_balt_helmet_b, itm_arab_helmet_b, itm_turban_b, itm_byz_helmet_b, itm_kau_turcopole_a, itm_kau_turcopole_b, itm_cuman_boots, itm_byz_boots_c, itm_hunter, itm_bodkin_arrows], str_18|agi_16|int_6|cha_9|level(22), wpex(220,10,130,300,10,10), knows_shield_4|knows_power_strike_3|knows_power_throw_6|knows_power_draw_6|knows_weapon_master_3|knows_horse_archery_7|knows_ironflesh_2|knows_riding_5, 0x000000001c0c31d134a391e76255c4dc00000000001e28ac0000000000000000, 0x0000000edc0c424034a391e76255c4dc00000000001e28ac0000000000000000],
 
@@ -1703,11 +1699,7 @@ troops = [
 
   ["euro_horse_4", "European Knight", "European Knights", tf_mounted|tf_guarantee_all_wo_ranged, no_scene, 0, fac_kingdom_1, [itm_sword_type_xiii, itm_sword_type_xiiia, itm_mace_2, itm_mace_3, itm_morningstar, itm_heraldic_lance, itm_heavy_lance, itm_mail_mittens, itm_mail_coif, itm_mail_coif_c, itm_rnd_helm_04, itm_great_helmet_decorative, itm_flat_topped_helmet_b, itm_great_helmet_a, itm_elm6, itm_elm8, itm_great_helmet_b, itm_great_helmet_c, itm_kettlehat_b, itm_rnd_helm_03, itm_norman_faceplate, itm_norman_coif_e, itm_vik_norman_helmet_b, itm_rnd_helm_05, itm_rnd_helm_06, itm_mail_coif, itm_rhodok_great_helmet, itm_frenchpepperpot2, itm_frenchpepperpot3, itm_munitionshelm2, itm_pepperpothelm1, itm_munitionshelm1, itm_frenchpepperpot, itm_tab_shield_heater_c, itm_warhorse, itm_rnd_surcoat_01, itm_rnd_surcoat_02, itm_rnd_surcoat_03, itm_rnd_surcoat_04, itm_rnd_surcoat_05, itm_rnd_surcoat_06, itm_rnd_surcoat_07, itm_rnd_surcoat_08, itm_rnd_surcoat_09, itm_rnd_surcoat_10, itm_rnd_surcoat_11, itm_rnd_surcoat_12, itm_rnd_surcoat_13, itm_rnd_surcoat_14, itm_rnd_surcoat_15, itm_rnd_surcoat_16, itm_rnd_surcoat_17, itm_rnd_surcoat_18, itm_rnd_surcoat_19, itm_rnd_surcoat_20, itm_rnd_surcoat_21, itm_rnd_surcoat_22, itm_rnd_surcoat_23, itm_splinted_greaves_long, itm_mail_boots_long, itm_modded_arena_sword_two_handed, itm_heraldic_mail_with_surcoat_for_tableau, itm_modded_arena_sword, itm_bb_serbian_sword_1], str_25|agi_15|int_12|cha_20|level(30), wpex(325,325,325,10,10,110), knows_shield_6|knows_power_strike_7|knows_prisoner_management_1|knows_weapon_master_7|knows_tactics_4|knows_leadership_3|knows_horse_archery_6|knows_ironflesh_2|knows_athletics_1|knows_riding_8, 0x000000015c04200259156eb6e1b5a6eb00000000001f2e540000000000000000, 0x0000000a3f08300654856b4852a656db00000000001e451b0000000000000000],
 
-  #####################
-  # troops end here
-  #####################
-
- ["looter", "Looter", "Looters", tf_guarantee_armor, no_scene, 0, fac_outlaws, [itm_modded_club, itm_butchering_knife, itm_peasant_g, itm_gaelic_shirt_blue, itm_dark_grey_hose, itm_green_hose_b, itm_legs_with_shoes, itm_shoes, itm_woolen_cap, itm_1257_hood, itm_archer_a, itm_archer_b, itm_peasant_c, itm_peasant_d, itm_modded_practice_sword, itm_modded_practice_dagger, itm_modded_practice_staff, itm_modded_cudgel, itm_darts, itm_dagger, itm_cleaver, itm_knife, itm_stones, itm_fustibalus, itm_throwing_knives], str_7|agi_6|int_4|cha_4|level(1), wp(20), knows_inventory_management_10, 0x000000001c00101027233536622ea85b00000000001f52de0000000000000000, 0x0000000fff0052064deeffffffffffff00000000001efff90000000000000000],
+  ["looter", "Looter", "Looters", tf_guarantee_armor, no_scene, 0, fac_outlaws, [itm_modded_club, itm_butchering_knife, itm_peasant_g, itm_gaelic_shirt_blue, itm_dark_grey_hose, itm_green_hose_b, itm_legs_with_shoes, itm_shoes, itm_woolen_cap, itm_1257_hood, itm_archer_a, itm_archer_b, itm_peasant_c, itm_peasant_d, itm_modded_practice_sword, itm_modded_practice_dagger, itm_modded_practice_staff, itm_modded_cudgel, itm_darts, itm_dagger, itm_cleaver, itm_knife, itm_stones, itm_fustibalus, itm_throwing_knives], str_7|agi_6|int_4|cha_4|level(1), wp(20), knows_inventory_management_10, 0x000000001c00101027233536622ea85b00000000001f52de0000000000000000, 0x0000000fff0052064deeffffffffffff00000000001efff90000000000000000],
 
   ["raider", "Highwayman", "Highwaymen", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_shield, no_scene, 0, fac_outlaws, [itm_dark_grey_hose, itm_green_hose_b, itm_legs_with_shoes, itm_shoes, itm_pilgrim_hat, itm_priest_cap_2, itm_vik_spangen_a, itm_woolen_cap, itm_1257_hood, itm_modded_practice_shield, itm_modded_tutorial_battle_axe1, itm_modded_tutorial_arrows1, itm_modded_tutorial_bolts1, itm_modded_practice_shield, itm_short_bow, itm_hunting_bow, itm_arrows, itm_barbed_arrows, itm_rawhide_coat, itm_linen_tunic, itm_red_shirt, itm_gambeson_a, itm_gambeson_b, itm_haubergeon, itm_coat_of_plates, itm_bb_serbian_sword_5, itm_bb_serbian_sword_1, itm_sword_type_xiv, itm_sword_type_xiii], str_15|agi_12|int_4|cha_4|level(15), wp(135), knows_shield_3|knows_power_strike_3|knows_inventory_management_10|knows_power_throw_3|knows_power_draw_3|knows_ironflesh_3|knows_athletics_3, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000fff0052064deeffffffffffff00000000001efff90000000000000000],
 
@@ -1892,7 +1884,8 @@ troops = [
   ["irish_prison_guard", "Prison Guard", "Prison Guards", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_gloves, no_scene, 0, fac_kingdom_1, [itm_1257_hood, itm_legs_with_shoes, itm_shoes, itm_kettlehat_a, itm_kettlehat_b, itm_kettlehat_c, itm_flat_kettle_hat, itm_maciejowski_kettle_hat_a, itm_maciejowski_kettle_hat_b, itm_mail_coif, itm_vik_norman_helmet_a, itm_vik_norman_helmet_b, itm_raf_spangen, itm_kolpak_mail, itm_kau_mail_b, itm_kau_mail_shirt_a, itm_kau_mail_shirt_d, itm_ankle_boots, itm_wrapping_boots, itm_raf_two_handed_axe_a, itm_raf_two_handed_axe_b, itm_raf_two_handed_axe_c, itm_byz_swordsman_1, itm_galloglass_padded, itm_modded_tutorial_battle_axe1, itm_modded_tutorial_arrows1, itm_modded_tutorial_bolts1, itm_leather_gloves, itm_scale_gauntlets], str_18|agi_16|int_9|cha_9|level(25), wpex(10,265,140,10,10,50), knows_power_strike_6|knows_weapon_master_4|knows_ironflesh_6|knows_athletics_4, 0x00000000000c314458e36fd8d292379a00000000001d42ac0000000000000000, 0x0000000f7a0c300458e36fd8d292379a00000000001d42ac0000000000000000],
 
   ["irish_castle_guard", "Castle Guard", "Castle Guards", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_gloves|tf_guarantee_shield, no_scene, 0, fac_kingdom_1, [itm_sword_viking_2, itm_sword_viking_3, itm_raf_one_handed_axe_a, itm_raf_one_handed_axe_b, itm_raf_one_handed_axe_c, itm_spear_k, itm_spear_l, itm_spear_m, itm_spear_n, itm_legs_with_shoes, itm_shoes, itm_tab_shield_heater_c, itm_tab_shield_kite_c, itm_kettlehat_a, itm_kettlehat_b, itm_kettlehat_c, itm_kettle_cloth, itm_maciejowski_kettle_hat_a, itm_maciejowski_kettle_hat_b, itm_vik_norman_helmet_a, itm_vik_norman_helmet_b, itm_raf_spangen, itm_kolpak_mail, itm_kau_mail_b, itm_spear_a, itm_spear_b, itm_spear_c, itm_spear_d, itm_spear_e, itm_spear_f, itm_spear_g, itm_spear_h, itm_spear_i, itm_spear_j, itm_spear_o, itm_spear_p, itm_pickaxe, itm_spiked_club, itm_fighting_pick, itm_military_pick, itm_hatchet, itm_raf_one_handed_axe_d, itm_raf_one_handed_axe_e, itm_raf_one_handed_axe_f, itm_raf_one_handed_axe_g, itm_raf_one_handed_axe_h, itm_military_sickle_a, itm_byz_swordsman_1, itm_galloglass_padded, itm_modded_tutorial_battle_axe1, itm_modded_tutorial_arrows1, itm_modded_tutorial_bolts1, itm_scale_gauntlets, itm_leather_gloves, itm_war_darts, itm_practice_bow_2], str_18|agi_16|int_9|cha_9|level(25), wpex(140,10,265,10,10,50), knows_shield_5|knows_power_strike_6|knows_power_throw_2|knows_weapon_master_5|knows_ironflesh_2|knows_athletics_5, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000bc00062c76ddcdf7feefbffff00000000001efdbc0000000000000000],
-	
+
+  
   [
     "Xerina",
     "Jean de Joinville",
@@ -2942,16 +2935,16 @@ troops = [
 #Tutorial
   ["tutorial_trainer","Training Ground Master","Training Ground Master",tf_hero, 0, 0, fac_commoners,[itm_robe,itm_wrapping_boots],def_attrib|level(2),wp(20),knows_common,0x000000000008414401e28f534c8a2d09],
   ["tutorial_student_1","{!}tutorial_student_1","{!}tutorial_student_1",tf_guarantee_boots|tf_guarantee_armor, 0, 0, fac_neutral,
-   [itm_practice_sword, itm_practice_shield, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
+   [itm_modded_practice_sword, itm_modded_practice_shield, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
    def_attrib|level(2),wp(20),knows_common, swadian_face_young_1, swadian_face_old_2],
   ["tutorial_student_2","{!}tutorial_student_2","{!}tutorial_student_2",tf_guarantee_boots|tf_guarantee_armor, 0, 0, fac_neutral,
-   [itm_practice_sword, itm_practice_shield, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
+   [itm_modded_practice_sword, itm_modded_practice_shield, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
    def_attrib|level(2),wp(20),knows_common, swadian_face_young_1, swadian_face_old_2],
   ["tutorial_student_3","{!}tutorial_student_3","{!}tutorial_student_3",tf_guarantee_boots|tf_guarantee_armor, 0, 0, fac_neutral,
-   [itm_practice_staff, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
+   [itm_modded_practice_staff, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
    def_attrib|level(2),wp(20),knows_common, swadian_face_young_1, swadian_face_old_2],
   ["tutorial_student_4","{!}tutorial_student_4","{!}tutorial_student_4",tf_guarantee_boots|tf_guarantee_armor, 0, 0, fac_neutral,
-   [itm_practice_staff, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
+   [itm_modded_practice_staff, itm_linen_tunic,itm_merchant_outfit,itm_gambeson_a,itm_ankle_boots,itm_padded_coif,itm_footman_helmet],
    def_attrib|level(2),wp(20),knows_common, swadian_face_young_1, swadian_face_old_2],
 
 #Sargoth
@@ -3603,7 +3596,7 @@ troops = [
    # str_8|agi_7|int_12|cha_7|level(3),wp(60),knows_tracker_npc|
    # knows_ironflesh_1|knows_power_strike_1|knows_pathfinding_3|knows_athletics_2|knows_tracking_1|knows_riding_2, #skills 2/3 player at that level
    # 0x00000004bf086143259d061a9046e23500000000001db52c0000000000000000],
-  # ["npc2","Marnid","Marnid", tf_hero|tf_unmoveable_in_party_window, 0,reserved, fac_commoners,[itm_linen_tunic,itm_hide_boots,itm_club],
+  # ["npc2","Marnid","Marnid", tf_hero|tf_unmoveable_in_party_window, 0,reserved, fac_commoners,[itm_linen_tunic,itm_hide_boots,itm_modded_club],
    # str_7|agi_7|int_11|cha_6|level(1),wp(40),knows_merchant_npc|
    # knows_trade_2|knows_weapon_master_1|knows_ironflesh_1|knows_wound_treatment_1|knows_athletics_2|knows_first_aid_1|knows_leadership_1,
    # 0x000000019d004001570b893712c8d28d00000000001dc8990000000000000000],
@@ -3738,7 +3731,7 @@ troops = [
    # str_8|agi_7|int_12|cha_7|level(3),wp(60),knows_tracker_npc|
    # knows_ironflesh_1|knows_power_strike_1|knows_pathfinding_3|knows_athletics_2|knows_tracking_1|knows_riding_2, #skills 2/3 player at that level
    # 0x00000004bf086143259d061a9046e23500000000001db52c0000000000000000],
-  # ["npc2","Simon Brewer","Simon Brewer", tf_hero|tf_unmoveable_in_party_window, 0,reserved, fac_commoners,[itm_linen_tunic,itm_hunting_bow,itm_arrows,itm_hide_boots,itm_club],
+  # ["npc2","Simon Brewer","Simon Brewer", tf_hero|tf_unmoveable_in_party_window, 0,reserved, fac_commoners,[itm_linen_tunic,itm_hunting_bow,itm_arrows,itm_hide_boots,itm_modded_club],
    # str_11|agi_7|int_7|cha_6|level(1),wp_archery(100)|wp(40),knows_merchant_npc|
    # knows_trade_1|knows_weapon_master_1|knows_ironflesh_1|knows_wound_treatment_1|knows_athletics_1|knows_first_aid_1|knows_leadership_3,
    # 0x000000019d004001570b893712c8d28d00000000001dc8990000000000000000],
@@ -24985,10 +24978,10 @@ itm_rnd_helm_06,
 
   ["local_merchant","Local Merchant","Local Merchants",tf_guarantee_boots|tf_guarantee_armor, 0,0, fac_commoners,[itm_tunic_with_green_cape,itm_leather_boots,itm_butchering_knife],def_attrib|level(5),wp(40),knows_power_strike_1, merchant_face_1, merchant_face_2],
   ["tax_rebel","Peasant Rebel","Peasant Rebels",tf_guarantee_armor,0,reserved,fac_commoners,
-   [itm_cleaver,itm_knife,itm_pitch_fork,itm_sickle,itm_club,itm_stones,itm_leather_cap,itm_felt_hat,itm_felt_hat,itm_linen_tunic,itm_coarse_tunic,itm_nomad_boots,itm_wrapping_boots],
+   [itm_cleaver,itm_knife,itm_pitch_fork,itm_sickle,itm_modded_club,itm_stones,itm_leather_cap,itm_felt_hat,itm_felt_hat,itm_linen_tunic,itm_coarse_tunic,itm_nomad_boots,itm_wrapping_boots],
    def_attrib|level(4),wp(60),knows_common,vaegir_face1, vaegir_face2],
   ["trainee_peasant","Peasant","Peasants",tf_guarantee_armor,0,reserved,fac_commoners,
-   [itm_cleaver,itm_knife,itm_pitch_fork,itm_sickle,itm_club,itm_stones,itm_leather_cap,itm_felt_hat,itm_felt_hat,itm_linen_tunic,itm_coarse_tunic,itm_nomad_boots,itm_wrapping_boots],
+   [itm_cleaver,itm_knife,itm_pitch_fork,itm_sickle,itm_modded_club,itm_stones,itm_leather_cap,itm_felt_hat,itm_felt_hat,itm_linen_tunic,itm_coarse_tunic,itm_nomad_boots,itm_wrapping_boots],
    def_attrib|level(4),wp(60),knows_common,vaegir_face1, vaegir_face2],
   ["fugitive","Nervous Man","Nervous Men",tf_guarantee_boots|tf_guarantee_armor,0,0,fac_commoners,
    [itm_short_tunic,itm_linen_tunic,itm_coarse_tunic, itm_archer_a, itm_leather_vest, itm_woolen_hose, itm_woolen_hose, itm_blue_hose, itm_wrapping_boots, itm_fur_hat, itm_leather_cap, itm_sword_type_xiii, itm_throwing_daggers],
@@ -25031,7 +25024,7 @@ itm_rnd_helm_06,
 ##   [itm_sword,itm_leather_jerkin,itm_leather_boots,itm_hunter,itm_leather_gloves],
 ##   def_attrib|agi_11|level(10),wp(130),knows_common,vaegir_face1, vaegir_face2],
 ##  ["peasant_rebel","Peasant Rebel","Peasant Rebels",tf_guarantee_armor,0,reserved,fac_peasant_rebels,
-##   [itm_cleaver,itm_knife,itm_pitch_fork,itm_sickle,itm_club,itm_stones,itm_leather_cap,itm_felt_hat,itm_felt_hat,itm_linen_tunic,itm_coarse_tunic,itm_nomad_boots,itm_wrapping_boots],
+##   [itm_cleaver,itm_knife,itm_pitch_fork,itm_sickle,itm_modded_club,itm_stones,itm_leather_cap,itm_felt_hat,itm_felt_hat,itm_linen_tunic,itm_coarse_tunic,itm_nomad_boots,itm_wrapping_boots],
 ##   def_attrib|level(4),wp(60),knows_common,vaegir_face1, vaegir_face2],
 ##  ["noble_refugee","Noble Refugee","Noble Refugees",tf_guarantee_boots|tf_guarantee_armor,0,0,fac_noble_refugees,
 ##   [itm_sword,itm_leather_jacket,itm_hide_boots, itm_saddle_horse, itm_leather_jacket, itm_leather_cap],
@@ -25043,8 +25036,7 @@ itm_rnd_helm_06,
 
   ["quick_battle_6_player", "{!}quick_battle_6_player", "{!}quick_battle_6_player", tf_hero, 0, reserved,  fac_player_faction, [itm_gambeson_b,itm_woolen_hose,   itm_sword_type_xiii,  itm_crossbow, itm_bolts],    knight_attrib_1,wp(130),knight_skills_1, 0x000000000008010b01f041a9249f65fd],
 
-#Multiplayer ai troops
-# modded2x begin
+#modded2x begin
   ["swadian_crossbowman_multiplayer_ai", "Andalusian Veteran Slinger", "Andalusian Veteran Slingers", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_shield|tf_guarantee_ranged, no_scene, 0, fac_kingdom_20, [itm_buff_leather, itm_arab_helmet_a, itm_leather_fur_boots, itm_meghrebi_leather_a, itm_meghrebi_leather_b, itm_meghrebi_leather_c, itm_andalusian_shield_4, itm_andalusian_shield_3, itm_arab_shield_a_3, itm_arab_mail_coif, itm_kau_arab_aketon_red, itm_kau_arab_aketon, itm_kau_arab_aketon_blue, itm_andalus_infantry_helmet, itm_african_trousers, itm_almogavar_sword, itm_scimitar_b, itm_arabian_sword_a, itm_arabian_sword_b, itm_javelin, itm_darts], str_10|agi_9|int_6|cha_6|level(19), wpex(120,10,10,10,10,130), knows_shield_2|knows_power_strike_3|knows_power_throw_3|knows_athletics_1, 0x000000001c0c31d134a391e76255c4dc00000000001e28ac0000000000000000, 0x0000000edc0c424034a391e76255c4dc00000000001e28ac0000000000000000],
 
   ["swadian_infantry_multiplayer_ai", "Andalusian Elite Slinger", "Andalusian Elite Slingers", tf_guarantee_boots|tf_guarantee_armor|tf_guarantee_helmet|tf_guarantee_shield|tf_guarantee_ranged, no_scene, 0, fac_kingdom_20, [itm_buff_leather, itm_arab_helmet_a, itm_leather_fur_boots, itm_meghrebi_leather_a, itm_meghrebi_leather_b, itm_meghrebi_leather_c, itm_andalusian_shield_4, itm_andalusian_shield_3, itm_arab_shield_a_3, itm_arab_mail_coif, itm_kolpak_mail, itm_kau_arab_aketon_red, itm_kau_arab_aketon, itm_kau_arab_aketon_blue, itm_andalus_infantry_helmet, itm_african_trousers, itm_almogavar_sword, itm_scimitar_b, itm_arabian_sword_a, itm_arabian_sword_b, itm_javelin, itm_darts, itm_fustibalus, itm_andalus_infantry_helmet, itm_arab_mail_coif, itm_arab_helmet_b, itm_almogavar_sword], str_11|agi_12|int_9|cha_9|level(24), wpex(160,10,10,10,10,195), knows_shield_3|knows_power_strike_4|knows_power_throw_4|knows_ironflesh_2|knows_athletics_2, 0x000000001c0c31d134a391e76255c4dc00000000001e28ac0000000000000000, 0x0000000edc0c424034a391e76255c4dc00000000001e28ac0000000000000000],
@@ -25114,10 +25106,11 @@ itm_rnd_helm_06,
   ["sarranid_footman_multiplayer", "Farmer", "Farmers", tf_guarantee_boots|tf_guarantee_armor, no_scene, 0, fac_commoners, [itm_modded_club, itm_1257_hood, itm_woolen_cap, itm_leather_cap, itm_straw_hat, itm_peasant_tunic_a, itm_peasant_b, itm_peasant_c, itm_peasant_d, itm_tunic_with_green_cape, itm_peasant_f, itm_peasant_g, itm_woolen_hose, itm_wrapping_boots, itm_modded_practice_sword, itm_modded_practice_dagger, itm_javelin, itm_darts, itm_fustibalus, itm_throwing_knives, itm_stones, itm_modded_club, itm_sickle], str_9|agi_9|int_6|cha_5|level(5), wp(70), knows_shield_2|knows_power_strike_3|knows_power_throw_1|knows_weapon_master_2|knows_athletics_1, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000bc00062c76ddcdf7feefbffff00000000001efdbc0000000000000000],
 
   ["sarranid_mamluke_multiplayer", "Farmer", "Farmers", tf_guarantee_boots|tf_guarantee_armor, no_scene, 0, fac_commoners, [itm_modded_club, itm_1257_hood, itm_woolen_cap, itm_leather_cap, itm_straw_hat, itm_peasant_tunic_a, itm_peasant_b, itm_peasant_c, itm_peasant_d, itm_tunic_with_green_cape, itm_peasant_f, itm_peasant_g, itm_woolen_hose, itm_wrapping_boots, itm_modded_practice_sword, itm_modded_practice_dagger, itm_javelin, itm_darts, itm_fustibalus, itm_throwing_knives, itm_stones, itm_modded_club, itm_sickle], str_9|agi_9|int_6|cha_5|level(5), wp(70), knows_shield_2|knows_power_strike_3|knows_power_throw_1|knows_weapon_master_2|knows_athletics_1, 0x00000003c000000336db6db6db6db6db00000000001db6db0000000000000000, 0x0000000bc00062c76ddcdf7feefbffff00000000001efdbc0000000000000000],
-  
+
   ["multiplayer_end","{!}multiplayer_end","{!}multiplayer_end", 0, 0, 0, fac_kingdom_5, [], 0, 0, 0, 0, 0],
 
 # modded2x end
+
   #replacable troop, not used
   ["nurse","Nurse","{!}nurse",tf_hero|tf_female|tf_unmoveable_in_party_window,0,reserved,fac_kingdom_1, [             itm_leather_boots],     def_attrib|level(2),wp(50),knows_common|knows_riding_2, 0x000000055910200107632d675a92b92d00000000001e45620000000000000000],
   #erase later added to avoid errors
@@ -25255,7 +25248,7 @@ itm_rnd_helm_06,
    def_attrib|level(24),wp(110),knows_ironflesh_2|knows_power_strike_2|knows_power_draw_3|knows_power_throw_2|knows_riding_1|knows_athletics_2,nord_face_young_1, nord_face_old_2],
 
   ["looter_leader","Robber","Looters",tf_hero,0,0,fac_outlaws,
-   [itm_hatchet,itm_club,itm_butchering_knife,itm_falchion,itm_rawhide_coat,itm_stones,itm_nomad_armor,itm_nomad_armor,itm_woolen_cap,itm_woolen_cap,itm_woolen_hose,itm_wrapping_boots],
+   [itm_hatchet,itm_modded_club,itm_butchering_knife,itm_falchion,itm_rawhide_coat,itm_stones,itm_nomad_armor,itm_nomad_armor,itm_woolen_cap,itm_woolen_cap,itm_woolen_hose,itm_wrapping_boots],
    def_attrib|level(4),wp(20),knows_common,0x00000001b80032473ac49738206626b200000000001da7660000000000000000, bandit_face2],
 
   ["bandit_leaders_end","bandit_leaders_end","bandit_leaders_end",tf_hero, 0,0, fac_commoners,[],def_attrib|level(2),wp(20),knows_inventory_management_10,0],
@@ -25893,9 +25886,6 @@ itm_rnd_helm_06,
   ["pool_kipchak","{!}pool_kipchak","{!}pool_kipchak",tf_hero,no_scene,reserved,fac_commoners,[],def_attrib,0,knows_common|knows_inventory_management_10,0], 
 ]
 
-
-#Troop upgrade declarations
-# Mercenaries
 upgrade2(troops, "modded_tutorial_maceman", "modded_tutorial_archer", "modded_arena_training_fighter_10")
 upgrade2(troops, "modded_tutorial_swordsman", "modded_novice_fighter", "black_khergit_horseman")
 upgrade(troops, "modded_regular_fighter", "modded_veteran_fighter")
@@ -25904,67 +25894,6 @@ upgrade(troops, "modded_arena_training_fighter_2", "modded_arena_training_fighte
 upgrade(troops, "modded_arena_training_fighter_4", "modded_arena_training_fighter_5")
 upgrade(troops, "modded_arena_training_fighter_6", "modded_arena_training_fighter_7")
 upgrade(troops, "modded_arena_training_fighter_8", "modded_arena_training_fighter_9")
-
-upgrade(troops, "swadian_crossbowman_multiplayer_ai", "swadian_infantry_multiplayer_ai")
-upgrade(troops, "swadian_man_at_arms_multiplayer_ai", "vaegir_archer_multiplayer_ai")
-upgrade(troops, "vaegir_spearman_multiplayer_ai", "manhunter")
-upgrade(troops, "vaegir_horseman_multiplayer_ai", "manhunter")
-upgrade(troops, "khergit_dismounted_lancer_multiplayer_ai", "manhunter")
-upgrade(troops, "khergit_veteran_horse_archer_multiplayer_ai", "manhunter")
-upgrade(troops, "khergit_lancer_multiplayer_ai", "manhunter")
-upgrade(troops, "nord_veteran_multiplayer_ai", "manhunter")
-upgrade(troops, "nord_scout_multiplayer_ai", "manhunter")
-upgrade(troops, "nord_archer_multiplayer_ai", "manhunter")
-upgrade(troops, "rhodok_veteran_crossbowman_multiplayer_ai", "manhunter")
-upgrade(troops, "rhodok_veteran_spearman_multiplayer_ai", "manhunter")
-upgrade(troops, "rhodok_scout_multiplayer_ai", "manhunter")
-upgrade(troops, "sarranid_infantry_multiplayer_ai", "manhunter")
-upgrade(troops, "sarranid_archer_multiplayer_ai", "manhunter")
-upgrade(troops, "sarranid_horseman_multiplayer_ai", "manhunter")
-upgrade(troops, "swadian_crossbowman_multiplayer", "manhunter")
-upgrade(troops, "swadian_infantry_multiplayer", "manhunter")
-upgrade(troops, "swadian_man_at_arms_multiplayer", "manhunter")
-upgrade(troops, "vaegir_archer_multiplayer", "manhunter")
-upgrade(troops, "vaegir_spearman_multiplayer", "manhunter")
-upgrade(troops, "vaegir_horseman_multiplayer", "manhunter")
-upgrade(troops, "khergit_veteran_horse_archer_multiplayer", "manhunter")
-upgrade(troops, "khergit_lancer_multiplayer", "manhunter")
-upgrade(troops, "nord_archer_multiplayer", "manhunter")
-upgrade(troops, "nord_veteran_multiplayer", "manhunter")
-upgrade(troops, "nord_scout_multiplayer", "manhunter")
-upgrade(troops, "rhodok_veteran_crossbowman_multiplayer", "manhunter")
-upgrade(troops, "rhodok_sergeant_multiplayer", "manhunter")
-upgrade(troops, "rhodok_horseman_multiplayer", "manhunter")
-upgrade(troops, "sarranid_archer_multiplayer", "manhunter")
-upgrade(troops, "sarranid_footman_multiplayer", "manhunter")
-upgrade(troops, "sarranid_mamluke_multiplayer", "manhunter")
-
-#upgrade2( troops, "looter", "mountain_bandit", "forest_bandit" )
-# upgrade2 (troops, "forest_bandit", "mercenary_veteran_archer", "mercenary_veteran_crossbowman"),
-# upgrade2 (troops, "mountain_bandit", "mercenary_veteran_swordsman", "mercenary_veteran_billman"),
-upgrade( troops, "bandit", "brigand")
-# upgrade( troops, "manhunter", "slave_driver" )
-# upgrade( troops, "slave_driver", "slave_hunter" )
-# upgrade( troops, "slave_hunter", "slave_crusher" )
-# upgrade( troops, "slave_crusher", "slaver_chief" )
-# upgrade( troops, "follower_woman", "hunter_woman" )
-# upgrade( troops, "hunter_woman", "fighter_woman" )
-# upgrade( troops, "fighter_woman", "sword_sister" )
-# upgrade( troops, "refugee", "follower_woman" )
-#upgrade( troops, "peasant_woman", "follower_woman" )
-#upgrade( troops, "peasant_woman", "mercenary_town_footman" ) #TOM
-
-##redo this. tribesman -> horseman ->lancer->h. lancer
-##			 tribesman2->skirmisher->horse archer->h.archer
-##NEW RECRUIT!
-# upgrade( troops, "tatar_tribesman", "tatar_skirmisher" )
-# upgrade( troops, "tatar_skirmisher", "tatar_horseman" )
-# upgrade( troops, "tatar_horseman", "tatar_horse_archer" )
-# upgrade2( troops, "tatar_horse_archer", "tatar_lancer", "tatar_veteran_horse_archer" )
-# upgrade( troops, "tatar_lancer", "tatar_heavy_lancer" )
-
-#upgrade( troops, "tatar_tribesman", "tatar_horseman"),
-#noble
 upgrade(troops, "cuman_tribesman", "cuman_skirmisher")
 upgrade2(troops, "cuman_skirmisher", "cuman_horse_archer", "cuman_horseman")
 upgrade(troops, "cuman_horseman", "cuman_lancer")
@@ -26205,7 +26134,6 @@ upgrade(troops, "hunter_woman", "fighter_woman")
 upgrade2(troops, "fighter_woman", "sword_sister", "refugee")
 upgrade(troops, "peasant_woman", "follower_woman")
 upgrade(troops, "scottish_messenger", "scottish_deserter")
-
 upgrade(troops, "swadian_crossbowman_multiplayer_ai", "swadian_infantry_multiplayer_ai")
 upgrade(troops, "swadian_man_at_arms_multiplayer_ai", "vaegir_archer_multiplayer_ai")
 upgrade(troops, "vaegir_spearman_multiplayer_ai", "manhunter")

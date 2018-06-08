@@ -265,6 +265,9 @@ def accuracy(x):
 def custom_kill_info(x): # you have to add ico_custom_x (where x is a number between 1 and 7) mesh in order to display it correctly.
   return (((bignum | x) & (itp_kill_info_mask >> itp_kill_info_bits)) << itp_kill_info_bits)
 
+def resistance(x):
+  return body_armor(x)
+
 # Item capabilities:
 itcf_thrust_onehanded                                = 0x0000000000000001
 itcf_overswing_onehanded                             = 0x0000000000000002

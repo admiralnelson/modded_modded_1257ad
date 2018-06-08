@@ -139,6 +139,7 @@ from script.functions import Mod_Formation as function_mod_formation
 from script.functions import Mod_Formation_utils as function_mod_formation_util
 from script.functions import Mod_Formation_ai as function_mod_formation_ai
 from script.functions import Mod_AutoLoot as function_mod_autoloot
+from script.functions import Modded2x as function_modded2x
 
 
 # include all conditional functions
@@ -272,6 +273,7 @@ scripts = [
 	
 	# script_game_event_party_encounter:
 	# This script is called from the game engine whenever player party encounters another party or a battle on the world map
+	# WARNING: HEAVILY modified by 1257AD devs
 	# INPUT: param1: encountered_party, param2: second encountered_party (if this was a battle)
 	# OUTPUT: none
 	procedure_campaign.game_event_party_encounter,
@@ -5537,5 +5539,9 @@ scripts = [
 	#INPUT: input_size
 	#OUTPUT: none
 	procedure_modded2x.modded2x_print_fizzbuzz,
-	
+
+	#script_modded2x_Int2Bin
+	#INPUT: a number
+	#OUTPUT: s1, binary string
+	function_modded2x.modded2x_Int2Bin
 	]

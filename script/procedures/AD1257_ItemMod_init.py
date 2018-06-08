@@ -11,26 +11,32 @@ def set_item_score():
 
 		## difficulty
 		item_score.append((item_set_slot, i_item, slot_item_difficulty, get_difficulty(items[i_item][6])))
+		try:
+			## armor type
+			if items[i_item][7] == imodbits_cloth:
+				item_score.append((item_set_slot, i_item, slot_armor_type, armor_cloth))
+			elif items[i_item][7] == imodbits_armor:
+				item_score.append((item_set_slot, i_item, slot_armor_type, armor_armor))
+			elif items[i_item][7] == imodbits_plate:
+				item_score.append((item_set_slot, i_item, slot_armor_type, armor_plate))
+			## item_best_modifier
+			if items[i_item][7] == imodbits_bow:
+				item_score.append((item_set_slot, i_item, slot_item_best_modifier, imod_masterwork))
+			elif items[i_item][7] == imodbits_pick:
+				item_score.append((item_set_slot, i_item, slot_item_best_modifier, imod_balanced))
+			elif items[i_item][7] == imodbits_none:
+				item_score.append((item_set_slot, i_item, slot_item_best_modifier, imod_plain))
+			else:
+				for i in xrange(43):
+					if items[i_item][7] >> i == 1:
+						item_score.append((item_set_slot, i_item, slot_item_best_modifier, i))
+		except Exception as e:
+			print "!!!!ERROR AT INDEX NO: " + str(i_item)
+			print "!!!!ITEM  " + str(items[i_item]) + " LENGTH: " + str(len(items[i_item]))
+			print "!!! PREV ITEM WAS " + str(i_item-1)
+			print "!!!!ITEM  " + str(items[i_item-1]) + " LENGTH: " + str(len(items[i_item-1]))
 
-		## armor type
-		if items[i_item][7] == imodbits_cloth:
-			item_score.append((item_set_slot, i_item, slot_armor_type, armor_cloth))
-		elif items[i_item][7] == imodbits_armor:
-			item_score.append((item_set_slot, i_item, slot_armor_type, armor_armor))
-		elif items[i_item][7] == imodbits_plate:
-			item_score.append((item_set_slot, i_item, slot_armor_type, armor_plate))
-
-		## item_best_modifier
-		if items[i_item][7] == imodbits_bow:
-			item_score.append((item_set_slot, i_item, slot_item_best_modifier, imod_masterwork))
-		elif items[i_item][7] == imodbits_pick:
-			item_score.append((item_set_slot, i_item, slot_item_best_modifier, imod_balanced))
-		elif items[i_item][7] == imodbits_none:
-			item_score.append((item_set_slot, i_item, slot_item_best_modifier, imod_plain))
-		else:
-			for i in xrange(43):
-				if items[i_item][7] >> i == 1:
-					item_score.append((item_set_slot, i_item, slot_item_best_modifier, i))
+			raise
 
 		type = items[i_item][3] & 0x000000ff
 		if type == itp_type_two_handed_wpn and items[i_item][3] & itp_two_handed == 0:
@@ -63,7 +69,7 @@ def set_item_score():
 		item_score.append((item_set_slot, i_modifier, slot_item_modifier_quality, modifiers[i_modifier][2]))
 
 	return item_score[:]
-
+	
 def keys_array():
 	keys_list = []
 	for key_no in xrange(len(keys)):

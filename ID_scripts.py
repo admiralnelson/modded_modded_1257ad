@@ -774,5 +774,6 @@ script_equip_troops_by_tier = 772
 script_rebalance_troop_trees = 773
 script_rebalance_troops_by_culture = 774
 script_modded2x_print_fizzbuzz = 775
+script_modded2x_int2bin = 776
 
 

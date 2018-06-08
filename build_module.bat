@@ -1,5 +1,7 @@
 @echo off
 @del /Q /F /S  *.pyc
+py ItemCreator.py  > ID_items.py
+echo ID_items.py updated!
 py -2  process_init.py
 py -2  process_global_variables.py
 py -2  process_strings.py
@@ -45,5 +47,6 @@ echo ______________________________
 echo.
 rem BEEP:
 echo 
-echo Press any key to exit. . .
-pause>nul
+REM echo Press any key to exit. . .
+REM pause>nul
+"D:\steam\steamapps\common\MountBlade Warband\mb_warband.exe"

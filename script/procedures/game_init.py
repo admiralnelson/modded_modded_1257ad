@@ -6,6 +6,7 @@ from header import *
 game_start = (
 	"game_start",
 		[
+			(display_message, "@SETTING UP...0"),
 			# deathcam ################
 			(assign, "$setting_use_dmod", 1),
 			# end deathcam ################
@@ -169,6 +170,7 @@ game_start = (
 					(val_add, ":num_iterations", 1),
 				(try_end),
 			(try_end),
+			(display_message, "@SETTING UP...CULTURES"),
 			
 			# Cultures:
 			(faction_set_slot, "fac_culture_teutonic", slot_faction_tier_1_troop, "trp_teu_village_recruit"),
@@ -487,6 +489,8 @@ game_start = (
 				(display_message, "@{!}DEBUG : Completed faction troop assignments, cheat mode: {reg3}"),
 			(try_end),
 			
+			(display_message, "@SETTING UP...FACTIONS"),
+			
 			# Factions:
 			(faction_set_slot, "fac_kingdom_1",  slot_faction_culture, "fac_culture_teutonic"), 
 			(faction_set_slot, "fac_kingdom_1",  slot_faction_leader, "trp_kingdom_1_lord"),
@@ -669,6 +673,8 @@ game_start = (
 			(call_script, "script_initialize_faction_troop_types"),
 			
 			
+			(display_message, "@SETTING UP...TOWNS"),
+			
 			# Towns:
 			(try_for_range, ":item_no", trade_goods_begin, trade_goods_end),
 				(store_sub, ":offset", ":item_no", trade_goods_begin),
@@ -694,6 +700,8 @@ game_start = (
 			#village products -- at some point we might make it so that the villages supply raw materials to towns, and the towns produce manufactured goods
 			#village products designate the raw materials produced in the vicinity
 			#right now, just doing a test for grain produced in the swadian heartland
+			
+			(display_message, "@SETTING UP...VILLAGES ASSIG. TO CASTLE"),
 			
 			# fill_village_bound_centers
 			#pass 1: Give one village to each castle
@@ -1342,6 +1350,9 @@ game_start = (
 			# Assign banners and renown.
 			# We assume there are enough banners for all kingdom heroes.
 			
+			(display_message, "@SETTING UP...FACTIONS BANNERS"),
+			
+
 			#faction banners
 			(faction_set_slot, "fac_kingdom_1", slot_faction_banner, "mesh_banner_kingdom_1"),
 			(faction_set_slot, "fac_kingdom_2", slot_faction_banner, "mesh_banner_kingdom_2"),
@@ -5116,6 +5127,7 @@ game_quick_start = (
 			(val_add, ":sarranid_price_slot", slot_item_multiplayer_faction_price_multipliers_begin),
 			
 			#      (item_set_slot, "itm_steppe_horse", ":khergit_price_slot", 50),
+			(display_message, "@SETTING UP..."),
 			
 			#arrows
 			(item_set_slot, "itm_arrows", slot_item_multiplayer_item_class, multi_item_class_type_arrow),
@@ -6666,6 +6678,8 @@ initialize_item_info =	(
 			(item_set_slot, "itm_book_wound_treatment_reference", slot_item_intelligence_requirement, 10),
 			(item_set_slot, "itm_book_training_reference", slot_item_intelligence_requirement, 10),
 			(item_set_slot, "itm_book_surgery_reference", slot_item_intelligence_requirement, 10),
+			(display_message, "@SETTING UP...done"),
+			
 	])
 
 #script_initialize_town_arena_info

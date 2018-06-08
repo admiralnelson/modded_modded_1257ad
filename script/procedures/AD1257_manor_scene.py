@@ -414,7 +414,7 @@ remove_manor_objects= (
 		(replace_scene_items_with_scene_props,"itm_wine","spr_empty"), 
 		(replace_scene_items_with_scene_props,"itm_quest_wine","spr_empty"),
 		(replace_scene_items_with_scene_props,"itm_ale","spr_empty"),
-			(replace_scene_items_with_scene_props,"itm_quest_ale","spr_empty"),
+		(replace_scene_items_with_scene_props,"itm_quest_ale","spr_empty"),
 		(replace_scene_items_with_scene_props,"itm_dried_meat","spr_empty"),
 		(replace_scene_items_with_scene_props,"itm_sausages","spr_empty"),
 		(replace_scene_items_with_scene_props,"itm_bread","spr_empty"),
@@ -669,20 +669,20 @@ init_manor_walker_agents = (
 			# (entry_point_get_position, pos0, 11 ),
 			# (agent_set_look_target_position, ":cur_agent", pos0), 
 			# (try_end),
-			(this_or_next|is_between, ":cur_troop", walkers_begin, walkers_end),
+					(this_or_next|is_between, ":cur_troop", walkers_begin, walkers_end),
 					(this_or_next|is_between, ":cur_troop", "trp_manor_noble", "trp_manor_trader_silk"), #manor walkers
-			(is_between, ":cur_troop", "trp_farmer", "trp_kingdom_heroes_including_player_begin"), #manor walkers
-			(neg|is_between, ":cur_troop", "trp_ransom_broker_1", "trp_tavern_traveler_1"), #manor walkers
-					(val_add, ":num_walkers", 1),
-					(agent_get_position, pos1, ":cur_agent"),
+					(is_between, ":cur_troop", "trp_farmer", "trp_kingdom_heroes_including_player_begin"), #manor walkers
+					(neg|is_between, ":cur_troop", "trp_ransom_broker_1", "trp_tavern_traveler_1"), #manor walkers
+						(val_add, ":num_walkers", 1),
+						(agent_get_position, pos1, ":cur_agent"),
 			
-			(store_random_in_range, ":r", 0, 2),
-			(try_begin),
-				(eq, ":r", 0),
-				(store_random_in_range, ":i_e_p", 20, 72),
-			(else_try),
-				(store_random_in_range, ":i_e_p", 81, 95),
-			(try_end),
+						(store_random_in_range, ":r", 0, 2),
+						(try_begin),
+							(eq, ":r", 0),
+								(store_random_in_range, ":i_e_p", 20, 72),
+						(else_try),
+							(store_random_in_range, ":i_e_p", 81, 95),
+						(try_end),
 			
 					#(try_for_range, ":i_e_p", 20, 94),#Entry points
 			#  (neg|is_between, ":i_e_p", 73, 81),
@@ -691,8 +691,8 @@ init_manor_walker_agents = (
 						#(lt, ":distance", 200),
 						(agent_set_slot, ":cur_agent", 0, ":i_e_p"),
 				 # (try_end),
-					(call_script, "script_set_town_walker_destination", ":cur_agent"),
-				(try_end),
+						(call_script, "script_set_town_walker_destination", ":cur_agent"),
+					(try_end),
 		])
 	
 

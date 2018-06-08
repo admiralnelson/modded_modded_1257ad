@@ -49,6 +49,40 @@ mtf_culture_generic = mtf_culture_5
 mtf_culture_christian = mtf_culture_1 
 mtf_culture_moorish = mtf_culture_6
 
+# modded2x begin:
+# DESCRIPTION: additional culture system for bgm.
+# by using OR between flag, we could expand the music culture system
+
+# general theme
+mtf_culture_west_eu = mtf_culture_1 
+mtf_culture_central_eu = mtf_culture_2
+mtf_culture_eastern_eu = mtf_culture_3
+mtf_culture_mediterrania = mtf_culture_4
+mtf_culture_scandinavia	  = mtf_culture_5
+mtf_culture_arabians 		   = mtf_culture_6
+mtf_culture_byz				   = mtf_culture_3 | mtf_culture_2
+mtf_culture_britain 		   = mtf_culture_5 | mtf_culture_1
+mtf_tom_ambient = mtf_culture_all
+# encounter theme (like in medieval 2 total war)
+mtf_encounter_christian = mtf_culture_1 | mtf_sit_encounter_hostile
+mtf_encounter_nonchristian = mtf_culture_2 | mtf_sit_encounter_hostile
+
+# battle theme
+mtf_battle_christian = mtf_culture_1 | mtf_sit_fight
+mtf_battle_nonchristian = mtf_culture_2 | mtf_sit_fight
+
+# entering hostile teritory
+mtf_hostile_teritory = 0x00008000 
+
+mtf_hostile_teritory_christian = 0x00004000
+mtf_hostile_teritory_nonchristian = 0x00000800
+
+# modded2x end
+
+
+
+
+
 mtf_culture_generic = mtf_culture_1
 mtf_culture_saracen = mtf_culture_2
 mtf_culture_crusader = mtf_culture_3
