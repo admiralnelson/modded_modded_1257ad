@@ -7,8 +7,8 @@ note:
 
 TODO:
 - [x] code refactoring and documentation 
-- [ ] import troop trees from modded 1257AD + weapon balance ofc  
-- [ ] brainybots 
+- [x] import troop trees from modded 1257AD + weapon balance ofc  
+- [ ] ~~brainybots~~ can't find the source code, there's patch tho, stability is not guaranteed.
 - [x] fix retarded siege AI
 
 Suggestion from last thread 211791549
