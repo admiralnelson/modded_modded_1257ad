@@ -7,6 +7,9 @@ note:
 
 special thanks:
 - NaikJoy - for arabian scenes.
+- Anon - for recoloured UI.
+- Anon - for modded 1275AD
+- Anon - for mount&blade java decompiler
 
 #### New version of this mod might break previous version of the save game
 #### Not compatible with modded 1257AD or modded modded 1257AD save game
