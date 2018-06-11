@@ -5,6 +5,9 @@ note:
 1. compile the files using build_module.bat
 2. change output directory in module info.
 
+special thanks:
+- NaikJoy - for arabian scenes.
+
 TODO:
 - [x] code refactoring and documentation 
 - [x] import troop trees from modded 1257AD + weapon balance ofc  
