@@ -8,6 +8,17 @@ note:
 special thanks:
 - NaikJoy - for arabian scenes.
 
+# What's new?
+
+Beta version:
+- Troop trees from modded anon's 1257AD
+- Items from modded anon's 1257AD
+- Assets from modded modded 1257AD
+- Removed shitty shaders
+- New scenes
+- New BGM
+
+
 TODO:
 - [x] code refactoring and documentation 
 - [x] import troop trees from modded 1257AD + weapon balance ofc  
