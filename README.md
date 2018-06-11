@@ -11,6 +11,9 @@ special thanks:
 - Anon - for modded 1275AD
 - Anon - for mount&blade java decompiler
 
+donwload compiled + mod resources here: https://1drv.ms/u/s!AntuMZqjoMfIhspH7gqb-_yy1GtLlA   
+
+
 #### New version of this mod might break previous version of the save game
 #### Not compatible with modded 1257AD or modded modded 1257AD save game
 ## What's new?
