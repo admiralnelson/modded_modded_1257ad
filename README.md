@@ -56,5 +56,8 @@ logs:
 (57%-ish, 340 out of 596 procedures/functions/cfunctions)  
 (70%-ish, 422 out of 596  procedures/functions/cfunctions)  
 (100, 596 out of 596  procedures/functions/cfunctions)  
+imported troop tress and items (the most tedious thing to do)  
+new scenes were added      
+new bgm were added   
 ## important keywords so far
 1257AD, 1257AD devs, WARNING, modified, modded2x, tom, ozan, rafi, dplmc, diplomacy begin, diplomacy end, freelancer
