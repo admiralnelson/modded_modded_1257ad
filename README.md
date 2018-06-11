@@ -64,5 +64,6 @@ logs:
 imported troop tress and items (the most tedious thing to do)  
 new scenes were added      
 new bgm were added   
+testing phase  
 ## important keywords so far
 1257AD, 1257AD devs, WARNING, modified, modded2x, tom, ozan, rafi, dplmc, diplomacy begin, diplomacy end, freelancer
