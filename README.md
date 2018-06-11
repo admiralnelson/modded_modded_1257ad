@@ -8,7 +8,9 @@ note:
 special thanks:
 - NaikJoy - for arabian scenes.
 
-# What's new?
+#### New version of this mod might break previous version of the save game
+#### Not compatible with modded 1257AD or modded modded 1257AD save game
+## What's new?
 
 Beta version:
 - Troop trees from modded anon's 1257AD
